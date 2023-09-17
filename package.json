@@ -9,6 +9,7 @@
     "build": "node esbuild.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "prettier": "prettier . --write",
     "prepare": "husky install"
   },
   "keywords": [],
