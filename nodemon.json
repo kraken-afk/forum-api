@@ -1,8 +1,8 @@
 {
-  "ignore": ["__tests__", "**/node_modules/**", "*.test.ts", ".git"],
-  "execMap": {
-    "ts": "node esbuild.dev.mjs && node ./target/debug/main.js"
-  },
-  "ext": "ts,json,js",
-  "watch": ["src/"]
+	"ignore": ["__tests__", "**/node_modules/**", "*.test.ts", ".git"],
+	"execMap": {
+		"ts": "node esbuild.dev.mjs && node --trace-warnings ./target/debug/main.js"
+	},
+	"ext": "ts,json,js",
+	"watch": ["src/"]
 }

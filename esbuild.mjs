@@ -1,6 +1,5 @@
 // @ts-check
 
-import { bundler } from './helpers/bundler.js';
+import bundler from './utils/helpers/bundler.mjs';
 
-await bundler({ outdir: 'target/release/', minify: true })
-  .build();
+await bundler({outdir: 'target/release/', minify: true}).build();

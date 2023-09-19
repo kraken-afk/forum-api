@@ -51,13 +51,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/users",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"users"
-							]
+							"path": ["users"]
 						}
 					},
 					"response": []
@@ -136,13 +132,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/users",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"users"
-							]
+							"path": ["users"]
 						}
 					},
 					"response": []
@@ -216,13 +208,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/users",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"users"
-							]
+							"path": ["users"]
 						}
 					},
 					"response": []
@@ -252,9 +240,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"exec": [
-									""
-								],
+								"exec": [""],
 								"type": "text/javascript"
 							}
 						}
@@ -274,13 +260,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/users",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"users"
-							]
+							"path": ["users"]
 						}
 					},
 					"response": []
@@ -299,9 +281,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"exec": [
-											""
-										],
+										"exec": [""],
 										"type": "text/javascript"
 									}
 								}
@@ -321,13 +301,9 @@
 								"url": {
 									"raw": "{{protocol}}://{{host}}:{{port}}/users",
 									"protocol": "{{protocol}}",
-									"host": [
-										"{{host}}"
-									],
+									"host": ["{{host}}"],
 									"port": "{{port}}",
-									"path": [
-										"users"
-									]
+									"path": ["users"]
 								}
 							},
 							"response": []
@@ -403,13 +379,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/authentications",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"authentications"
-							]
+							"path": ["authentications"]
 						}
 					},
 					"response": []
@@ -483,13 +455,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/authentications",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"authentications"
-							]
+							"path": ["authentications"]
 						}
 					},
 					"response": []
@@ -568,13 +536,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/authentications",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"authentications"
-							]
+							"path": ["authentications"]
 						}
 					},
 					"response": []
@@ -619,13 +583,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/authentications",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"authentications"
-							]
+							"path": ["authentications"]
 						}
 					},
 					"response": []
@@ -668,13 +628,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/authentications",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"authentications"
-							]
+							"path": ["authentications"]
 						}
 					},
 					"response": []
@@ -743,13 +699,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/authentications",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"authentications"
-							]
+							"path": ["authentications"]
 						}
 					},
 					"response": []
@@ -793,13 +745,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/authentications",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"authentications"
-							]
+							"path": ["authentications"]
 						}
 					},
 					"response": []
@@ -818,9 +766,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"exec": [
-											""
-										],
+										"exec": [""],
 										"type": "text/javascript"
 									}
 								}
@@ -840,13 +786,9 @@
 								"url": {
 									"raw": "{{protocol}}://{{host}}:{{port}}/users",
 									"protocol": "{{protocol}}",
-									"host": [
-										"{{host}}"
-									],
+									"host": ["{{host}}"],
 									"port": "{{port}}",
-									"path": [
-										"users"
-									]
+									"path": ["users"]
 								}
 							},
 							"response": []
@@ -913,13 +855,9 @@
 								"url": {
 									"raw": "{{protocol}}://{{host}}:{{port}}/authentications",
 									"protocol": "{{protocol}}",
-									"host": [
-										"{{host}}"
-									],
+									"host": ["{{host}}"],
 									"port": "{{port}}",
-									"path": [
-										"authentications"
-									]
+									"path": ["authentications"]
 								}
 							},
 							"response": []
@@ -954,13 +892,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads"
-							]
+							"path": ["threads"]
 						}
 					},
 					"response": []
@@ -1047,13 +981,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads"
-							]
+							"path": ["threads"]
 						}
 					},
 					"response": []
@@ -1113,13 +1043,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads"
-							]
+							"path": ["threads"]
 						}
 					},
 					"response": []
@@ -1138,9 +1064,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"exec": [
-											""
-										],
+										"exec": [""],
 										"type": "text/javascript"
 									}
 								}
@@ -1160,13 +1084,9 @@
 								"url": {
 									"raw": "{{protocol}}://{{host}}:{{port}}/users",
 									"protocol": "{{protocol}}",
-									"host": [
-										"{{host}}"
-									],
+									"host": ["{{host}}"],
 									"port": "{{port}}",
-									"path": [
-										"users"
-									]
+									"path": ["users"]
 								}
 							},
 							"response": []
@@ -1177,9 +1097,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"exec": [
-											""
-										],
+										"exec": [""],
 										"type": "text/javascript"
 									}
 								}
@@ -1199,13 +1117,9 @@
 								"url": {
 									"raw": "{{protocol}}://{{host}}:{{port}}/users",
 									"protocol": "{{protocol}}",
-									"host": [
-										"{{host}}"
-									],
+									"host": ["{{host}}"],
 									"port": "{{port}}",
-									"path": [
-										"users"
-									]
+									"path": ["users"]
 								}
 							},
 							"response": []
@@ -1272,13 +1186,9 @@
 								"url": {
 									"raw": "{{protocol}}://{{host}}:{{port}}/authentications",
 									"protocol": "{{protocol}}",
-									"host": [
-										"{{host}}"
-									],
+									"host": ["{{host}}"],
 									"port": "{{port}}",
-									"path": [
-										"authentications"
-									]
+									"path": ["authentications"]
 								}
 							},
 							"response": []
@@ -1345,13 +1255,9 @@
 								"url": {
 									"raw": "{{protocol}}://{{host}}:{{port}}/authentications",
 									"protocol": "{{protocol}}",
-									"host": [
-										"{{host}}"
-									],
+									"host": ["{{host}}"],
 									"port": "{{port}}",
-									"path": [
-										"authentications"
-									]
+									"path": ["authentications"]
 								}
 							},
 							"response": []
@@ -1396,13 +1302,9 @@
 								"url": {
 									"raw": "{{protocol}}://{{host}}:{{port}}/threads",
 									"protocol": "{{protocol}}",
-									"host": [
-										"{{host}}"
-									],
+									"host": ["{{host}}"],
 									"port": "{{port}}",
-									"path": [
-										"threads"
-									]
+									"path": ["threads"]
 								}
 							},
 							"response": []
@@ -1449,15 +1351,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}/comments",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"{{threadId}}",
-								"comments"
-							]
+							"path": ["threads", "{{threadId}}", "comments"]
 						}
 					},
 					"response": []
@@ -1510,15 +1406,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/xxx/comments",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"xxx",
-								"comments"
-							]
+							"path": ["threads", "xxx", "comments"]
 						}
 					},
 					"response": []
@@ -1602,15 +1492,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}/comments",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"{{threadId}}",
-								"comments"
-							]
+							"path": ["threads", "{{threadId}}", "comments"]
 						}
 					},
 					"response": []
@@ -1670,15 +1554,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}/comments",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"{{threadId}}",
-								"comments"
-							]
+							"path": ["threads", "{{threadId}}", "comments"]
 						}
 					},
 					"response": []
@@ -1740,15 +1618,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}/comments",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"{{threadId}}",
-								"comments"
-							]
+							"path": ["threads", "{{threadId}}", "comments"]
 						}
 					},
 					"response": []
@@ -1806,14 +1678,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"{{threadId}}"
-							]
+							"path": ["threads", "{{threadId}}"]
 						}
 					},
 					"response": []
@@ -1846,16 +1713,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}/comments/{{commentId}}",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"{{threadId}}",
-								"comments",
-								"{{commentId}}"
-							]
+							"path": ["threads", "{{threadId}}", "comments", "{{commentId}}"]
 						}
 					},
 					"response": []
@@ -1900,16 +1760,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}/comments/xxx",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"{{threadId}}",
-								"comments",
-								"xxx"
-							]
+							"path": ["threads", "{{threadId}}", "comments", "xxx"]
 						}
 					},
 					"response": []
@@ -1954,16 +1807,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}/comments/{{commentId}}",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"{{threadId}}",
-								"comments",
-								"{{commentId}}"
-							]
+							"path": ["threads", "{{threadId}}", "comments", "{{commentId}}"]
 						}
 					},
 					"response": []
@@ -2006,16 +1852,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}/comments/{{commentId}}",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"{{threadId}}",
-								"comments",
-								"{{commentId}}"
-							]
+							"path": ["threads", "{{threadId}}", "comments", "{{commentId}}"]
 						}
 					},
 					"response": []
@@ -2073,14 +1912,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"{{threadId}}"
-							]
+							"path": ["threads", "{{threadId}}"]
 						}
 					},
 					"response": []
@@ -2099,9 +1933,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"exec": [
-											""
-										],
+										"exec": [""],
 										"type": "text/javascript"
 									}
 								}
@@ -2121,13 +1953,9 @@
 								"url": {
 									"raw": "{{protocol}}://{{host}}:{{port}}/users",
 									"protocol": "{{protocol}}",
-									"host": [
-										"{{host}}"
-									],
+									"host": ["{{host}}"],
 									"port": "{{port}}",
-									"path": [
-										"users"
-									]
+									"path": ["users"]
 								}
 							},
 							"response": []
@@ -2138,9 +1966,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"exec": [
-											""
-										],
+										"exec": [""],
 										"type": "text/javascript"
 									}
 								}
@@ -2160,13 +1986,9 @@
 								"url": {
 									"raw": "{{protocol}}://{{host}}:{{port}}/users",
 									"protocol": "{{protocol}}",
-									"host": [
-										"{{host}}"
-									],
+									"host": ["{{host}}"],
 									"port": "{{port}}",
-									"path": [
-										"users"
-									]
+									"path": ["users"]
 								}
 							},
 							"response": []
@@ -2233,13 +2055,9 @@
 								"url": {
 									"raw": "{{protocol}}://{{host}}:{{port}}/authentications",
 									"protocol": "{{protocol}}",
-									"host": [
-										"{{host}}"
-									],
+									"host": ["{{host}}"],
 									"port": "{{port}}",
-									"path": [
-										"authentications"
-									]
+									"path": ["authentications"]
 								}
 							},
 							"response": []
@@ -2306,13 +2124,9 @@
 								"url": {
 									"raw": "{{protocol}}://{{host}}:{{port}}/authentications",
 									"protocol": "{{protocol}}",
-									"host": [
-										"{{host}}"
-									],
+									"host": ["{{host}}"],
 									"port": "{{port}}",
-									"path": [
-										"authentications"
-									]
+									"path": ["authentications"]
 								}
 							},
 							"response": []
@@ -2357,13 +2171,9 @@
 								"url": {
 									"raw": "{{protocol}}://{{host}}:{{port}}/threads",
 									"protocol": "{{protocol}}",
-									"host": [
-										"{{host}}"
-									],
+									"host": ["{{host}}"],
 									"port": "{{port}}",
-									"path": [
-										"threads"
-									]
+									"path": ["threads"]
 								}
 							},
 							"response": []
@@ -2408,15 +2218,9 @@
 								"url": {
 									"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}/comments",
 									"protocol": "{{protocol}}",
-									"host": [
-										"{{host}}"
-									],
+									"host": ["{{host}}"],
 									"port": "{{port}}",
-									"path": [
-										"threads",
-										"{{threadId}}",
-										"comments"
-									]
+									"path": ["threads", "{{threadId}}", "comments"]
 								}
 							},
 							"response": []
@@ -2427,9 +2231,7 @@
 								{
 									"listen": "test",
 									"script": {
-										"exec": [
-											""
-										],
+										"exec": [""],
 										"type": "text/javascript"
 									}
 								}
@@ -2459,15 +2261,9 @@
 								"url": {
 									"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}/comments",
 									"protocol": "{{protocol}}",
-									"host": [
-										"{{host}}"
-									],
+									"host": ["{{host}}"],
 									"port": "{{port}}",
-									"path": [
-										"threads",
-										"{{threadId}}",
-										"comments"
-									]
+									"path": ["threads", "{{threadId}}", "comments"]
 								}
 							},
 							"response": []
@@ -2514,17 +2310,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}/comments/{{commentId}}/replies",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"{{threadId}}",
-								"comments",
-								"{{commentId}}",
-								"replies"
-							]
+							"path": ["threads", "{{threadId}}", "comments", "{{commentId}}", "replies"]
 						}
 					},
 					"response": []
@@ -2578,17 +2366,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/xxxx/comments/{{commentId}}/replies",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"xxxx",
-								"comments",
-								"{{commentId}}",
-								"replies"
-							]
+							"path": ["threads", "xxxx", "comments", "{{commentId}}", "replies"]
 						}
 					},
 					"response": []
@@ -2642,17 +2422,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}/comments/xxx/replies",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"{{threadId}}",
-								"comments",
-								"xxx",
-								"replies"
-							]
+							"path": ["threads", "{{threadId}}", "comments", "xxx", "replies"]
 						}
 					},
 					"response": []
@@ -2737,17 +2509,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}/comments/{{commentId}}/replies",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"{{threadId}}",
-								"comments",
-								"{{commentId}}",
-								"replies"
-							]
+							"path": ["threads", "{{threadId}}", "comments", "{{commentId}}", "replies"]
 						}
 					},
 					"response": []
@@ -2808,17 +2572,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}/comments/{{commentId}}/replies",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"{{threadId}}",
-								"comments",
-								"{{commentId}}",
-								"replies"
-							]
+							"path": ["threads", "{{threadId}}", "comments", "{{commentId}}", "replies"]
 						}
 					},
 					"response": []
@@ -2877,17 +2633,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}/comments/{{commentId}}/replies",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"{{threadId}}",
-								"comments",
-								"{{commentId}}",
-								"replies"
-							]
+							"path": ["threads", "{{threadId}}", "comments", "{{commentId}}", "replies"]
 						}
 					},
 					"response": []
@@ -2962,14 +2710,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"{{threadId}}"
-							]
+							"path": ["threads", "{{threadId}}"]
 						}
 					},
 					"response": []
@@ -3014,18 +2757,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}/comments/{{commentId}}/replies/xxx",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"{{threadId}}",
-								"comments",
-								"{{commentId}}",
-								"replies",
-								"xxx"
-							]
+							"path": ["threads", "{{threadId}}", "comments", "{{commentId}}", "replies", "xxx"]
 						}
 					},
 					"response": []
@@ -3070,9 +2804,7 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}/comments/{{commentId}}/replies/{{replyId}}",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
 							"path": [
 								"threads",
@@ -3124,9 +2856,7 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}/comments/{{commentId}}/replies/{{replyId}}",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
 							"path": [
 								"threads",
@@ -3207,14 +2937,9 @@
 						"url": {
 							"raw": "{{protocol}}://{{host}}:{{port}}/threads/{{threadId}}",
 							"protocol": "{{protocol}}",
-							"host": [
-								"{{host}}"
-							],
+							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": [
-								"threads",
-								"{{threadId}}"
-							]
+							"path": ["threads", "{{threadId}}"]
 						}
 					},
 					"response": []
