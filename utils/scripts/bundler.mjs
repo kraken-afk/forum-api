@@ -1,8 +1,9 @@
-// @ts-check
-
 import * as esbuild from 'esbuild';
 import {readFile} from 'node:fs/promises';
 import ora from 'ora';
+import {routerParser} from './router-parser.mjs';
+
+const ROUTER_PATH = 'src/api/';
 
 /**
  *
@@ -16,22 +17,32 @@ export default function bundler(options) {
 			const start = Date.now();
 
 			spinner.color = 'yellow';
-			spinner.start('Eating esbuild.json ...\n');
+			spinner.start('Load esbuild.json ...\n');
 
 			try {
-				const optJson = await readFile('esbuild.config.json', {encoding: 'utf-8'});
+				const optJson = await readFile('esbuild.config.json', {
+					encoding: 'utf-8',
+				});
 				/**
 				 * @type {import('esbuild').BuildOptions}
 				 */
 				const option = {
 					...JSON.parse(optJson).options,
 					...options,
+					define: {
+						__OUT_DIR__: `'${options.outdir}'`,
+					},
 				};
 
 				spinner.text = 'Building apps ...\n';
 				spinner.color = 'green';
 
-				await esbuild.build(option);
+				await Promise.all([
+					esbuild.build(option),
+					routerParser(ROUTER_PATH, options.outdir, {
+						...option,
+					}),
+				]);
 				const stop = Date.now();
 
 				spinner.succeed(`Done in ${Number(stop - start)}ms\n`);

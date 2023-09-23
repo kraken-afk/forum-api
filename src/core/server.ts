@@ -1,20 +1,22 @@
 import {createServer} from 'node:http';
+import {notFoundHandler} from '~/core/handler';
 import {prepareRoutesHandler} from '~/core/mod';
 import {log} from '~/libs/log';
 
 export async function server() {
-	const PORT = parseInt(process.env?.port || '3000');
-	const HOST = process.env?.host as string;
+	const port = parseInt(process.env.port ?? '3000', 10);
+	const host = process.env?.host;
 	const httpServer = createServer();
 
 	const router = await prepareRoutesHandler();
-	httpServer.on('request', (request, response) => {
+	httpServer.on('request', async (request, response) => {
 		console.log(request.url);
-		console.log(request.method);
 
-		response.end('Ok');
+		if (!router.has(request.url!)) {
+			notFoundHandler(request, response);
+		}
 	});
 
-	httpServer.listen(PORT, HOST);
-	log.info('Listening to', `http://${HOST}:${PORT}`);
+	httpServer.listen(port, host);
+	log.info('Listening to', `http://${host}:${port}`);
 }
