@@ -1,20 +1,14 @@
 {
 	"options": {
-		"entryPoints": [
-			"src/main.ts"
-		],
+		"entryPoints": ["src/main.ts"],
 		"platform": "node",
 		"metafile": true,
 		"color": true,
 		"bundle": true,
 		"tsconfig": "tsconfig.json",
 		"sourcemap": true,
-		"external": [
-			"esbuild"
-		],
-		"target": [
-			"node14.17.3"
-		],
+		"external": ["esbuild"],
+		"target": ["node14.17.3"],
 		"alias": {
 			"~/*": "src/*"
 		}

@@ -2312,7 +2312,13 @@
 							"protocol": "{{protocol}}",
 							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": ["threads", "{{threadId}}", "comments", "{{commentId}}", "replies"]
+							"path": [
+								"threads",
+								"{{threadId}}",
+								"comments",
+								"{{commentId}}",
+								"replies"
+							]
 						}
 					},
 					"response": []
@@ -2368,7 +2374,13 @@
 							"protocol": "{{protocol}}",
 							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": ["threads", "xxxx", "comments", "{{commentId}}", "replies"]
+							"path": [
+								"threads",
+								"xxxx",
+								"comments",
+								"{{commentId}}",
+								"replies"
+							]
 						}
 					},
 					"response": []
@@ -2511,7 +2523,13 @@
 							"protocol": "{{protocol}}",
 							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": ["threads", "{{threadId}}", "comments", "{{commentId}}", "replies"]
+							"path": [
+								"threads",
+								"{{threadId}}",
+								"comments",
+								"{{commentId}}",
+								"replies"
+							]
 						}
 					},
 					"response": []
@@ -2574,7 +2592,13 @@
 							"protocol": "{{protocol}}",
 							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": ["threads", "{{threadId}}", "comments", "{{commentId}}", "replies"]
+							"path": [
+								"threads",
+								"{{threadId}}",
+								"comments",
+								"{{commentId}}",
+								"replies"
+							]
 						}
 					},
 					"response": []
@@ -2635,7 +2659,13 @@
 							"protocol": "{{protocol}}",
 							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": ["threads", "{{threadId}}", "comments", "{{commentId}}", "replies"]
+							"path": [
+								"threads",
+								"{{threadId}}",
+								"comments",
+								"{{commentId}}",
+								"replies"
+							]
 						}
 					},
 					"response": []
@@ -2759,7 +2789,14 @@
 							"protocol": "{{protocol}}",
 							"host": ["{{host}}"],
 							"port": "{{port}}",
-							"path": ["threads", "{{threadId}}", "comments", "{{commentId}}", "replies", "xxx"]
+							"path": [
+								"threads",
+								"{{threadId}}",
+								"comments",
+								"{{commentId}}",
+								"replies",
+								"xxx"
+							]
 						}
 					},
 					"response": []

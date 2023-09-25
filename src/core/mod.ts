@@ -5,6 +5,22 @@ import {pathToFileURL} from 'node:url';
 
 const sourcePath = 'src/api';
 
+/**
+ * Taking all router into memory with ```require() ```
+ * and returning a Map with router path as keys
+ * and all methods of router module as the values
+ * ```ts
+ * Map { '/user' => {get: Function} }
+ * //******************************
+ * Module {
+ * 	post: Function;
+ * 	get: Function;
+ * 	delete: Function;
+ * 	put: Function;
+ * 	patch: Function;
+ * }
+ * ```
+ */
 export async function prepareRoutesHandler(): Promise<AppRouter> {
 	const apiPath = resolve(process.cwd(), sourcePath);
 	const router = new Map<string, Record<Partial<HttpMethodKey>, RouterFunc>>();
@@ -12,7 +28,6 @@ export async function prepareRoutesHandler(): Promise<AppRouter> {
 
 	for (const route of routeList.values()) {
 		if (route) {
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call
 			const targetDir = resolve(join(...__OUT_DIR__.split('/'), 'api'));
 			const targetRoute = route.replace(/ts$/, 'js').split('/');
 			const modPath = resolve(targetDir, ...targetRoute);
@@ -26,6 +41,18 @@ export async function prepareRoutesHandler(): Promise<AppRouter> {
 	return router;
 }
 
+/**
+ * Taking router directory as paramter
+ * ```ts
+ * searchForRoutesFile('src/app/routes')
+ * ```
+ * Returning a Set of route path
+ * ```ts
+ * return Set { '/user', '/user/[userId]' }
+ * ```
+ * Similiar with NextJs route system
+ * @param {string} dir
+ */
 export function searchForRoutesFile(dir: string): Set<string> {
 	dir = resolve(process.cwd(), dir);
 	const file = new Set<string>();
@@ -58,4 +85,48 @@ export function searchForRoutesFile(dir: string): Set<string> {
 	};
 
 	return directoriesClimber();
+}
+
+/**
+ * Matching url with routes and return status of route.
+ * ```ts
+ * return ({
+ * 	endPoint: string;
+ *		status: 'TRUE' | 'PARAMS' | 'FALSE';
+ *		params: Record<string, string>;
+ *	});
+ * ```
+ */
+export function routeController(
+	routeStr: string,
+	urlStr: string,
+): ExtractedRouterObject {
+	const route = routeStr.split('/');
+	const url = urlStr.split('/');
+	const len = route.length > url.length ? route.length : url.length;
+	const rgx = /\[.+\]/;
+	const extractedRouterObject: ExtractedRouterObject = {
+		endPoint: routeStr,
+		status: 'TRUE',
+		params: {},
+	};
+
+	for (let i = 0; i < len; i++) {
+		const r = route[i];
+		const u = url[i];
+
+		if (r === u) {
+			continue;
+		} else if (rgx.test(r)) {
+			const key = rgx.exec(r)![0].replace(/[[\]]/g, '');
+
+			extractedRouterObject.status = 'PARAMS';
+			extractedRouterObject.params[key] = u;
+		} else {
+			extractedRouterObject.status = 'FALSE';
+			break;
+		}
+	}
+
+	return extractedRouterObject;
 }

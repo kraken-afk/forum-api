@@ -1,7 +1,19 @@
 export function get() {
-	console.log('GET');
+	return new Response(
+		JSON.stringify({
+			name: 'Romeo',
+			age: 18,
+		}),
+		{
+			status: 201,
+			headers: {
+				'Content-Type': 'application/json',
+				authorization: 'bearer 1223422',
+			},
+		},
+	);
 }
 
 export function post() {
-	console.log('POST');
+	return new Response('Hello POST');
 }

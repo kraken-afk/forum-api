@@ -3,13 +3,13 @@
 import chalk from 'chalk';
 
 export module log {
-	const _error = chalk.bgRed.blackBright;
+	const _error = chalk.bgRed.black;
 	const _errorTxt = chalk.red;
-	const __warn = chalk.bgYellow.blackBright;
+	const __warn = chalk.bgYellow.black;
 	const __warnTxt = chalk.yellow;
-	const _run = chalk.bgCyan.blackBright;
+	const _run = chalk.bgCyan.black;
 	const _runTxt = chalk.cyan;
-	const _info = chalk.bgCyanBright.blackBright;
+	const _info = chalk.bgCyanBright.black;
 	const _infoTxt = chalk.cyanBright;
 
 	export function error(msg?: string, ...optionalParrams: any[]) {
