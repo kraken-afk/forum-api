@@ -1,9 +1,28 @@
-import {readdirSync} from 'node:fs';
-import {resolve, sep} from 'node:path';
-import {join} from 'node:path/posix';
-import {pathToFileURL} from 'node:url';
+import { readdirSync } from 'node:fs';
+import { IncomingMessage, ServerResponse } from 'node:http';
+import { resolve, sep } from 'node:path';
+import { join } from 'node:path/posix';
+import { pathToFileURL } from 'node:url';
+import { controller } from '~/core/controller';
+import { NotFoundError } from '~/errors/not-found-error';
 
-const sourcePath = 'src/api';
+
+/* MODULE */
+export type RouteMethod = (req: Request, res: ServeResponse) => Response;
+export type Request = IncomingMessage;
+export type ServeResponse = Prettify<ServerResponse & { params: Record<string, string>; }>;
+
+export const Send = {
+  new: (body?: Prettify<BodyInit | Record<string, unknown>>, headers?: ResponseInit): Response =>  {
+    const _body = typeof body === 'string'
+      ? body
+      : JSON.stringify(body);
+
+    return (new Response(_body, headers)) as Response;
+  },
+};
+
+const SOURCE_PATH = 'src/api';
 
 /**
  * Taking all router into memory with ```require() ```
@@ -22,23 +41,22 @@ const sourcePath = 'src/api';
  * ```
  */
 export async function prepareRoutesHandler(): Promise<AppRouter> {
-	const apiPath = resolve(process.cwd(), sourcePath);
-	const router = new Map<string, Record<Partial<HttpMethodKey>, RouterFunc>>();
-	const routeList = searchForRoutesFile(apiPath);
+  const apiPath = resolve(process.cwd(), SOURCE_PATH);
+  const router = new Map<string, Record<Partial<HttpMethodKey>, RouterFunc>>();
+  const routeList = searchForRoutesFile(apiPath);
 
-	for (const route of routeList.values()) {
-		if (route) {
-			const targetDir = resolve(join(...__OUT_DIR__.split('/'), 'api'));
-			const targetRoute = route.replace(/ts$/, 'js').split('/');
-			const modPath = resolve(targetDir, ...targetRoute);
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, no-await-in-loop
-			const module = await import(pathToFileURL(modPath).toString());
-			// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-			router.set(route.replace('/route.ts', '') || '/', module);
-		}
-	}
+  for (const route of routeList.values()) {
+    if (route) {
+      const targetDir = resolve(join(...__OUT_DIR__.split('/'), 'api'));
+      const targetRoute = route.replace(/ts$/, 'js').split('/');
+      const modPath = resolve(targetDir, ...targetRoute);
+      const module = await import(pathToFileURL(modPath).toString());
 
-	return router;
+      router.set(route.replace('/route.ts', '') || '/', module);
+    }
+  }
+
+  return router;
 }
 
 /**
@@ -51,82 +69,59 @@ export async function prepareRoutesHandler(): Promise<AppRouter> {
  * return Set { '/user', '/user/[userId]' }
  * ```
  * Similiar with NextJs route system
- * @param {string} dir
+ * @param {string} relativeDir
  */
-export function searchForRoutesFile(dir: string): Set<string> {
-	dir = resolve(process.cwd(), dir);
-	const file = new Set<string>();
-	const routerDirectory = String(dir.split(sep).at(-1));
-	let currentPath = dir;
+export function searchForRoutesFile(relativeDir: string): Set<string> {
+  const dir = resolve(process.cwd(), relativeDir);
 
-	const directoriesClimber = (searchPath: string = currentPath) => {
-		const dir = readdirSync(searchPath, {
-			encoding: 'utf-8',
-			withFileTypes: true,
-			recursive: true,
-		});
-		// eslint-disable-next-line operator-linebreak
-		const realtivePath =
-			// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-			searchPath.split(routerDirectory).at(-1)?.replace(/\\/g, '/') || '/';
+  const file = new Set<string>();
+  const routerDirectory = String(dir.split(sep).at(-1));
+  let currentPath = dir;
 
-		for (const f of dir) {
-			if (f.name === 'route.ts') {
-				file.add(join(realtivePath, f.name));
-			}
+  const findFileRecursive = (searchPath: string = currentPath) => {
+    const dir = readdirSync(searchPath, {
+      encoding: 'utf-8',
+      withFileTypes: true,
+      recursive: true,
+    });
+    const realtivePath =
+      searchPath.split(routerDirectory).at(-1)?.replace(/\\/g, '/') || '/';
 
-			if (f.isDirectory()) {
-				currentPath = resolve(currentPath, f.name);
-				directoriesClimber(currentPath);
-			}
-		}
+    for (const f of dir) {
+      if (f.name === 'route.ts') {
+        file.add(join(realtivePath, f.name));
+      }
 
-		return file;
-	};
+      if (f.isDirectory()) {
+        currentPath = resolve(currentPath, f.name);
+        findFileRecursive(currentPath);
+      }
+    }
 
-	return directoriesClimber();
+    return file;
+  };
+
+  return findFileRecursive();
 }
 
 /**
- * Matching url with routes and return status of route.
- * ```ts
- * return ({
- * 	endPoint: string;
- *		status: 'TRUE' | 'PARAMS' | 'FALSE';
- *		params: Record<string, string>;
- *	});
- * ```
+ * Iterating all over possibly route path and find route that matched with url
  */
-export function routeController(
-	routeStr: string,
-	urlStr: string,
-): ExtractedRouterObject {
-	const route = routeStr.split('/');
-	const url = urlStr.split('/');
-	const len = route.length > url.length ? route.length : url.length;
-	const rgx = /\[.+\]/;
-	const extractedRouterObject: ExtractedRouterObject = {
-		endPoint: routeStr,
-		status: 'TRUE',
-		params: {},
-	};
+export function findMatchingRoute(router: AppRouter, url: string): ExtractedRouterObject {
+  let extractedRouterObject: ExtractedRouterObject | undefined;
 
-	for (let i = 0; i < len; i++) {
-		const r = route[i];
-		const u = url[i];
+  for (const routePath of router.keys()) {
+    const comparedRouter = controller(routePath, url);
 
-		if (r === u) {
-			continue;
-		} else if (rgx.test(r)) {
-			const key = rgx.exec(r)![0].replace(/[[\]]/g, '');
+    if (comparedRouter.status !== 'FALSE') {
+      extractedRouterObject = comparedRouter;
+      break;
+    }
+  }
 
-			extractedRouterObject.status = 'PARAMS';
-			extractedRouterObject.params[key] = u;
-		} else {
-			extractedRouterObject.status = 'FALSE';
-			break;
-		}
-	}
+  if (!extractedRouterObject) {
+    throw new NotFoundError('404 Not Found');
+  }
 
-	return extractedRouterObject;
+  return extractedRouterObject;
 }

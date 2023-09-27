@@ -1,19 +1,9 @@
-export function get() {
-	return new Response(
-		JSON.stringify({
-			name: 'Romeo',
-			age: 18,
-		}),
-		{
-			status: 201,
-			headers: {
-				'Content-Type': 'application/json',
-				authorization: 'bearer 1223422',
-			},
-		},
-	);
-}
+import { IncomingMessage, ServerResponse } from 'node:http';
+import { Send } from '~/core/mod';
 
-export function post() {
-	return new Response('Hello POST');
+export function get(req: IncomingMessage, res: ServerResponse) {
+  return Send.new({
+    name: 'Romeo',
+    age: 18
+  })
 }

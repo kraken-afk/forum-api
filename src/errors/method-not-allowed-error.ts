@@ -1,9 +1,9 @@
-import {ClientError} from '~/errors/client-error';
+import { ClientError } from '~/errors/client-error';
 
 export class MethodNotAllowedError extends ClientError {
-	public statusCode = 405;
+  public statusCode = 405;
 
-	constructor(public message: string) {
-		super(message);
-	}
+  constructor(public message: string) {
+    super(message);
+  }
 }

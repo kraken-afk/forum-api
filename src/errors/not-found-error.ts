@@ -1,12 +1,12 @@
-import {ClientError} from '~/errors/client-error';
+import { ClientError } from '~/errors/client-error';
 
 /**
  * 404 Error
  */
 export class NotFoundError extends ClientError {
-	public statusCode = 400;
+  public statusCode = 400;
 
-	constructor(public message: string) {
-		super(message);
-	}
+  constructor(public message: string) {
+    super(message);
+  }
 }

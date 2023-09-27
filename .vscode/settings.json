@@ -1,6 +1,9 @@
 {
-	"typescript.format.semicolons": "insert",
-	"typescript.preferences.quoteStyle": "single",
-	"typescript.preferences.importModuleSpecifier": "non-relative",
-	"typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false
+  "typescript.format.semicolons": "insert",
+  "typescript.preferences.quoteStyle": "single",
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports.biome": true
+  }
 }

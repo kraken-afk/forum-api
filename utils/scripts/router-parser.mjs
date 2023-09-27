@@ -1,6 +1,6 @@
-import {join, resolve} from 'node:path';
-import {directoryCrawler} from './directory-crawler.mjs';
-import {build} from 'esbuild';
+import { join, resolve } from 'node:path';
+import { build } from 'esbuild';
+import { directoryCrawler } from './directory-crawler.mjs';
 
 /**
  *
@@ -9,23 +9,23 @@ import {build} from 'esbuild';
  * @param {import("esbuild").BuildOptions} options
  */
 export async function routerParser(dir, outdir, options) {
-	const cwd = process.cwd();
-	const routerPath = resolve(cwd, dir.replace(/\/$/, ''));
-	/**
-	 * @type {Set<string, string}
-	 */
-	const targetPath = new Set();
+  const cwd = process.cwd();
+  const routerPath = resolve(cwd, dir.replace(/\/$/, ''));
+  /**
+   * @type {Set<string, string}
+   */
+  const targetPath = new Set();
 
-	for (const target of directoryCrawler(routerPath)) {
-		const path = join(routerPath, target);
-		targetPath.add(path);
-	}
+  for (const target of directoryCrawler(routerPath)) {
+    const path = join(routerPath, target);
+    targetPath.add(path);
+  }
 
-	const opt = {
-		...options,
-		entryPoints: [...targetPath],
-		outdir: join(outdir, 'api'),
-	};
+  const opt = {
+    ...options,
+    entryPoints: [...targetPath],
+    outdir: join(outdir, 'api'),
+  };
 
-	await build(opt);
+  await build(opt);
 }
