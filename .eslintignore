@@ -1,4 +1,0 @@
-target/
-utils/
-**/*.test.ts
-**/*.d.ts
