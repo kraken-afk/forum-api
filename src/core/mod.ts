@@ -1,24 +1,29 @@
 import { readdirSync } from 'node:fs';
-import { IncomingMessage, ServerResponse } from 'node:http';
+import {
+  type IncomingMessage as NodeIncomingMessage,
+  type ServerResponse as NodeServerResponse,
+} from 'node:http';
 import { resolve, sep } from 'node:path';
 import { join } from 'node:path/posix';
 import { pathToFileURL } from 'node:url';
 import { controller } from '~/core/controller';
 import { NotFoundError } from '~/errors/not-found-error';
 
-
 /* MODULE */
-export type RouteMethod = (req: Request, res: ServeResponse) => Response;
-export type Request = IncomingMessage;
-export type ServeResponse = Prettify<ServerResponse & { params: Record<string, string>; }>;
+export type Request = Prettify<
+  NodeIncomingMessage & { params: Record<string, string> }
+>;
+export type ServerResponse = Prettify<NodeServerResponse>;
+export type RouteMethod = (req: Request, res: ServerResponse) => Response;
 
 export const Send = {
-  new: (body?: Prettify<BodyInit | Record<string, unknown>>, headers?: ResponseInit): Response =>  {
-    const _body = typeof body === 'string'
-      ? body
-      : JSON.stringify(body);
+  new: (
+    body?: Prettify<BodyInit | Record<string, unknown>>,
+    headers?: ResponseInit,
+  ): Response => {
+    const _body = typeof body === 'string' ? body : JSON.stringify(body);
 
-    return (new Response(_body, headers)) as Response;
+    return new Response(_body, headers) as Response;
   },
 };
 
@@ -107,7 +112,10 @@ export function searchForRoutesFile(relativeDir: string): Set<string> {
 /**
  * Iterating all over possibly route path and find route that matched with url
  */
-export function findMatchingRoute(router: AppRouter, url: string): ExtractedRouterObject {
+export function findMatchingRoute(
+  router: AppRouter,
+  url: string,
+): ExtractedRouterObject {
   let extractedRouterObject: ExtractedRouterObject | undefined;
 
   for (const routePath of router.keys()) {

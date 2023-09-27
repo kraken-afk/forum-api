@@ -12,10 +12,12 @@ export function controller(
   routeStr: string,
   urlStr: string,
 ): ExtractedRouterObject {
+  const { pathname, searchParams } = new URL(`http://userhost${urlStr}`);
   const route = routeStr.split('/');
-  const url = urlStr.split('/');
+  const url = pathname.split('/');
   const len = route.length > url.length ? route.length : url.length;
   const rgx = /\[.+\]/;
+  const params = new Map<string, string | number>();
   const extractedRouterObject: ExtractedRouterObject = {
     endPoint: routeStr,
     status: 'TRUE',
@@ -31,12 +33,19 @@ export function controller(
       const key = rgx.exec(r)![0].replace(/[[\]]/g, '');
 
       extractedRouterObject.status = 'PARAMS';
-      extractedRouterObject.params[key] = u;
+      params.set(key, u);
     } else {
       extractedRouterObject.status = 'FALSE';
       break;
     }
   }
 
+  for (const [key, value] of searchParams) {
+    const val = /^[0-9\.]+$/.test(value) ? +value : value;
+
+    params.set(key, val);
+  }
+
+  extractedRouterObject.params = Object.fromEntries(params);
   return extractedRouterObject;
 }

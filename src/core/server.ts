@@ -1,5 +1,10 @@
 import { createServer } from 'node:http';
-import { type RouteMethod, prepareRoutesHandler, ServeResponse, findMatchingRoute } from '~/core/mod';
+import {
+  type Request,
+  type RouteMethod,
+  findMatchingRoute,
+  prepareRoutesHandler,
+} from '~/core/mod';
 import { ClientError } from '~/errors/client-error';
 import { FatalError } from '~/errors/fatal-error';
 import { MethodNotAllowedError } from '~/errors/method-not-allowed-error';
@@ -39,7 +44,10 @@ export async function server() {
         );
       }
 
-      const result = (func as RouteMethod)(_request, { ..._response, params } as ServeResponse);
+      const result = (func as RouteMethod)(
+        { ..._request, params } as Request,
+        _response,
+      );
 
       if (!(result instanceof Response)) {
         throw new FatalError('Return value must be instance of Response');
@@ -47,7 +55,7 @@ export async function server() {
 
       const body = result
         .json()
-        .then(obj => typeof obj === 'string' ? obj : JSON.stringify(obj))
+        .then(obj => (typeof obj === 'string' ? obj : JSON.stringify(obj)))
         .catch(error => {
           log.error('Return Type Error', error);
           throw new FatalError(error.message as string);
@@ -66,6 +74,7 @@ export async function server() {
       _response.end(JSON.stringify(response));
     } catch (error) {
       if (error instanceof FatalError) {
+        log.error(error.message);
         throw new Error(error.message);
       }
 
@@ -86,4 +95,3 @@ export async function server() {
   httpServer.listen(port, host);
   log.info('Listening to', `http://${host}:${port}`);
 }
-

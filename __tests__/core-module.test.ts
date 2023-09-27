@@ -34,6 +34,8 @@ describe('Extract router url function test case', () => {
   const urlOne = '/user/123';
   const urlTwo = '/user/123/post/456';
 
+  const urlOneWithSearchParams = '/user/123?name=Romeo&age=18';
+
   test('Router and url should match', () => {
     const r = controller('/user', '/user');
 
@@ -60,6 +62,22 @@ describe('Extract router url function test case', () => {
     expect(r).toHaveProperty('params');
     expect(r.params?.userId).toBe('123');
     expect(r.params?.postId).toBe('456');
+  });
+
+  test('Should return userId, name, and age as params', () => {
+    const r = controller(routeOne, urlOneWithSearchParams);
+
+    expect(r).toHaveProperty('endPoint', routeOne);
+    expect(r).toHaveProperty('status', PARAMS);
+
+    expect(r).toHaveProperty('params');
+    expect(r.params?.userId).toBe('123');
+
+    expect(r.params?.name).toBeTypeOf('string');
+    expect(r.params?.age).toBeTypeOf('number');
+
+    expect(r.params?.name).toBe('Romeo');
+    expect(r.params?.age).toBe(18);
   });
 
   test('Status of router should be FALSE', () => {

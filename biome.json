@@ -25,8 +25,7 @@
     "indentSize": 2,
     "formatWithErrors": true,
     "indentStyle": "space",
-    "lineWidth": 80,
-    "ignore": ["target/", "node_modules"]
+    "lineWidth": 80
   },
   "javascript": {
     "formatter": {

@@ -16,7 +16,7 @@ type UrlMatchStatus = 'TRUE' | 'PARAMS' | 'FALSE';
 type ExtractedRouterObject = {
   endPoint: string;
   status: UrlMatchStatus;
-  params: Record<string, string>;
+  params: Record<string, string | number>;
 };
 
 type ResponseStruct =
