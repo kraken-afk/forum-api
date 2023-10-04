@@ -15,7 +15,6 @@
       },
       "style": {
         "recommended": true,
-        "noNamespace": "off",
         "noNonNullAssertion": "off"
       }
     }
@@ -52,6 +51,9 @@
     }
   },
   "files": {
-    "ignore": ["**/*/target/*", "node_modules/*"]
+    "ignore": [
+      "**/*/target/*",
+      "node_modules/*"
+    ]
   }
 }

@@ -11,8 +11,8 @@ import { MethodNotAllowedError } from '~/errors/method-not-allowed-error';
 import { log } from '~/libs/log';
 
 export async function server() {
-  const port = parseInt(process.env.port ?? '3000', 10);
-  const host = process.env?.host;
+  const port = parseInt(process.env.PORT ?? '3000', 10);
+  const host = process.env?.HOST;
   const httpServer = createServer();
   const router = await prepareRoutesHandler();
 
@@ -73,9 +73,9 @@ export async function server() {
 
       _response.end(JSON.stringify(response));
     } catch (error) {
-      if (error instanceof FatalError) {
-        log.error(error.message);
-        throw new Error(error.message);
+      if (error instanceof FatalError || error instanceof Error) {
+        log.error(error.message, error);
+        process.exit(1);
       }
 
       const statusCode = (error as ClientError).statusCode ?? 500;

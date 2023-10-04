@@ -9,13 +9,15 @@
 		"lint": "biome check .",
 		"lint:fix": "biome check --apply .",
 		"format": "biome format --write .",
-		"prepare": "husky install"
+		"prepare": "husky install",
+		"migrations": "drizzle-kit generate:pg --schema=./src/database/schema.ts --out=migrations"
 	},
 	"keywords": [],
 	"author": "Romeo Noveanre",
 	"license": "ISC",
 	"devDependencies": {
 		"@biomejs/biome": "1.2.2",
+		"@biomejs/cli-win32-x64": "^1.2.2",
 		"@types/node": "^20.6.2",
 		"drizzle-kit": "^0.19.13",
 		"esbuild": "^0.19.3",
@@ -30,6 +32,7 @@
 		"dotenv": "^16.3.1",
 		"drizzle-orm": "^0.28.6",
 		"jsonwebtoken": "^9.0.2",
-		"ora": "6.3.0"
+		"ora": "6.3.0",
+		"postgres": "^3.3.5"
 	}
 }
