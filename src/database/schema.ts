@@ -2,38 +2,47 @@ import { pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 import { randomStr } from '~/libs/random-str';
 
 export const authentications = pgTable('authentications', {
-  token: varchar('token').primaryKey(),
-  refreshToken: varchar('refreshToken'),
+  token: varchar('token').primaryKey().notNull(),
+  refreshToken: varchar('refreshToken').notNull(),
 });
 
 export const users = pgTable('users', {
   id: varchar('id')
     .primaryKey()
-    .$defaultFn(() => randomStr()),
-  username: varchar('username').unique(),
-  fullname: varchar('fullname'),
-  createdAt: timestamp('createdAt').defaultNow(),
-  updatedAt: timestamp('createdAt').defaultNow(),
+    .$defaultFn(() => randomStr())
+    .notNull(),
+  username: varchar('username').unique().notNull(),
+  fullname: varchar('fullname').notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('createdAt').defaultNow().notNull(),
 });
 
 export const threads = pgTable('threads', {
   id: varchar('id')
     .primaryKey()
-    .$defaultFn(() => randomStr()),
-  title: varchar('title'),
-  body: text('body'),
-  ownerId: varchar('ownerId').references(() => users.id),
-  createdAt: timestamp('createdAt').defaultNow(),
-  updatedAt: timestamp('createdAt').defaultNow(),
+    .$defaultFn(() => randomStr())
+    .notNull(),
+  title: varchar('title').notNull(),
+  body: text('body').notNull(),
+  ownerId: varchar('ownerId')
+    .references(() => users.id)
+    .notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('createdAt').defaultNow().notNull(),
 });
 
 export const comments = pgTable('comments', {
   id: varchar('id')
     .primaryKey()
-    .$defaultFn(() => randomStr()),
-  content: text('body'),
-  threadsId: varchar('threadsId').references(() => threads.id),
-  ownerId: varchar('ownerId').references(() => users.id),
-  createdAt: timestamp('createdAt').defaultNow(),
-  updatedAt: timestamp('createdAt').defaultNow(),
+    .$defaultFn(() => randomStr())
+    .notNull(),
+  content: text('body').notNull(),
+  threadsId: varchar('threadsId')
+    .references(() => threads.id)
+    .notNull(),
+  ownerId: varchar('ownerId')
+    .references(() => users.id)
+    .notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('createdAt').defaultNow().notNull(),
 });
