@@ -1,6 +1,5 @@
 import { readdirSync } from 'node:fs';
 import {
-  IncomingMessage,
   type IncomingMessage as NodeIncomingMessage,
   type ServerResponse as NodeServerResponse,
 } from 'node:http';
@@ -19,12 +18,12 @@ export type RouteMethod = (req: Request, res: ServerResponse) => Response;
 
 export const Send = {
   new: (
-    body?: Prettify<BodyInit | Record<string, unknown>>,
+    body: Prettify<BodyInit | Record<string, unknown>> = {},
     headers?: ResponseInit,
   ): Response => {
     const _body = typeof body === 'string' ? body : JSON.stringify(body);
     const _headers =
-      'Content-Type' in headers!
+      headers && 'Content-Type' in headers!
         ? headers
         : { ...headers, headers: { 'Content-Type': 'application/json' } };
 
@@ -82,11 +81,11 @@ export async function prepareRoutesHandler(): Promise<AppRouter> {
  * @param {string} relativeDir
  */
 export function searchForRoutesFile(relativeDir: string): Set<string> {
-  const dir = resolve(process.cwd(), relativeDir);
+  const directory = resolve(process.cwd(), relativeDir);
 
   const file = new Set<string>();
-  const routerDirectory = String(dir.split(sep).at(-1));
-  let currentPath = dir;
+  const routerDirectory = String(directory.split(sep).at(-1));
+  let currentPath = directory;
 
   const findFileRecursive = (searchPath: string = currentPath) => {
     const dir = readdirSync(searchPath, {
@@ -103,7 +102,7 @@ export function searchForRoutesFile(relativeDir: string): Set<string> {
       }
 
       if (f.isDirectory()) {
-        currentPath = resolve(currentPath, f.name);
+        currentPath = resolve(directory, f.name);
         findFileRecursive(currentPath);
       }
     }
@@ -139,7 +138,7 @@ export function findMatchingRoute(
   return extractedRouterObject;
 }
 
-export function extractPayload(req: IncomingMessage): Promise<string> {
+export function extractPayload(req: NodeIncomingMessage): Promise<string> {
   return new Promise((resolve, reject) => {
     let data = '';
     req.on('data', chunk => {

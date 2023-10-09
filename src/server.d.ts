@@ -4,7 +4,7 @@ type Prettify<T> = {
   [K in keyof T]: T[K];
 } & {};
 
-type HttpMethodKey = 'get' | 'post' | 'delete' | 'put' | 'patch';
+type HttpMethodKey = 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH';
 type ServerState = 'SUCCESS' | 'ERROR' | 'NOT FOUND';
 type RouterFunc = (request: Request, response: Response) => Response;
 type AppRouter = Map<string, Record<Partial<HttpMethodKey>, RouterFunc>>;

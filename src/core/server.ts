@@ -18,7 +18,7 @@ export async function server() {
   const router = await prepareRoutesHandler();
 
   httpServer.on('request', async (_request, _response) => {
-    log.info(_request.method!, _request.url);
+    log.log(_request.method!, _request.url);
 
     try {
       if (!_request?.method) {
@@ -26,7 +26,7 @@ export async function server() {
       }
 
       const payload = extractPayload(_request);
-      const method = _request.method.toLowerCase()!;
+      const method = _request.method!;
       const { endPoint, params }: ExtractedRouterObject = findMatchingRoute(
         router,
         _request.url!,
@@ -39,7 +39,7 @@ export async function server() {
       // If route doesn't have a method to handle request
       if (!func) {
         throw new MethodNotAllowedError(
-          `A request made for a resource that not support ${method.toUpperCase()} method`,
+          `A request made for a resource that not support ${method} method`,
         );
       }
 

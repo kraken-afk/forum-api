@@ -9,6 +9,7 @@ const sql = postgres({
   database: PGDATABASE,
   password: PGPASSWORD,
   username: PGUSER,
+  max: 1,
 });
 
 export const db = drizzle(sql);

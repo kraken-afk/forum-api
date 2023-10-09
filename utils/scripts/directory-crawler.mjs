@@ -8,10 +8,10 @@ import { join, resolve } from 'node:path';
  * @returns {Set<string>}
  */
 export function directoryCrawler(relativeDir) {
-  const dir = resolve(process.cwd(), relativeDir);
+  const directory = resolve(process.cwd(), relativeDir);
   const file = new Set();
-  const routerDirectory = String(dir.split(sep).at(-1));
-  let currentPath = dir;
+  const routerDirectory = String(directory.split(sep).at(-1));
+  let currentPath = directory;
 
   const directoriesClimber = (searchPath = currentPath) => {
     const dir = readdirSync(searchPath, {
@@ -29,7 +29,7 @@ export function directoryCrawler(relativeDir) {
       }
 
       if (f.isDirectory()) {
-        currentPath = resolve(currentPath, f.name);
+        currentPath = resolve(directory, f.name);
         directoriesClimber(currentPath);
       }
     }

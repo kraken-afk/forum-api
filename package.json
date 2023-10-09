@@ -20,6 +20,7 @@
 		"@biomejs/biome": "1.2.2",
 		"@biomejs/cli-win32-x64": "^1.2.2",
 		"@types/bcryptjs": "^2.4.4",
+		"@types/jsonwebtoken": "^9.0.3",
 		"@types/node": "^20.6.2",
 		"drizzle-kit": "^0.19.13",
 		"esbuild": "^0.19.3",

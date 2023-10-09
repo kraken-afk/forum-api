@@ -33,4 +33,8 @@ export namespace log {
     const txt = `${_info(`🐶 ${title}: `)} ${_infoTxt(msg)}\n`;
     console.info(txt, optionalParrams.length ? optionalParrams : '');
   }
+
+  export function log(title: string, ...msg: unknown[]) {
+    console.info(`${chalk.yellow('⚡')}${title}`, msg);
+  }
 }

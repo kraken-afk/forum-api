@@ -13,8 +13,10 @@ describe('Search for router files test case', () => {
   });
 
   test('Should have 2 length', () => {
-    expect(route.size).toEqual(2);
+    expect(route.size).toEqual(3);
   });
+
+  console.log(route);
 
   test('Each item should include name route.ts', () => {
     route.forEach(item => {
