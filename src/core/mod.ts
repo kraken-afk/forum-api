@@ -1,5 +1,6 @@
 import { readdirSync } from 'node:fs';
 import {
+  IncomingMessage,
   type IncomingMessage as NodeIncomingMessage,
   type ServerResponse as NodeServerResponse,
 } from 'node:http';
@@ -11,7 +12,7 @@ import { NotFoundError } from '~/errors/not-found-error';
 
 /* MODULE */
 export type Request = Prettify<
-  NodeIncomingMessage & { params: Record<string, string> }
+  NodeIncomingMessage & { params: Record<string, string>; payload: string }
 >;
 export type ServerResponse = Prettify<NodeServerResponse>;
 export type RouteMethod = (req: Request, res: ServerResponse) => Response;
@@ -22,8 +23,12 @@ export const Send = {
     headers?: ResponseInit,
   ): Response => {
     const _body = typeof body === 'string' ? body : JSON.stringify(body);
+    const _headers =
+      'Content-Type' in headers!
+        ? headers
+        : { ...headers, headers: { 'Content-Type': 'application/json' } };
 
-    return new Response(_body, headers) as Response;
+    return new Response(_body, _headers) as Response;
   },
 };
 
@@ -132,4 +137,15 @@ export function findMatchingRoute(
   }
 
   return extractedRouterObject;
+}
+
+export function extractPayload(req: IncomingMessage): Promise<string> {
+  return new Promise((resolve, reject) => {
+    let data = '';
+    req.on('data', chunk => {
+      data += chunk;
+    });
+    req.on('end', () => resolve(data));
+    req.on('error', err => reject(err));
+  });
 }

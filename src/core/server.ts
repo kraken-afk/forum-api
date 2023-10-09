@@ -2,6 +2,7 @@ import { createServer } from 'node:http';
 import {
   type Request,
   type RouteMethod,
+  extractPayload,
   findMatchingRoute,
   prepareRoutesHandler,
 } from '~/core/mod';
@@ -17,16 +18,14 @@ export async function server() {
   const router = await prepareRoutesHandler();
 
   httpServer.on('request', async (_request, _response) => {
-    /**
-     * DEFAULT HTTP HEADER CONFIGURATION
-     */
-    _response.setHeader('Content-Type', 'application/json');
+    log.info(_request.method!, _request.url);
 
     try {
       if (!_request?.method) {
         throw new ClientError('Http method should be attached');
       }
 
+      const payload = extractPayload(_request);
       const method = _request.method.toLowerCase()!;
       const { endPoint, params }: ExtractedRouterObject = findMatchingRoute(
         router,
@@ -44,8 +43,8 @@ export async function server() {
         );
       }
 
-      const result = (func as RouteMethod)(
-        { ..._request, params } as Request,
+      const result = await (func as RouteMethod)(
+        { ..._request, params, payload: await payload } as Request,
         _response,
       );
 
@@ -53,17 +52,16 @@ export async function server() {
         throw new FatalError('Return value must be instance of Response');
       }
 
-      const body = result
-        .json()
-        .then(obj => (typeof obj === 'string' ? obj : JSON.stringify(obj)))
-        .catch(error => {
-          log.error('Return Type Error', error);
-          throw new FatalError(error.message as string);
-        });
+      const body = result.json().catch(error => {
+        log.error('Return Type Error', error);
+        throw new FatalError(error.message as string);
+      });
 
       for (const [headerKey, headerValue] of result.headers) {
         _response.setHeader(headerKey, headerValue);
       }
+
+      _response.statusCode = result.status;
 
       const response: ResponseStruct = {
         status: 'success',
@@ -73,8 +71,8 @@ export async function server() {
 
       _response.end(JSON.stringify(response));
     } catch (error) {
-      if (error instanceof FatalError || error instanceof Error) {
-        log.error(error.message, error);
+      if (error instanceof FatalError || !('statusCode' in (error as Error))) {
+        log.error((error as Error).message, error);
         process.exit(1);
       }
 
@@ -88,6 +86,7 @@ export async function server() {
       };
 
       _response.statusCode = statusCode;
+      _response.setHeader('Content-type', 'application/json');
       _response.end(JSON.stringify(response));
     }
   });

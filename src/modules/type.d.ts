@@ -1,0 +1,3 @@
+type Validator = {
+  success: boolean;
+};

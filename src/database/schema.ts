@@ -13,8 +13,9 @@ export const users = pgTable('users', {
     .notNull(),
   username: varchar('username').unique().notNull(),
   fullname: varchar('fullname').notNull(),
+  password: varchar('password').notNull(),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().notNull(),
 });
 
 export const threads = pgTable('threads', {
@@ -28,7 +29,7 @@ export const threads = pgTable('threads', {
     .references(() => users.id)
     .notNull(),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().notNull(),
 });
 
 export const comments = pgTable('comments', {
@@ -44,5 +45,5 @@ export const comments = pgTable('comments', {
     .references(() => users.id)
     .notNull(),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
-  updatedAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().notNull(),
 });

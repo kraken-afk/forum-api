@@ -36,6 +36,20 @@
       "when": 1696413572403,
       "tag": "0004_green_lester",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1696817924571,
+      "tag": "0005_military_captain_midlands",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1696821591772,
+      "tag": "0006_breezy_ricochet",
+      "breakpoints": true
     }
   ]
 }
