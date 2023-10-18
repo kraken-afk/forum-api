@@ -1,5 +1,5 @@
-import { ClientError } from '~/errors/client-error';
-import { loginSchema } from '~/libs/zod-types';
+import { ClientError } from '~/commons/errors/client-error';
+import { loginSchema } from '~/commons/libs/zod-types';
 
 export function loginPayloadValidator(payload: unknown): Validator {
   const result = loginSchema.safeParse(payload);

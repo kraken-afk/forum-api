@@ -1,15 +1,16 @@
 import { createServer } from 'node:http';
+import { ClientError } from '~/commons/errors/client-error';
+import { FatalError } from '~/commons/errors/fatal-error';
+import { MethodNotAllowedError } from '~/commons/errors/method-not-allowed-error';
+import { log } from '~/commons/libs/log';
 import {
   type Request,
   type RouteMethod,
   extractPayload,
   findMatchingRoute,
   prepareRoutesHandler,
-} from '~/core/mod';
-import { ClientError } from '~/errors/client-error';
-import { FatalError } from '~/errors/fatal-error';
-import { MethodNotAllowedError } from '~/errors/method-not-allowed-error';
-import { log } from '~/libs/log';
+} from '~/infrastructure/core/mod';
+import middleware from '~/middleware';
 
 export async function server() {
   const port = parseInt(process.env.PORT ?? '3000', 10);
@@ -43,9 +44,11 @@ export async function server() {
         );
       }
 
-      const result = await (func as RouteMethod)(
-        { ..._request, params, payload: await payload } as Request,
+      const request = Object.assign(_request, { params, payload: await payload }) as Request;
+      const result = await middleware(
+        request,
         _response,
+        async () => await (func as RouteMethod)(request, _response),
       );
 
       if (!(result instanceof Response)) {

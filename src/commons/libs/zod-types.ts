@@ -21,3 +21,8 @@ export const loginSchema = z.object({
   username: z.string().min(1).max(255),
   password: z.string().min(1).max(255),
 });
+
+export const threadSchema = z.object({
+  title: z.string().min(1).max(36),
+  body: z.string().min(1).max(510),
+});

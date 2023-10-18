@@ -1,8 +1,8 @@
 import { type JwtPayload } from 'jsonwebtoken';
-import type { Request } from '~/core/mod';
-import { Send } from '~/core/mod';
-import { ClientError } from '~/errors/client-error';
-import { UnauthorizedError } from '~/errors/unauthorized-error';
+import { ClientError } from '~/commons/errors/client-error';
+import { UnauthorizedError } from '~/commons/errors/unauthorized-error';
+import type { Request } from '~/infrastructure/core/mod';
+import { Send } from '~/infrastructure/core/mod';
 import { authentications } from '~/modules/models/authentications-model';
 import { users } from '~/modules/models/users-model';
 import { jwt } from '~/modules/security/jwt';
@@ -46,7 +46,7 @@ export async function PUT(req: Request) {
   if (!jwt.verifyToken(payload.refreshToken, process.env.REFRESH_TOKEN_KEY!))
     throw new ClientError('refresh token tidak valid');
 
-  if (!(await authentications.isExist(payload.refreshToken)))
+  if (!(await authentications.isRefreshTokenExist(payload.refreshToken)))
     throw new ClientError('refresh token tidak ditemukan di database');
 
   const jwtPayload = jwt.unpack(payload.refreshToken) as JwtPayload;
@@ -67,7 +67,7 @@ export async function DELETE(req: Request) {
   if (!payload.refreshToken || typeof payload.refreshToken !== 'string')
     throw new ClientError('refreshToken must be a string');
 
-  if (!(await authentications.isExist(payload.refreshToken)))
+  if (!(await authentications.isRefreshTokenExist(payload.refreshToken)))
     throw new ClientError('refresh token tidak ditemukan di database');
 
   authentications.deleteToken(payload.refreshToken);

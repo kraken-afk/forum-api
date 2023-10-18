@@ -19,6 +19,10 @@ type ExtractedRouterObject = {
   params: Record<string, string | number>;
 };
 
+type Validator = {
+  success: boolean;
+};
+
 type ResponseStruct =
   | {
       status: 'success';

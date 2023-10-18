@@ -4,6 +4,11 @@ type UserPayload = {
   password: string;
 };
 
+type JwtPayload = {
+  username: string;
+  exp?: number;
+};
+
 type LoginPayload = {
   username: string;
   password: string;
@@ -11,4 +16,9 @@ type LoginPayload = {
 
 type RefreshTokenPayload = {
   refreshToken: string;
+};
+
+type ThreadPyaload = {
+  title: string;
+  body: string;
 };

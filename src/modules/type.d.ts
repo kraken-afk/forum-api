@@ -1,3 +1,0 @@
-type Validator = {
-  success: boolean;
-};

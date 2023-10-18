@@ -1,5 +1,5 @@
 import { pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core';
-import { randomStr } from '~/libs/random-str';
+import { randomStr } from '~/commons/libs/random-str';
 
 export const authentications = pgTable('authentications', {
   token: varchar('token').primaryKey().notNull(),

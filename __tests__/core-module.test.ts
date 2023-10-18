@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 import { describe, expect, test } from 'vitest';
-import { controller } from '~/core/controller';
-import { searchForRoutesFile } from '~/core/mod';
+import { controller } from '~/infrastructure/core/controller';
+import { searchForRoutesFile } from '~/infrastructure/core/mod';
 
 describe('Search for router files test case', () => {
   const route: Set<string> = searchForRoutesFile(
@@ -15,8 +15,6 @@ describe('Search for router files test case', () => {
   test('Should have 2 length', () => {
     expect(route.size).toEqual(3);
   });
-
-  console.log(route);
 
   test('Each item should include name route.ts', () => {
     route.forEach(item => {

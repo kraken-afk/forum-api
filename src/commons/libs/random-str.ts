@@ -6,8 +6,8 @@ export function randomStr(howMany = 43): string {
   const utf8 =
     '!@#$%^&*[]{}+=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~-._';
 
-  for (let i = 0; i <= howMany; i++)
-    result = result.concat(utf8[Math.round(Math.random() * utf8.length + 1)]);
+  for (let i = 1; i <= howMany; i++)
+    result += utf8[Math.floor(Math.random() * utf8.length)];
 
   return result;
 }

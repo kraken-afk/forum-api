@@ -1,4 +1,4 @@
-import { ClientError } from '~/errors/client-error';
+import { ClientError } from '~/commons/errors/client-error';
 
 /**
  * 401 Error

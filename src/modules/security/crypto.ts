@@ -1,17 +1,4 @@
-import bcrypt from 'bcryptjs';
+import { Crypto } from '~/domains/security/crypto';
+import { CryptoRepository } from '~/infrastructure/repository/crypto-repository';
 
-export namespace crypto {
-  export async function hash(str: string): Promise<string> {
-    const salt = await bcrypt.genSalt();
-    const hash = await bcrypt.hash(str, salt);
-    return hash;
-  }
-
-  export async function compare(
-    password: string,
-    hash: string,
-  ): Promise<boolean> {
-    const result = await bcrypt.compare(password, hash);
-    return result;
-  }
-}
+export const crypto = new Crypto(new CryptoRepository());

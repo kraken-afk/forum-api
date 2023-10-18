@@ -6,9 +6,8 @@ import {
 import { resolve, sep } from 'node:path';
 import { join } from 'node:path/posix';
 import { pathToFileURL } from 'node:url';
-import { controller } from '~/core/controller';
-import { NotFoundError } from '~/errors/not-found-error';
-
+import { NotFoundError } from '~/commons/errors/not-found-error';
+import { controller } from '~/infrastructure/core/controller';
 /* MODULE */
 export type Request = Prettify<
   NodeIncomingMessage & { params: Record<string, string>; payload: string }
