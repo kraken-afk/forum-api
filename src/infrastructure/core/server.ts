@@ -44,7 +44,10 @@ export async function server() {
         );
       }
 
-      const request = Object.assign(_request, { params, payload: await payload }) as Request;
+      const request = Object.assign(_request, {
+        params,
+        payload: await payload,
+      }) as Request;
       const result = await middleware(
         request,
         _response,
