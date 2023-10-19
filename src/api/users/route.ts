@@ -11,6 +11,6 @@ export async function POST(req: Request) {
   if (await users.isUsernameExist(payload.username))
     throw new ClientError('username tidak tersedia');
 
-  const newUser = await users.createUser(payload);
+  const newUser = await users.create(payload);
   return Send.new({ addedUser: newUser }, { status: 201 });
 }

@@ -2,11 +2,10 @@ import { db } from '@test/helpers/db';
 import { eq } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, test } from 'vitest';
 import { randomStr } from '~/commons/libs/random-str';
-import { Authentications } from '~/domains/models/authentications';
 import { authentications } from '~/infrastructure/database/schema';
 import { AuthenticationsRepository } from '~/infrastructure/repository/authentications-repository';
 
-const model = new Authentications(new AuthenticationsRepository(db));
+const model = new AuthenticationsRepository(db);
 
 describe('Authentication repository test suite', () => {
   beforeEach(async () => {

@@ -3,12 +3,16 @@ import { IUsers } from '~/infrastructure/contracts/T-users';
 export class Users {
   constructor(private readonly repository: IUsers) {}
 
-  async createUser(payload: UserPayload): Promise<{
-    username: string;
-    fullname: string;
-    id: string;
-  }> {
-    return await this.repository.createUser(payload);
+  async create(payload: UserPayload): Promise<User> {
+    return await this.repository.create(payload);
+  }
+
+  async delete(id: string): Promise<void> {
+    return await this.repository.delete(id);
+  }
+
+  async select(username: string): Promise<User> {
+    return await this.repository.select(username);
   }
 
   async isUsernameExist(username: string): Promise<boolean> {

@@ -9,7 +9,7 @@ export const authentications = pgTable('authentications', {
 export const users = pgTable('users', {
   id: varchar('id')
     .primaryKey()
-    .$defaultFn(() => randomStr())
+    .$defaultFn(() => `users-${randomStr(10)}`)
     .notNull(),
   username: varchar('username').unique().notNull(),
   fullname: varchar('fullname').notNull(),
@@ -21,7 +21,7 @@ export const users = pgTable('users', {
 export const threads = pgTable('threads', {
   id: varchar('id')
     .primaryKey()
-    .$defaultFn(() => randomStr())
+    .$defaultFn(() => `threads-${randomStr(10)}`)
     .notNull(),
   title: varchar('title').notNull(),
   body: text('body').notNull(),
@@ -35,7 +35,7 @@ export const threads = pgTable('threads', {
 export const comments = pgTable('comments', {
   id: varchar('id')
     .primaryKey()
-    .$defaultFn(() => randomStr())
+    .$defaultFn(() => `comments-${randomStr(10)}`)
     .notNull(),
   content: text('body').notNull(),
   threadsId: varchar('threadsId')

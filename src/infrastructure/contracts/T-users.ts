@@ -2,19 +2,10 @@ import { type PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 export interface IUsers {
   readonly db: PostgresJsDatabase;
+  create: (payload: UserPayload) => Promise<User> | User;
+  delete: (id: string) => Promise<void> | void;
+  select: (username: string) => Promise<User> | User;
   isUsernameExist: (username: string) => Promise<boolean> | boolean;
-  createUser: (payload: UserPayload) =>
-    | Promise<{
-        username: string;
-        fullname: string;
-        id: string;
-      }>
-    | {
-        username: string;
-        fullname: string;
-        id: string;
-      };
-
   isPasswordAndUsernameMatch: (
     username: string,
     password: string,

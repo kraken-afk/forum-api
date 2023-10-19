@@ -7,11 +7,7 @@ import { crypto } from '~/modules/security/crypto';
 export class UsersRepository implements IUsers {
   constructor(public readonly db: PostgresJsDatabase) {}
 
-  async createUser(payload: UserPayload): Promise<{
-    username: string;
-    fullname: string;
-    id: string;
-  }> {
+  async create(payload: UserPayload): Promise<User> {
     const hash = await crypto.hash(payload.password);
 
     return (
@@ -27,6 +23,23 @@ export class UsersRepository implements IUsers {
           id: usersSchema.id,
           fullname: usersSchema.fullname,
         })
+    )[0];
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.db.delete(usersSchema).where(eq(usersSchema.id, id));
+  }
+
+  async select(username: string): Promise<User> {
+    return (
+      await this.db
+        .selectDistinct({
+          username: usersSchema.username,
+          fullname: usersSchema.fullname,
+          id: usersSchema.id,
+        })
+        .from(usersSchema)
+        .where(eq(usersSchema.username, username))
     )[0];
   }
 
