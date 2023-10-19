@@ -1,9 +1,22 @@
-import type { Request, ServerResponse } from '~/infrastructure/core/mod';
+import type { Request } from '~/infrastructure/core/mod';
 import { Send } from '~/infrastructure/core/mod';
+import { threads } from '~/modules/models/threads-model';
+import { users } from '~/modules/models/users-model';
+import { jwt } from '~/modules/security/jwt';
+import { threadPayloadValidator } from '~/modules/validators/thread-payload-validator';
 
-export function POST(req: Request, res: ServerResponse) {
-  return Send.new({
-    name: 'Romeo',
-    age: 18,
-  });
+export async function POST(req: Request) {
+  const payload = JSON.parse(req.payload) as ThreadPayload;
+  threadPayloadValidator(payload);
+
+  const [_authType, token] = req.headers.authorization?.split(' ')!;
+  const unpackedJwt = jwt.unpack(token) as Record<string, unknown>;
+  const user = await users.select(unpackedJwt?.username as string);
+  const addedThread = await threads.create(
+    payload.title,
+    payload.body,
+    user.id,
+  );
+
+  return Send.new({ addedThread }, { status: 201 });
 }

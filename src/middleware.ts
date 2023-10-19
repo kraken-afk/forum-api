@@ -26,7 +26,7 @@ export default async function (
   const token = jwt.unpack(accessToken) as Record<string, unknown>;
   const now = Date.now();
 
-  if ((token?.exp as number) >= now)
+  if (now > (token?.exp as number))
     throw new ForbiddenError('Token has been expired');
 
   return await next();
