@@ -1,17 +1,39 @@
 import { ForbiddenError } from '~/commons/errors/forbidden-error';
 import { UnauthorizedError } from '~/commons/errors/unauthorized-error';
+import { controller } from '~/infrastructure/core/controller';
 import { type Request, type ServerResponse } from '~/infrastructure/core/mod';
 import { authentications } from '~/modules/models/authentications-model';
 import { jwt } from '~/modules/security/jwt';
 
-const excludedRoute = ['/', '/users', '/authentications'];
+export type TPublicRoutes = Record<string, Array<HttpMethodKey | '*'>>;
+
+const publicRoutes: TPublicRoutes = {
+  '/': ['GET'],
+  authentications: ['*'],
+  users: ['*'],
+  'threads/[threadId]/comments': ['GET'],
+};
 
 export default async function (
   req: Request,
   _res: ServerResponse,
   next: CallableFunction,
 ) {
-  if (excludedRoute.includes(req.url!)) return await next();
+  let isPublicUrl = false;
+
+  for (const [route, method] of Object.entries(publicRoutes)) {
+    const control = controller(route, req.url!);
+
+    if (
+      (control.status !== 'FALSE' && method.includes('*')) ||
+      method.includes(req.method as HttpMethodKey)
+    ) {
+      isPublicUrl = true;
+      break;
+    }
+  }
+
+  if (isPublicUrl) return await next();
   const auth = req.headers?.authorization;
 
   if (!auth) throw new UnauthorizedError('Missing authentication');
@@ -19,7 +41,7 @@ export default async function (
 
   if (
     !(await authentications.isAccessTokenExist(accessToken)) &&
-    !(await jwt.verifyToken(accessToken, process.env.ACCESS_TOKEN_KEY!))
+    !jwt.verifyToken(accessToken, process.env.ACCESS_TOKEN_KEY!)
   )
     throw new ForbiddenError('Invalid access token ');
 

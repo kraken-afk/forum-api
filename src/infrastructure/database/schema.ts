@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import { pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core';
 import { randomStr } from '~/commons/libs/random-str';
 
@@ -9,7 +10,7 @@ export const authentications = pgTable('authentications', {
 export const users = pgTable('users', {
   id: varchar('id')
     .primaryKey()
-    .$defaultFn(() => `users-${randomStr(10)}`)
+    .$defaultFn(() => `user-${randomStr(7)}`)
     .notNull(),
   username: varchar('username').unique().notNull(),
   fullname: varchar('fullname').notNull(),
@@ -21,7 +22,7 @@ export const users = pgTable('users', {
 export const threads = pgTable('threads', {
   id: varchar('id')
     .primaryKey()
-    .$defaultFn(() => `threads-${randomStr(10)}`)
+    .$defaultFn(() => `thread-${randomStr(7)}`)
     .notNull(),
   title: varchar('title').notNull(),
   body: text('body').notNull(),
@@ -35,10 +36,10 @@ export const threads = pgTable('threads', {
 export const comments = pgTable('comments', {
   id: varchar('id')
     .primaryKey()
-    .$defaultFn(() => `comments-${randomStr(10)}`)
+    .$defaultFn(() => `comment-${randomStr(7)}`)
     .notNull(),
   content: text('body').notNull(),
-  threadsId: varchar('threadsId')
+  masterId: varchar('masterId')
     .references(() => threads.id)
     .notNull(),
   ownerId: varchar('ownerId')
@@ -47,3 +48,37 @@ export const comments = pgTable('comments', {
   createdAt: timestamp('createdAt').defaultNow().notNull(),
   updatedAt: timestamp('updatedAt').defaultNow().notNull(),
 });
+
+export const replies = pgTable('replies', {
+  id: varchar('id')
+    .primaryKey()
+    .$defaultFn(() => `reply-${randomStr(7)}`)
+    .notNull(),
+  content: text('body').notNull(),
+  masterId: varchar('masterId')
+    .references(() => comments.id)
+    .notNull(),
+  ownerId: varchar('ownerId')
+    .references(() => users.id)
+    .notNull(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().notNull(),
+});
+
+export const usersRelation = relations(users, ({ many }) => ({
+  threads: many(threads),
+}));
+
+export const commentsRelation = relations(comments, ({ one }) => ({
+  thread: one(threads, {
+    fields: [comments.masterId],
+    references: [threads.id],
+  }),
+}));
+
+export const repliesRelation = relations(replies, ({ one }) => ({
+  comment: one(comments, {
+    fields: [replies.masterId],
+    references: [comments.id],
+  }),
+}));

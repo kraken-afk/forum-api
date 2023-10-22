@@ -2,17 +2,28 @@ import { db } from '@test/helpers/db';
 import { eq } from 'drizzle-orm';
 import { afterAll, beforeEach, describe, expect, test } from 'vitest';
 import { randomStr } from '~/commons/libs/random-str';
-import { users } from '~/infrastructure/database/schema';
+import {
+  comments,
+  replies,
+  threads,
+  users,
+} from '~/infrastructure/database/schema';
 import { UsersRepository } from '~/infrastructure/repository/users-repository';
 
 const model = new UsersRepository(db);
 
 describe('Users repository test suite', () => {
   beforeEach(async () => {
+    await db.delete(replies);
+    await db.delete(comments);
+    await db.delete(threads);
     await db.delete(users);
   });
 
   afterAll(async () => {
+    await db.delete(replies);
+    await db.delete(comments);
+    await db.delete(threads);
     await db.delete(users);
   });
 

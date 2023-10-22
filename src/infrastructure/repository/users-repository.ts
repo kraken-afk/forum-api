@@ -1,7 +1,13 @@
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { type PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { IUsers } from '~/infrastructure/contracts/T-users';
-import { users as usersSchema } from '~/infrastructure/database/schema';
+import {
+  comments,
+  replies,
+  threads,
+  users,
+  users as usersSchema,
+} from '~/infrastructure/database/schema';
 import { crypto } from '~/modules/security/crypto';
 
 export class UsersRepository implements IUsers {
@@ -27,10 +33,13 @@ export class UsersRepository implements IUsers {
   }
 
   async delete(id: string): Promise<void> {
-    await this.db.delete(usersSchema).where(eq(usersSchema.id, id));
+    await this.db.delete(replies).where(eq(replies.ownerId, id));
+    await this.db.delete(comments).where(eq(comments.ownerId, id));
+    await this.db.delete(threads).where(eq(threads.ownerId, id));
+    await this.db.delete(users).where(eq(users.id, id));
   }
 
-  async select(username: string): Promise<User> {
+  async select(username: string): Promise<User | undefined> {
     return (
       await this.db
         .selectDistinct({

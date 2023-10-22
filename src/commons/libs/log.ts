@@ -35,6 +35,6 @@ export namespace log {
   }
 
   export function log(title: string, ...msg: unknown[]) {
-    console.info(`${chalk.yellow('⚡')}${title}`, msg);
+    console.info(`${title}:`, ...msg);
   }
 }

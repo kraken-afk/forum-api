@@ -4,7 +4,7 @@ export interface IUsers {
   readonly db: PostgresJsDatabase;
   create: (payload: UserPayload) => Promise<User> | User;
   delete: (id: string) => Promise<void> | void;
-  select: (username: string) => Promise<User> | User;
+  select: (username: string) => Promise<User | undefined> | User | undefined;
   isUsernameExist: (username: string) => Promise<boolean> | boolean;
   isPasswordAndUsernameMatch: (
     username: string,

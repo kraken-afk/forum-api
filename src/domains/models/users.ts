@@ -11,7 +11,7 @@ export class Users {
     return await this.repository.delete(id);
   }
 
-  async select(username: string): Promise<User> {
+  async select(username: string): Promise<User | undefined> {
     return await this.repository.select(username);
   }
 

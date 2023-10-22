@@ -3,7 +3,7 @@ import { ClientError } from '~/commons/errors/client-error';
 import { loginPayloadValidator } from '~/modules/validators/login-payload-validator';
 
 test('Login payload validator test case', () => {
-  console.info('User should send username & password');
+  // User should send username & password
   const successPayload = { username: 'xxxx', password: 'xxxx' };
   const failPayload = { username: [], password: 'xxxx' };
 

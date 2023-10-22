@@ -10,7 +10,7 @@
 		"lint:fix": "biome check --apply .",
 		"format": "biome format --write .",
 		"prepare": "husky install",
-		"generate": "drizzle-kit generate:pg --schema=./src/database/schema.ts --out=migrations",
+		"generate": "drizzle-kit generate:pg --schema=./src/infrastructure/database/schema.ts --out=migrations",
 		"migrate": "node utils/scripts/db-migrate.mjs",
 		"migrate:test": "node utils/scripts/db-migrate-test.mjs"
 	},

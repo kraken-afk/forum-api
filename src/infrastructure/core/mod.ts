@@ -81,8 +81,13 @@ export async function prepareRoutesHandler(): Promise<AppRouter> {
  */
 export function searchForRoutesFile(relativeDir: string): Set<string> {
   const directory = resolve(process.cwd(), relativeDir);
-
   const file = new Set<string>();
+  const parentDir = readdirSync(directory, {
+    encoding: 'utf-8',
+    withFileTypes: true,
+  }).map(dirent => {
+    if (dirent.isDirectory()) return dirent.name;
+  });
   const routerDirectory = String(directory.split(sep).at(-1));
   let currentPath = directory;
 
@@ -90,7 +95,6 @@ export function searchForRoutesFile(relativeDir: string): Set<string> {
     const dir = readdirSync(searchPath, {
       encoding: 'utf-8',
       withFileTypes: true,
-      recursive: true,
     });
     const realtivePath =
       searchPath.split(routerDirectory).at(-1)?.replace(/\\/g, '/') || '/';
@@ -101,7 +105,10 @@ export function searchForRoutesFile(relativeDir: string): Set<string> {
       }
 
       if (f.isDirectory()) {
-        currentPath = resolve(directory, f.name);
+        if (parentDir.includes(f.name))
+          currentPath = resolve(directory, f.name);
+        else currentPath = resolve(currentPath, f.name);
+
         findFileRecursive(currentPath);
       }
     }

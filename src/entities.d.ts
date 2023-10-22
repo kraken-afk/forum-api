@@ -23,6 +23,19 @@ type ThreadPayload = {
   body: string;
 };
 
+type CommentPayload = {
+  content: string;
+};
+
+type ReplyPayload = {
+  content: string;
+};
+
+type Auth = {
+  accessToken: string;
+  refreshToken: string;
+};
+
 type User = {
   username: string;
   fullname: string;
@@ -35,4 +48,17 @@ type Thread = {
   body: string;
   owner: string;
   date: Date;
+};
+
+type TComment = {
+  id: string;
+  username: string;
+  date: Date;
+  content: string;
+};
+
+type Reply = {
+  id: string;
+  owner: string;
+  content: string;
 };

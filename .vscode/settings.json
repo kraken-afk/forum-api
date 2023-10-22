@@ -5,5 +5,5 @@
   "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets": false,
   "editor.codeActionsOnSave": {
     "source.organizeImports.biome": true
-  }
+  },
 }

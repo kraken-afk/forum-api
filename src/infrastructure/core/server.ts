@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { createServer } from 'node:http';
 import { ClientError } from '~/commons/errors/client-error';
 import { FatalError } from '~/commons/errors/fatal-error';
@@ -19,7 +20,8 @@ export async function server() {
   const router = await prepareRoutesHandler();
 
   httpServer.on('request', async (_request, _response) => {
-    log.log(_request.method!, _request.url);
+    console.time('response time');
+    log.log(_request.method!, chalk.blue(_request.url));
 
     try {
       if (!_request?.method) {
@@ -95,6 +97,8 @@ export async function server() {
       _response.setHeader('Content-type', 'application/json');
       _response.end(JSON.stringify(response));
     }
+    console.timeEnd('response time');
+    console.log()
   });
 
   httpServer.listen(port, host);

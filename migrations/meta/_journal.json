@@ -5,50 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1696402814601,
-      "tag": "0000_gifted_hobgoblin",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1696402843347,
-      "tag": "0001_concerned_argent",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1696402864995,
-      "tag": "0002_past_banshee",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1696402871076,
-      "tag": "0003_glamorous_microbe",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "5",
-      "when": 1696413572403,
-      "tag": "0004_green_lester",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "5",
-      "when": 1696817924571,
-      "tag": "0005_military_captain_midlands",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "5",
-      "when": 1696821591772,
-      "tag": "0006_breezy_ricochet",
+      "when": 1697960989000,
+      "tag": "0000_military_hammerhead",
       "breakpoints": true
     }
   ]

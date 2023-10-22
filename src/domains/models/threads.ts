@@ -15,7 +15,7 @@ export class Threads {
     return await this.repository.create(title, body, ownerId);
   }
 
-  async select(id: string): Promise<Thread> {
+  async select(id: string): Promise<Thread | undefined> {
     return this.repository.select(id);
   }
 

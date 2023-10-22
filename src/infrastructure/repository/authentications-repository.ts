@@ -6,10 +6,16 @@ import { authentications as authenticationsSchema } from '~/infrastructure/datab
 export class AuthenticationsRepository implements IAuthentications {
   constructor(public readonly db: PostgresJsDatabase) {}
 
-  async insert(accessToken: string, refreshToken: string): Promise<void> {
-    await this.db
-      .insert(authenticationsSchema)
-      .values({ token: accessToken, refreshToken: refreshToken });
+  async insert(accessToken: string, refreshToken: string): Promise<Auth> {
+    return (
+      await this.db
+        .insert(authenticationsSchema)
+        .values({ token: accessToken, refreshToken: refreshToken })
+        .returning({
+          accessToken: authenticationsSchema.token,
+          refreshToken: authenticationsSchema.refreshToken,
+        })
+    )[0];
   }
 
   async updateToken(

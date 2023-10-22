@@ -17,10 +17,10 @@ export interface Ithreads {
         title: string;
         owner: string;
       };
-  select: (id: string) => Promise<Thread> | Thread;
-  delete: (id: string) => Promise<void> | void;
   update: (
     id: string,
     payload: Partial<ThreadPayload>,
   ) => Promise<Thread> | Thread;
+  select: (id: string) => Promise<Thread | undefined> | Thread | undefined;
+  delete: (id: string) => Promise<void> | void;
 }

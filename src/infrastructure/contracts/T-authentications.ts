@@ -2,7 +2,7 @@ import { type PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 export interface IAuthentications {
   readonly db: PostgresJsDatabase;
-  insert: (accessToken: string, refreshToken: string) => Promise<void> | void;
+  insert: (accessToken: string, refreshToken: string) => Promise<Auth> | Auth;
   deleteToken: (refreshToken: string) => Promise<void> | void;
   isRefreshTokenExist: (refreshToken: string) => Promise<boolean> | boolean;
   isAccessTokenExist: (token: string) => Promise<boolean> | boolean;

@@ -3,7 +3,7 @@ import { IAuthentications } from '~/infrastructure/contracts/T-authentications';
 export class Authentications {
   constructor(private readonly repository: IAuthentications) {}
 
-  async insert(accessToken: string, refreshToken: string): Promise<void> {
+  async insert(accessToken: string, refreshToken: string): Promise<Auth> {
     return await this.repository.insert(accessToken, refreshToken);
   }
 

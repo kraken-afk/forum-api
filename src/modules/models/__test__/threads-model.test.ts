@@ -2,12 +2,13 @@ import { db } from '@test/helpers/db';
 import { afterAll, beforeEach, describe, expect, test } from 'vitest';
 import { randomStr } from '~/commons/libs/random-str';
 import { Threads } from '~/domains/models/threads';
+import { Users } from '~/domains/models/users';
 import { threads, users } from '~/infrastructure/database/schema';
 import { ThreadsRepository } from '~/infrastructure/repository/threads-repository';
 import { UsersRepository } from '~/infrastructure/repository/users-repository';
 
 const model = new Threads(new ThreadsRepository(db));
-const userModel = new UsersRepository(db);
+const userModel = new Users(new UsersRepository(db));
 
 describe('Threads model test suite', () => {
   const threadTitle = 'Lorem ipsum.';
@@ -53,8 +54,7 @@ describe('Threads model test suite', () => {
     expect(selectedThread).toHaveProperty('title', threadTitle);
     expect(selectedThread).toHaveProperty('body', threadBody);
     expect(selectedThread).toHaveProperty('owner', user.id);
-
-    console.log(selectedThread.date, selectedThread.date instanceof Date);
+    expect(selectedThread?.date).toBeInstanceOf(Date);
   });
 
   test('Update thread test case', async () => {

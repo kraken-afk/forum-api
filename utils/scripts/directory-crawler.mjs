@@ -10,6 +10,12 @@ import { join, resolve } from 'node:path';
 export function directoryCrawler(relativeDir) {
   const directory = resolve(process.cwd(), relativeDir);
   const file = new Set();
+  const parentDir = readdirSync(directory, {
+    encoding: 'utf-8',
+    withFileTypes: true,
+  }).map(dirent => {
+    if (dirent.isDirectory()) return dirent.name;
+  });
   const routerDirectory = String(directory.split(sep).at(-1));
   let currentPath = directory;
 
@@ -17,8 +23,8 @@ export function directoryCrawler(relativeDir) {
     const dir = readdirSync(searchPath, {
       encoding: 'utf-8',
       withFileTypes: true,
-      recursive: true,
     });
+
     // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     const realtivePath =
       searchPath.split(routerDirectory).at(-1)?.replace(/\\/g, '/') || '/';
@@ -29,7 +35,10 @@ export function directoryCrawler(relativeDir) {
       }
 
       if (f.isDirectory()) {
-        currentPath = resolve(directory, f.name);
+        if (parentDir.includes(f.name))
+          currentPath = resolve(directory, f.name);
+        else currentPath = resolve(currentPath, f.name);
+
         directoriesClimber(currentPath);
       }
     }

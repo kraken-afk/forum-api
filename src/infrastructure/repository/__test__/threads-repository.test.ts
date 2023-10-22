@@ -52,8 +52,7 @@ describe('Threads repository test suite', () => {
     expect(selectedThread).toHaveProperty('title', threadTitle);
     expect(selectedThread).toHaveProperty('body', threadBody);
     expect(selectedThread).toHaveProperty('owner', user.id);
-
-    console.log(selectedThread.date, selectedThread.date instanceof Date);
+    expect(selectedThread?.date).toBeInstanceOf(Date);
   });
 
   test('Update thread test case', async () => {

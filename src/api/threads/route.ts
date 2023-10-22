@@ -7,6 +7,7 @@ import { threadPayloadValidator } from '~/modules/validators/thread-payload-vali
 
 export async function POST(req: Request) {
   const payload = JSON.parse(req.payload) as ThreadPayload;
+
   threadPayloadValidator(payload);
 
   const [_authType, token] = req.headers.authorization?.split(' ')!;

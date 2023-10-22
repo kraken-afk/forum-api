@@ -1,0 +1,13 @@
+import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+
+export interface IReplies {
+  readonly db: PostgresJsDatabase;
+  select: (id: string) => Promise<Reply | undefined> | Reply | undefined;
+  update: (id: string, content: string) => Promise<Reply> | Reply;
+  create: (
+    ownerId: string,
+    masterId: string,
+    content: string,
+  ) => Promise<Reply> | Reply;
+  delete: (commentId: string) => Promise<void> | void;
+}

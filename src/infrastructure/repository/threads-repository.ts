@@ -24,7 +24,7 @@ export class ThreadsRepository implements Ithreads {
     )[0];
   }
 
-  async select(id: string): Promise<Thread> {
+  async select(id: string): Promise<Thread | undefined> {
     return (
       await this.db
         .selectDistinct({
