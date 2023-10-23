@@ -1,5 +1,5 @@
-import chalk from 'chalk';
 import { createServer } from 'node:http';
+import chalk from 'chalk';
 import { ClientError } from '~/commons/errors/client-error';
 import { FatalError } from '~/commons/errors/fatal-error';
 import { MethodNotAllowedError } from '~/commons/errors/method-not-allowed-error';
@@ -98,7 +98,7 @@ export async function server() {
       _response.end(JSON.stringify(response));
     }
     console.timeEnd('response time');
-    console.log()
+    console.log();
   });
 
   httpServer.listen(port, host);

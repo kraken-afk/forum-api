@@ -1,10 +1,69 @@
-import { eq } from 'drizzle-orm';
+import { eq, or } from 'drizzle-orm';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { Ithreads } from '~/infrastructure/contracts/T-threads';
-import { threads } from '~/infrastructure/database/schema';
+import {
+  comments,
+  replies,
+  threads,
+  users,
+} from '~/infrastructure/database/schema';
 
 export class ThreadsRepository implements Ithreads {
   constructor(readonly db: PostgresJsDatabase) {}
+
+  async getThreadsWithComments(
+    threadId: string,
+  ): Promise<ThreadsDetail | undefined> {
+    const threadRaw = this.db
+      .selectDistinct({
+        id: threads.id,
+        title: threads.title,
+        body: threads.body,
+        date: threads.createdAt,
+        username: users.username,
+      })
+      .from(threads)
+      .where(eq(threads.id, threadId))
+      .innerJoin(users, eq(users.id, threads.ownerId));
+    const threadComments = this.db
+      .selectDistinct({
+        id: comments.id,
+        username: users.username,
+        date: comments.createdAt,
+        content: comments.content,
+      })
+      .from(comments)
+      .where(eq(comments.masterId, threadId))
+      .innerJoin(users, eq(comments.ownerId, users.id));
+
+    const [[thread], commentList] = await Promise.all([
+      threadRaw,
+      threadComments,
+    ]);
+
+    if (!thread) return undefined;
+
+    const reply = await this.db
+      .selectDistinct({
+        id: replies.id,
+        content: replies.content,
+        date: replies.createdAt,
+        username: users.username,
+      })
+      .from(replies)
+      .where(
+        or(...commentList.map(comment => eq(replies.masterId, comment.id))),
+      )
+      .innerJoin(users, eq(replies.ownerId, users.id));
+
+    const result: ThreadsDetail = Object.assign(thread, {
+      comments: commentList.map(comment =>
+        Object.assign(comment, { replies: reply }),
+      ),
+    });
+
+    return result;
+  }
 
   async create(
     title: string,

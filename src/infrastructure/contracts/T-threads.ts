@@ -2,6 +2,9 @@ import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 export interface Ithreads {
   readonly db: PostgresJsDatabase;
+  getThreadsWithComments: (
+    threadId: string,
+  ) => Promise<ThreadsDetail | undefined> | ThreadsDetail | undefined;
   create: (
     title: string,
     body: string,

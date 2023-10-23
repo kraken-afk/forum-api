@@ -10,7 +10,23 @@ export class ThreadsMock implements Ithreads {
     owner: '',
     title: '',
   };
+
   constructor(readonly db: PostgresJsDatabase) {}
+
+  async getThreadsWithComments(
+    threadId: string,
+  ): Promise<ThreadsDetail | undefined> {
+    await setTimeout(() => {}, 10);
+
+    return {
+      id: threadId,
+      body: '',
+      date: new Date(),
+      title: '',
+      username: '',
+      comments: [],
+    };
+  }
 
   async create(
     title: string,

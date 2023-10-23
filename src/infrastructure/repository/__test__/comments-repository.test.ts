@@ -1,7 +1,12 @@
 import { db } from '@test/helpers/db';
 import { afterAll, beforeEach, describe, expect, test } from 'vitest';
 import { randomStr } from '~/commons/libs/random-str';
-import { comments, threads, users } from '~/infrastructure/database/schema';
+import {
+  comments,
+  replies,
+  threads,
+  users,
+} from '~/infrastructure/database/schema';
 import { CommentsRepository } from '~/infrastructure/repository/comments-repository';
 import { ThreadsRepository } from '~/infrastructure/repository/threads-repository';
 import { UsersRepository } from '~/infrastructure/repository/users-repository';
@@ -14,12 +19,14 @@ describe('Comments repository test suits', () => {
   const COMMENT = 'Lorem ipsum dolor sit amet';
 
   beforeEach(async () => {
+    await db.delete(replies);
     await db.delete(comments);
     await db.delete(threads);
     await db.delete(users);
   });
 
   afterAll(async () => {
+    await db.delete(replies);
     await db.delete(comments);
     await db.delete(threads);
     await db.delete(users);

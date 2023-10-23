@@ -8,6 +8,7 @@ import { Users } from '~/domains/models/users';
 
 const threadMock = new ThreadsMock(db);
 const userMock = new UsersMock(db);
+
 const model = new Threads(threadMock);
 const userModel = new Users(userMock);
 

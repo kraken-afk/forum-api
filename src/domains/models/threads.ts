@@ -3,6 +3,12 @@ import { Ithreads } from '~/infrastructure/contracts/T-threads';
 export class Threads {
   constructor(private readonly repository: Ithreads) {}
 
+  async getThreadsWithComments(
+    threadId: string,
+  ): Promise<ThreadsDetail | undefined> {
+    return await this.repository.getThreadsWithComments(threadId);
+  }
+
   async create(
     title: string,
     body: string,

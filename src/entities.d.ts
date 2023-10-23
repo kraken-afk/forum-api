@@ -62,3 +62,23 @@ type Reply = {
   owner: string;
   content: string;
 };
+
+type ThreadsDetail = {
+  id: string;
+  title: string;
+  body: string;
+  username: string;
+  date: Date;
+  comments: Array<{
+    id: string;
+    username: string;
+    date: Date;
+    content: string;
+    replies: Array<{
+      id: string;
+      content: string;
+      date: Date;
+      username: string;
+    }>;
+  }>;
+};
