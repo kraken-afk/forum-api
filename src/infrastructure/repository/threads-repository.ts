@@ -58,7 +58,8 @@ export class ThreadsRepository implements Ithreads {
       .where(
         or(...commentList.map(comment => eq(replies.masterId, comment.id))),
       )
-      .innerJoin(users, eq(replies.ownerId, users.id));
+      .innerJoin(users, eq(replies.ownerId, users.id))
+      .orderBy(asc(replies.createdAt));
 
     const result: ThreadsDetail = Object.assign(thread, {
       comments: commentList.map(comment => {
@@ -76,7 +77,7 @@ export class ThreadsRepository implements Ithreads {
               username: reply.username,
               date: reply.date,
               content: reply.isDeleted
-                ? '**komentar telah dihapus**'
+                ? '**balasan telah dihapus**'
                 : reply.content,
             })),
         };

@@ -1,17 +1,26 @@
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { IReplies } from '~/infrastructure/contracts/T-replies';
+import { IReplies, RepliesOptions } from '~/infrastructure/contracts/T-replies';
 import { replies, users } from '~/infrastructure/database/schema';
 
 export class RepliesRepository implements IReplies {
   constructor(readonly db: PostgresJsDatabase) {}
 
-  async select(id: string): Promise<Reply | undefined> {
-    const [data] = await this.db
-      .select()
-      .from(replies)
-      .where(eq(replies.id, id))
-      .innerJoin(users, eq(replies.ownerId, users.id));
+  async select(
+    id: string,
+    options: RepliesOptions = { all: false },
+  ): Promise<Reply | undefined> {
+    const [data] = options.all
+      ? await this.db
+          .select()
+          .from(replies)
+          .where(eq(replies.id, id))
+          .innerJoin(users, eq(replies.ownerId, users.id))
+      : await this.db
+          .select()
+          .from(replies)
+          .where(and(eq(replies.id, id), eq(replies.isDeleted, false)))
+          .innerJoin(users, eq(replies.ownerId, users.id));
 
     if (!data) return undefined;
 
@@ -69,6 +78,9 @@ export class RepliesRepository implements IReplies {
   }
 
   async delete(replyId: string): Promise<void> {
-    await this.db.delete(replies).where(eq(replies.id, replyId));
+    await this.db
+      .update(replies)
+      .set({ isDeleted: true })
+      .where(eq(replies.id, replyId));
   }
 }

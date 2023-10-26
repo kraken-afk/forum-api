@@ -22,7 +22,7 @@ export async function DELETE(req: Request) {
   if (!user) throw new UnauthorizedError('User not listed on database');
 
   if (user.id !== (await users.select(comment.owner))?.id)
-    throw new ForbiddenError('Only the author of the comment could do delete.');
+    throw new ForbiddenError('Only the author could do the action');
 
   void (await comments.delete(commentId));
   return Send.new({});

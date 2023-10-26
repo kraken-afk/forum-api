@@ -1,19 +1,24 @@
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { randomStr } from '~/commons/libs/random-str';
-import { IReplies } from '~/infrastructure/contracts/T-replies';
+import { IReplies, RepliesOptions } from '~/infrastructure/contracts/T-replies';
 
 export class RepliesMock implements IReplies {
-  public reply: Reply = {
+  public reply: Reply & { isDeleted: boolean } = {
     content: '',
     id: '',
     owner: '',
+    isDeleted: false,
   };
   public masterId = '';
   constructor(readonly db: PostgresJsDatabase) {}
 
-  async select(id: string): Promise<Reply | undefined> {
-    if (this.reply.id !== id) throw new Error("Reply doesn't exist");
-    return this.reply;
+  async select(
+    id: string,
+    options: RepliesOptions = { all: false },
+  ): Promise<Reply | undefined> {
+    if (this.reply.id !== id) return undefined;
+    if (options?.all) return this.reply;
+    if (!this.reply.isDeleted) return this.reply;
   }
 
   async create(
@@ -21,7 +26,12 @@ export class RepliesMock implements IReplies {
     masterId: string,
     content: string,
   ): Promise<Reply> {
-    this.reply = { content, id: randomStr(7), owner: ownerId };
+    this.reply = {
+      content,
+      id: randomStr(7),
+      owner: ownerId,
+      isDeleted: false,
+    };
     this.masterId = masterId;
 
     return this.reply;
@@ -46,11 +56,6 @@ export class RepliesMock implements IReplies {
 
   async delete(replyId: string): Promise<void> {
     if (this.reply.id !== replyId) throw new Error("Reply doesn't exist");
-    this.reply = {
-      content: '',
-      id: '',
-      owner: '',
-    };
-    this.masterId = '';
+    this.reply.isDeleted = true;
   }
 }

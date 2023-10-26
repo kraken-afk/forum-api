@@ -1,8 +1,15 @@
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
+export type RepliesOptions = {
+  all?: boolean;
+};
+
 export interface IReplies {
   readonly db: PostgresJsDatabase;
-  select: (id: string) => Promise<Reply | undefined> | Reply | undefined;
+  select: (
+    id: string,
+    options?: RepliesOptions,
+  ) => Promise<Reply | undefined> | Reply | undefined;
   update: (id: string, content: string) => Promise<Reply> | Reply;
   create: (
     ownerId: string,

@@ -1,10 +1,13 @@
-import { IReplies } from '~/infrastructure/contracts/T-replies';
+import { IReplies, RepliesOptions } from '~/infrastructure/contracts/T-replies';
 
 export class Replies {
   constructor(private readonly repository: IReplies) {}
 
-  async select(id: string): Promise<Reply | undefined> {
-    return await this.repository.select(id);
+  async select(
+    id: string,
+    options: RepliesOptions = { all: false },
+  ): Promise<Reply | undefined> {
+    return await this.repository.select(id, options);
   }
 
   async create(
