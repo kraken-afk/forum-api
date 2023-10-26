@@ -1,8 +1,15 @@
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
+export type CommentOption = {
+  all?: boolean;
+};
+
 export interface IComments {
   readonly db: PostgresJsDatabase;
-  select: (id: string) => Promise<TComment | undefined> | TComment | undefined;
+  select: (
+    id: string,
+    options?: CommentOption,
+  ) => Promise<TComment | undefined> | TComment | undefined;
   update: (
     id: string,
     content: string,

@@ -51,9 +51,6 @@
     }
   },
   "files": {
-    "ignore": [
-      "node_modules/*",
-      "target/*"
-    ]
+    "ignore": ["node_modules/*", "target/*"]
   }
 }

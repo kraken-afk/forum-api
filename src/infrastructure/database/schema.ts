@@ -1,5 +1,11 @@
 import { relations } from 'drizzle-orm';
-import { pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  pgTable,
+  text,
+  timestamp,
+  varchar,
+} from 'drizzle-orm/pg-core';
 import { randomStr } from '~/commons/libs/random-str';
 
 export const authentications = pgTable('authentications', {
@@ -45,6 +51,9 @@ export const comments = pgTable('comments', {
   ownerId: varchar('ownerId')
     .references(() => users.id)
     .notNull(),
+  isDeleted: boolean('isDeleted')
+    .$default(() => false)
+    .notNull(),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
   updatedAt: timestamp('updatedAt').defaultNow().notNull(),
 });
@@ -61,12 +70,21 @@ export const replies = pgTable('replies', {
   ownerId: varchar('ownerId')
     .references(() => users.id)
     .notNull(),
+  isDeleted: boolean('isDeleted').$default(() => false),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
   updatedAt: timestamp('updatedAt').defaultNow().notNull(),
 });
 
 export const usersRelation = relations(users, ({ many }) => ({
   threads: many(threads),
+}));
+
+export const threadsRelation = relations(threads, ({ many }) => ({
+  threads: many(comments),
+}));
+
+export const commentsToReplies = relations(comments, ({ many }) => ({
+  comments: many(replies),
 }));
 
 export const commentsRelation = relations(comments, ({ one }) => ({

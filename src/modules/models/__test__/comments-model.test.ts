@@ -51,8 +51,8 @@ describe('Comments model test suits', () => {
     expect(comment).toHaveProperty('id');
     expect(comment.id).toBeTypeOf('string');
 
-    expect(comment).toHaveProperty('username');
-    expect(comment.username).toBe(user.username);
+    expect(comment).toHaveProperty('owner');
+    expect(comment.owner).toBe(user.username);
 
     expect(comment).toHaveProperty('content');
     expect(comment.content).toBe(COMMENT);
@@ -71,8 +71,8 @@ describe('Comments model test suits', () => {
     expect(selectedComment).toHaveProperty('id');
     expect(selectedComment?.id).toBeTypeOf('string');
 
-    expect(selectedComment).toHaveProperty('username');
-    expect(selectedComment?.username).toBe(user.username);
+    expect(selectedComment).toHaveProperty('owner');
+    expect(selectedComment?.owner).toBe(user.username);
 
     expect(selectedComment).toHaveProperty('content');
     expect(selectedComment?.content).toBe(COMMENT);
@@ -92,8 +92,8 @@ describe('Comments model test suits', () => {
     expect(updatedComment).toHaveProperty('id');
     expect(updatedComment.id).toBeTypeOf('string');
 
-    expect(updatedComment).toHaveProperty('username');
-    expect(updatedComment.username).toBe(user.username);
+    expect(updatedComment).toHaveProperty('owner');
+    expect(updatedComment.owner).toBe(user.username);
 
     expect(updatedComment).toHaveProperty('content');
     expect(updatedComment.content).toBe(newComment);

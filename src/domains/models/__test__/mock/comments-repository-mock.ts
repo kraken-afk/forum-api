@@ -1,22 +1,34 @@
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { randomStr } from '~/commons/libs/random-str';
-import { IComments } from '~/infrastructure/contracts/T-comments';
+import {
+  CommentOption,
+  IComments,
+} from '~/infrastructure/contracts/T-comments';
 
 export class CommentsMock implements IComments {
-  public comment: TComment & { master: string; ownerId: string } = {
+  public comment: TComment & {
+    master: string;
+    ownerId: string;
+    isDeleted: boolean;
+  } = {
     content: '',
     date: new Date(),
     id: '',
-    username: '',
+    owner: '',
     ownerId: '',
     master: '',
+    isDeleted: false,
   };
   constructor(readonly db: PostgresJsDatabase) {}
 
-  async select(id: string): Promise<TComment | undefined> {
+  async select(
+    id: string,
+    _options?: CommentOption,
+  ): Promise<TComment | undefined> {
     await setTimeout(() => {}, 10);
     if (this.comment.id !== id) return undefined;
-    return this.comment;
+    if (_options?.all) return this.comment;
+    if (!this.comment.isDeleted) return this.comment;
   }
 
   async create(
@@ -31,14 +43,15 @@ export class CommentsMock implements IComments {
       id: randomStr(7),
       master: masterId,
       ownerId,
-      username: '',
+      owner: '',
+      isDeleted: false,
     };
 
     return {
       content: this.comment.content,
       date: this.comment.date,
       id: this.comment.id,
-      username: this.comment.username,
+      owner: this.comment.owner,
     };
   }
 
@@ -48,20 +61,13 @@ export class CommentsMock implements IComments {
     this.comment.content = content;
 
     const editedAt = new Date();
-    const { content: comment, id, username, date } = this.comment;
-    return { content: comment, id, editedAt, username, date };
+    const { content: comment, id, owner, date } = this.comment;
+    return { content: comment, id, editedAt, owner, date };
   }
 
   async delete(commentId: string): Promise<void> {
     if (this.comment.id !== commentId) throw new Error("Comment doesn't exist");
 
-    this.comment = {
-      content: '',
-      date: new Date(),
-      id: '',
-      username: '',
-      ownerId: '',
-      master: '',
-    };
+    this.comment.isDeleted = true;
   }
 }

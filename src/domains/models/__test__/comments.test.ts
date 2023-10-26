@@ -84,7 +84,10 @@ describe('Comments model test suits', () => {
 
     await model.delete(comment.id);
 
-    expect(await model.select(comment.id)).toBeFalsy();
+    console.log(user);
+    console.log(await model.select(comment.id));
+
+    expect(await model.select(comment.id, { all: false })).toBeFalsy();
   });
 });
 

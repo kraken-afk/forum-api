@@ -3,8 +3,7 @@ export function randomStr(howMany = 43): string {
     throw new Error('length of number cannot be negative number');
 
   let result = '';
-  const utf8 =
-    '!@#$%^&*[]{}+=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~-._';
+  const utf8 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
   for (let i = 1; i <= howMany; i++)
     result += utf8[Math.floor(Math.random() * utf8.length)];

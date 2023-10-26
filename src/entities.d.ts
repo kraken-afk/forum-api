@@ -52,7 +52,7 @@ type Thread = {
 
 type TComment = {
   id: string;
-  username: string;
+  owner: string;
   date: Date;
   content: string;
 };

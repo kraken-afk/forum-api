@@ -1,4 +1,4 @@
-import { eq, or } from 'drizzle-orm';
+import { asc, eq, or } from 'drizzle-orm';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { Ithreads } from '~/infrastructure/contracts/T-threads';
 import {
@@ -31,10 +31,12 @@ export class ThreadsRepository implements Ithreads {
         username: users.username,
         date: comments.createdAt,
         content: comments.content,
+        isDeleted: comments.isDeleted,
       })
       .from(comments)
       .where(eq(comments.masterId, threadId))
-      .innerJoin(users, eq(comments.ownerId, users.id));
+      .innerJoin(users, eq(comments.ownerId, users.id))
+      .orderBy(asc(comments.createdAt));
 
     const [[thread], commentList] = await Promise.all([
       threadRaw,
@@ -49,6 +51,8 @@ export class ThreadsRepository implements Ithreads {
         content: replies.content,
         date: replies.createdAt,
         username: users.username,
+        masterId: replies.masterId,
+        isDeleted: replies.isDeleted,
       })
       .from(replies)
       .where(
@@ -57,9 +61,26 @@ export class ThreadsRepository implements Ithreads {
       .innerJoin(users, eq(replies.ownerId, users.id));
 
     const result: ThreadsDetail = Object.assign(thread, {
-      comments: commentList.map(comment =>
-        Object.assign(comment, { replies: reply }),
-      ),
+      comments: commentList.map(comment => {
+        return {
+          id: comment.id,
+          username: comment.username,
+          date: comment.date,
+          content: comment.isDeleted
+            ? '**komentar telah dihapus**'
+            : comment.content,
+          replies: reply
+            .filter(reply => reply.masterId === comment.id)
+            .map(reply => ({
+              id: reply.id,
+              username: reply.username,
+              date: reply.date,
+              content: reply.isDeleted
+                ? '**komentar telah dihapus**'
+                : reply.content,
+            })),
+        };
+      }),
     });
 
     return result;

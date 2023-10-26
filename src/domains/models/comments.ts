@@ -1,10 +1,16 @@
-import { IComments } from '~/infrastructure/contracts/T-comments';
+import {
+  CommentOption,
+  IComments,
+} from '~/infrastructure/contracts/T-comments';
 
 export class Comments {
   constructor(private readonly repository: IComments) {}
 
-  async select(id: string): Promise<TComment | undefined> {
-    return await this.repository.select(id);
+  async select(
+    id: string,
+    options: CommentOption = { all: false },
+  ): Promise<TComment | undefined> {
+    return await this.repository.select(id, options);
   }
 
   async create(

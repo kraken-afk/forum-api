@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 
   const accessToken = jwt.createAccessToken({
     username: payload.username,
-    exp: Date.now() + parseInt(process.env.ACCCESS_TOKEN_AGE!) * 60, // 3 minutes expire time,
+    exp: Date.now() + parseInt(process.env.ACCCESS_TOKEN_AGE!) * 60 * 60, // 3 hours expire time,
   });
   const refreshToken = jwt.createRefreshToken({
     username: payload.username,

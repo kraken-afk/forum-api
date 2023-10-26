@@ -1,25 +1,47 @@
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { IComments } from '~/infrastructure/contracts/T-comments';
+import type {
+  CommentOption,
+  IComments,
+} from '~/infrastructure/contracts/T-comments';
 import { comments, users } from '~/infrastructure/database/schema';
 
 export class CommentsRepository implements IComments {
   constructor(readonly db: PostgresJsDatabase) {}
 
-  async select(id: string): Promise<TComment | undefined> {
-    const [data] = await this.db
-      .select()
-      .from(comments)
-      .where(eq(comments.id, id))
-      .innerJoin(users, eq(comments.ownerId, users.id));
+  async select(
+    id: string,
+    options: CommentOption = { all: false },
+  ): Promise<TComment | undefined> {
+    const [data] = options.all
+      ? await this.db
+          .selectDistinct({
+            id: comments.id,
+            content: comments.content,
+            date: comments.createdAt,
+            owner: users.username,
+          })
+          .from(comments)
+          .where(eq(comments.id, id))
+          .innerJoin(users, eq(comments.ownerId, users.id))
+      : await this.db
+          .selectDistinct({
+            id: comments.id,
+            content: comments.content,
+            date: comments.createdAt,
+            owner: users.username,
+          })
+          .from(comments)
+          .where(and(eq(comments.id, id), eq(comments.isDeleted, false)))
+          .innerJoin(users, eq(comments.ownerId, users.id));
 
     if (!data) return undefined;
 
     const result: TComment = {
-      id: data.comments.id,
-      content: data.comments.content,
-      date: data.comments.createdAt,
-      username: data.users.username,
+      id: data.id,
+      content: data.content,
+      date: data.date,
+      owner: data.owner,
     };
 
     return result;
@@ -31,22 +53,24 @@ export class CommentsRepository implements IComments {
     content: string,
   ): Promise<TComment> {
     const user = this.db
-      .selectDistinct({ username: users.username })
+      .selectDistinct({ owner: users.username })
       .from(users)
       .where(eq(users.id, ownerId));
     const returnedComment = this.db
       .insert(comments)
-      .values({ ownerId, content, masterId: masterId })
+      .values({ ownerId, content, masterId })
       .returning({
         id: comments.id,
         date: comments.createdAt,
         content: comments.content,
       });
 
-    const [[{ username }], [{ id, content: comment, date }]] =
-      await Promise.all([user, returnedComment]);
+    const [[{ owner }], [{ id, content: comment, date }]] = await Promise.all([
+      user,
+      returnedComment,
+    ]);
 
-    return { id, username, content: comment, date };
+    return { id, owner, content: comment, date };
   }
 
   async update(
@@ -73,15 +97,18 @@ export class CommentsRepository implements IComments {
         })
     )[0];
 
-    const [{ username }] = await this.db
-      .selectDistinct({ username: users.username })
+    const [{ owner }] = await this.db
+      .selectDistinct({ owner: users.username })
       .from(users)
       .where(eq(users.id, ownerId));
 
-    return { id, username, content: comment, date, editedAt };
+    return { id, owner, content: comment, date, editedAt };
   }
 
   async delete(commentId: string): Promise<void> {
-    await this.db.delete(comments).where(eq(comments.id, commentId));
+    await this.db
+      .update(comments)
+      .set({ isDeleted: true })
+      .where(eq(comments.id, commentId));
   }
 }

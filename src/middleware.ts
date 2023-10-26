@@ -9,9 +9,10 @@ export type TPublicRoutes = Record<string, Array<HttpMethodKey | '*'>>;
 
 const publicRoutes: TPublicRoutes = {
   '/': ['GET'],
-  authentications: ['*'],
-  users: ['*'],
-  'threads/[threadId]/comments': ['GET'],
+  '/users': ['*'],
+  '/authentications': ['*'],
+  '/threads/[threadId]': ['GET'],
+  '/threads/[threadId]/comments': ['GET'],
 };
 
 export default async function (

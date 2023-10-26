@@ -25,7 +25,7 @@ const sql = postgres({
 const db = drizzle(sql);
 
 (async () => {
-  console.log(chalk.cyan(' 🐶 Start Migrating for test \n'));
+  console.log(chalk.cyan(` 🐶 Start Migrating to to ${PGDATABASE_TEST} \n`));
   await migrate(db, { migrationsFolder: join(process.cwd(), 'migrations') });
   console.log(chalk.bgCyan.black('\n ⚡Migrate Success ⚡ '));
   process.exit(0);

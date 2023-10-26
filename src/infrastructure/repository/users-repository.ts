@@ -1,4 +1,4 @@
-import { eq, sql } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { type PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { IUsers } from '~/infrastructure/contracts/T-users';
 import {
@@ -6,7 +6,6 @@ import {
   replies,
   threads,
   users,
-  users as usersSchema,
 } from '~/infrastructure/database/schema';
 import { crypto } from '~/modules/security/crypto';
 
@@ -18,16 +17,16 @@ export class UsersRepository implements IUsers {
 
     return (
       await this.db
-        .insert(usersSchema)
+        .insert(users)
         .values({
           fullname: payload.fullname,
           username: payload.username,
           password: hash,
         })
         .returning({
-          username: usersSchema.username,
-          id: usersSchema.id,
-          fullname: usersSchema.fullname,
+          username: users.username,
+          id: users.id,
+          fullname: users.fullname,
         })
     )[0];
   }
@@ -43,20 +42,20 @@ export class UsersRepository implements IUsers {
     return (
       await this.db
         .selectDistinct({
-          username: usersSchema.username,
-          fullname: usersSchema.fullname,
-          id: usersSchema.id,
+          username: users.username,
+          fullname: users.fullname,
+          id: users.id,
         })
-        .from(usersSchema)
-        .where(eq(usersSchema.username, username))
+        .from(users)
+        .where(eq(users.username, username))
     )[0];
   }
 
   async isUsernameExist(username: string): Promise<boolean> {
     const usn = await this.db
-      .selectDistinct({ username: usersSchema.username })
-      .from(usersSchema)
-      .where(eq(usersSchema.username, username));
+      .selectDistinct({ username: users.username })
+      .from(users)
+      .where(eq(users.username, username));
 
     return usn.length > 0;
   }
@@ -66,12 +65,12 @@ export class UsersRepository implements IUsers {
     password: string,
   ): Promise<boolean> {
     let status = false;
-    const users = await this.db
-      .selectDistinct({ password: usersSchema.password })
-      .from(usersSchema)
-      .where(eq(usersSchema.username, username));
+    const userList = await this.db
+      .selectDistinct({ password: users.password })
+      .from(users)
+      .where(eq(users.username, username));
 
-    for (const user of users) {
+    for (const user of userList) {
       status = await crypto.compare(password, user.password);
     }
 
