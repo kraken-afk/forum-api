@@ -16,7 +16,9 @@ export function directoryCrawler(relativeDir) {
   }).map(dirent => {
     if (dirent.isDirectory()) return dirent.name;
   });
-  const routerDirectory = String(directory.split(sep).at(-1));
+  const routerDirectory = String(
+    directory.split(sep)[directory.split(sep).length - 1],
+  );
   let currentPath = directory;
 
   const directoriesClimber = (searchPath = currentPath) => {
@@ -27,7 +29,10 @@ export function directoryCrawler(relativeDir) {
 
     // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
     const realtivePath =
-      searchPath.split(routerDirectory).at(-1)?.replace(/\\/g, '/') || '/';
+      searchPath
+        .split(routerDirectory)
+        [searchPath.split(routerDirectory).length - 1].replace(/\\/g, '/') ||
+      '/';
 
     for (const f of dir) {
       if (f.name === 'route.ts') {

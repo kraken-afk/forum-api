@@ -1,5 +1,4 @@
 import { config } from 'dotenv';
-import { describe, expect, test } from 'vitest';
 import { Jwt } from '~/domains/security/jwt';
 import { JwtRepository } from '~/infrastructure/repository/jwt-repository';
 
@@ -11,14 +10,14 @@ describe('Jwt repository test suite', () => {
     const payload = createJwtPayload();
     const token = jwt.createAccessToken(payload);
 
-    expect(token).toBeTypeOf('string');
+    expect(typeof token).toBe('string');
   });
 
   test('Create refresh token', () => {
     const payload = createJwtPayload();
     const token = jwt.createRefreshToken(payload);
 
-    expect(token).toBeTypeOf('string');
+    expect(typeof token).toBe('string');
   });
 
   test('Unpack payload', () => {

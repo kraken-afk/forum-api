@@ -1,6 +1,5 @@
 import { db } from '@test/helpers/db';
 import { eq } from 'drizzle-orm';
-import { afterAll, beforeEach, describe, expect, test } from 'vitest';
 import { randomStr } from '~/commons/libs/random-str';
 import { Authentications } from '~/domains/models/authentications';
 import { authentications } from '~/infrastructure/database/schema';
@@ -13,8 +12,8 @@ describe('Authentication model test suite', () => {
     await db.delete(authentications);
   });
 
-  afterAll(async () => {
-    await db.delete(authentications);
+  afterAll(done => {
+    db.delete(authentications).then(() => done());
   });
 
   test('Chech methods', () => {

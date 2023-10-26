@@ -1,4 +1,3 @@
-import { describe, expect, test } from 'vitest';
 import { CryptoMock } from '~/domains/security/__test__/mock/crypto-repository-mock';
 import { Crypto } from '~/domains/security/crypto';
 
@@ -9,7 +8,7 @@ describe('Crypto repository test suite', () => {
     const password = 'supersecret';
     const hashed = await crypto.hash(password);
 
-    expect(hashed).toBeTypeOf('string');
+    expect(typeof hashed).toBe('string');
     expect(hashed).not.toEqual(password);
   });
 

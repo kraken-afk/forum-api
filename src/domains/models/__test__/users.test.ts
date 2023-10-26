@@ -1,5 +1,4 @@
 import { db } from '@test/helpers/db';
-import { describe, expect, test } from 'vitest';
 import { randomStr } from '~/commons/libs/random-str';
 import { UsersMock } from '~/domains/models/__test__/mock/users-repository-mock';
 import { Users } from '~/domains/models/users';
@@ -53,9 +52,9 @@ describe('Users repository test suite', () => {
     const { username, fullname, id } = await insertUser(payload);
     const user = await model.select(username);
 
-    expect(user).haveOwnProperty('fullname', fullname);
-    expect(user).haveOwnProperty('username', username);
-    expect(user).haveOwnProperty('id', id);
+    expect(user).toHaveProperty('fullname', fullname);
+    expect(user).toHaveProperty('username', username);
+    expect(user).toHaveProperty('id', id);
   });
 
   test('Delete user', async () => {

@@ -1,4 +1,3 @@
-import { describe, expect, test } from 'vitest';
 import { CryptoRepository } from '~/infrastructure/repository/crypto-repository';
 
 const crypto = new CryptoRepository();
@@ -8,7 +7,7 @@ describe('Crypto repository test suite', () => {
     const password = 'supersecret';
     const hashed = await crypto.hash(password);
 
-    expect(hashed).toBeTypeOf('string');
+    expect(typeof hashed).toBe('string');
     expect(hashed).not.toEqual(password);
   });
 

@@ -1,5 +1,4 @@
 import { db } from '@test/helpers/db';
-import { describe, expect, test } from 'vitest';
 import { randomStr } from '~/commons/libs/random-str';
 import { CommentsMock } from '~/domains/models/__test__/mock/comments-repository-mock';
 import { ThreadsMock } from '~/domains/models/__test__/mock/threads-repository-mock';
@@ -33,7 +32,7 @@ describe('Comments model test suits', () => {
     const comment = await model.create(user.id, thread.id, COMMENT);
 
     expect(comment).toHaveProperty('id');
-    expect(comment.id).toBeTypeOf('string');
+    expect(typeof comment.id).toBe('string');
 
     expect(comment).toHaveProperty('content');
     expect(comment.content).toBe(COMMENT);
@@ -50,7 +49,7 @@ describe('Comments model test suits', () => {
     const selectedComment = await model.select(comment.id);
 
     expect(selectedComment).toHaveProperty('id');
-    expect(selectedComment?.id).toBeTypeOf('string');
+    expect(typeof selectedComment?.id).toBe('string');
 
     expect(selectedComment).toHaveProperty('content');
     expect(selectedComment?.content).toBe(COMMENT);
@@ -68,7 +67,7 @@ describe('Comments model test suits', () => {
     const updatedComment = await model.update(comment.id, newComment);
 
     expect(updatedComment).toHaveProperty('id');
-    expect(updatedComment.id).toBeTypeOf('string');
+    expect(typeof updatedComment.id).toBe('string');
 
     expect(updatedComment).toHaveProperty('content');
     expect(updatedComment.content).toBe(newComment);

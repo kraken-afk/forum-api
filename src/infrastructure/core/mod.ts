@@ -1,32 +1,34 @@
-import { readdirSync } from 'node:fs';
+import { readdirSync } from 'fs';
 import {
   type IncomingMessage as NodeIncomingMessage,
   type ServerResponse as NodeServerResponse,
-} from 'node:http';
-import { resolve, sep } from 'node:path';
-import { join } from 'node:path/posix';
-import { pathToFileURL } from 'node:url';
+} from 'http';
+import { resolve, sep } from 'path';
+import { posix } from 'path';
+import { pathToFileURL } from 'url';
+import { Response as NodeResponse } from 'node-fetch-cjs';
 import { NotFoundError } from '~/commons/errors/not-found-error';
 import { controller } from '~/infrastructure/core/controller';
+
 /* MODULE */
 export type Request = Prettify<
   NodeIncomingMessage & { params: Record<string, string>; payload: string }
 >;
 export type ServerResponse = Prettify<NodeServerResponse>;
-export type RouteMethod = (req: Request, res: ServerResponse) => Response;
+export type RouteMethod = (req: Request, res: ServerResponse) => NodeResponse;
 
 export const Send = {
   new: (
     body: Prettify<BodyInit | Record<string, unknown>> = {},
     headers?: ResponseInit,
-  ): Response => {
+  ): NodeResponse => {
     const _body = typeof body === 'string' ? body : JSON.stringify(body);
     const _headers =
       headers && 'Content-Type' in headers!
         ? headers
         : { ...headers, headers: { 'Content-Type': 'application/json' } };
 
-    return new Response(_body, _headers) as Response;
+    return new NodeResponse(_body, _headers);
   },
 };
 
@@ -55,7 +57,7 @@ export async function prepareRoutesHandler(): Promise<AppRouter> {
 
   for (const route of routeList.values()) {
     if (route) {
-      const targetDir = resolve(join(...__OUT_DIR__.split('/'), 'api'));
+      const targetDir = resolve(posix.join(...__OUT_DIR__.split('/'), 'api'));
       const targetRoute = route.replace(/ts$/, 'js').split('/');
       const modPath = resolve(targetDir, ...targetRoute);
       const module = await import(pathToFileURL(modPath).toString());
@@ -88,7 +90,9 @@ export function searchForRoutesFile(relativeDir: string): Set<string> {
   }).map(dirent => {
     if (dirent.isDirectory()) return dirent.name;
   });
-  const routerDirectory = String(directory.split(sep).at(-1));
+  const routerDirectory = String(
+    directory.split(sep)[directory.split(sep).length - 1],
+  );
   let currentPath = directory;
 
   const findFileRecursive = (searchPath: string = currentPath) => {
@@ -97,11 +101,14 @@ export function searchForRoutesFile(relativeDir: string): Set<string> {
       withFileTypes: true,
     });
     const realtivePath =
-      searchPath.split(routerDirectory).at(-1)?.replace(/\\/g, '/') || '/';
+      searchPath
+        .split(routerDirectory)
+        [searchPath.split(routerDirectory).length - 1].replace(/\\/g, '/') ||
+      '/';
 
     for (const f of dir) {
       if (f.name === 'route.ts') {
-        file.add(join(realtivePath, f.name));
+        file.add(posix.join(realtivePath, f.name));
       }
 
       if (f.isDirectory()) {

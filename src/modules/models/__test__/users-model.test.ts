@@ -1,6 +1,5 @@
 import { db } from '@test/helpers/db';
 import { eq } from 'drizzle-orm';
-import { afterAll, beforeEach, describe, expect, test } from 'vitest';
 import { randomStr } from '~/commons/libs/random-str';
 import { Users } from '~/domains/models/users';
 import { users } from '~/infrastructure/database/schema';
@@ -13,8 +12,8 @@ describe('Users model test suite', () => {
     await db.delete(users);
   });
 
-  afterAll(async () => {
-    await db.delete(users);
+  afterAll(done => {
+    db.delete(users).then(() => done());
   });
 
   test('Methods check', () => {
@@ -63,9 +62,9 @@ describe('Users model test suite', () => {
     const { username, fullname, id } = await insertUser(payload);
     const user = await model.select(username);
 
-    expect(user).haveOwnProperty('fullname', fullname);
-    expect(user).haveOwnProperty('username', username);
-    expect(user).haveOwnProperty('id', id);
+    expect(user).toHaveProperty('fullname', fullname);
+    expect(user).toHaveProperty('username', username);
+    expect(user).toHaveProperty('id', id);
   });
 
   test('Delete user', async () => {
