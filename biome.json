@@ -21,7 +21,7 @@
   },
   "formatter": {
     "enabled": true,
-    "indentSize": 2,
+    "indentWidth": 2,
     "formatWithErrors": true,
     "indentStyle": "space",
     "lineWidth": 80
@@ -45,12 +45,16 @@
   "json": {
     "formatter": {
       "enabled": true,
-      "indentSize": 2,
+      "indentWidth": 2,
       "indentStyle": "space",
       "lineWidth": 80
     }
   },
   "files": {
-    "ignore": ["node_modules/*", "target/*", "**/*/postman/*"]
+    "ignore": [
+      "node_modules/*",
+      "target/*",
+      "**/*/postman/*"
+    ]
   }
 }

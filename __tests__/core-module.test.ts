@@ -16,9 +16,9 @@ describe('Search for router files test case', () => {
   });
 
   test('Each item should include name route.ts', () => {
-    route.forEach(item => {
+    for (const item of route) {
       expect(item.includes('route.ts')).toBe(true);
-    });
+    }
   });
 });
 
