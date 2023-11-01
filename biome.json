@@ -29,7 +29,7 @@
   "javascript": {
     "formatter": {
       "enabled": true,
-      "indentSize": 2,
+      "indentWidth": 2,
       "indentStyle": "space",
       "quoteStyle": "single",
       "arrowParentheses": "asNeeded",
@@ -51,10 +51,6 @@
     }
   },
   "files": {
-    "ignore": [
-      "node_modules/*",
-      "target/*",
-      "**/*/postman/*"
-    ]
+    "ignore": ["node_modules/*", "target/*", "**/*/postman/*"]
   }
 }
