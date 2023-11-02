@@ -29,7 +29,7 @@ export function controller(
     const u = url[i];
 
     if (r === u) continue;
-    if (rgx.test(r)) {
+    if (rgx.test(r) && u) {
       const key = rgx.exec(r)![0].replace(/[[\]]/g, '');
 
       extractedRouterObject.status = 'PARAMS';
