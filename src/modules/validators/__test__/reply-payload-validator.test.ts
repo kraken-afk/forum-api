@@ -1,4 +1,3 @@
-import { expect, test } from 'vitest';
 import { ClientError } from '~/commons/errors/client-error';
 import { replyPayloadValidator } from '~/modules/validators/reply-payload-validator';
 

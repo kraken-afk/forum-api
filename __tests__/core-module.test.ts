@@ -1,5 +1,4 @@
 import { resolve } from 'path';
-import { describe, expect, test } from 'vitest';
 import { controller } from '~/infrastructure/core/controller';
 import { searchForRoutesFile } from '~/infrastructure/core/mod';
 
@@ -17,9 +16,9 @@ describe('Search for router files test case', () => {
   });
 
   test('Each item should include name route.ts', () => {
-    route.forEach(item => {
+    for (const item of route) {
       expect(item.includes('route.ts')).toBe(true);
-    });
+    }
   });
 });
 
@@ -73,8 +72,8 @@ describe('Extract router url function test case', () => {
     expect(r).toHaveProperty('params');
     expect(r.params?.userId).toBe('123');
 
-    expect(r.params?.name).toBeTypeOf('string');
-    expect(r.params?.age).toBeTypeOf('number');
+    expect(typeof r.params?.name).toBe('string');
+    expect(typeof r.params?.age).toBe('number');
 
     expect(r.params?.name).toBe('Romeo');
     expect(r.params?.age).toBe(18);

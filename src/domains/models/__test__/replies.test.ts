@@ -1,5 +1,4 @@
 import { db } from '@test/helpers/db';
-import { describe, expect, test } from 'vitest';
 import { randomStr } from '~/commons/libs/random-str';
 import { CommentsRepository } from '~/infrastructure/repository/comments-repository';
 import { RepliesRepository } from '~/infrastructure/repository/replies-repository';
@@ -30,7 +29,7 @@ describe('Replies repository test suits', () => {
     const reply = await model.create(user.id, comment.id, REPLY);
 
     expect(reply).toHaveProperty('id');
-    expect(reply.id).toBeTypeOf('string');
+    expect(typeof reply.id).toBe('string');
 
     expect(reply).toHaveProperty('owner');
     expect(reply.owner).toBe(user.id);
@@ -48,7 +47,7 @@ describe('Replies repository test suits', () => {
     const selectedReply = await model.select(reply.id);
 
     expect(selectedReply).toHaveProperty('id');
-    expect(selectedReply?.id).toBeTypeOf('string');
+    expect(typeof selectedReply?.id).toBe('string');
 
     expect(selectedReply).toHaveProperty('owner');
     expect(selectedReply?.owner).toBe(user.id);
@@ -67,7 +66,7 @@ describe('Replies repository test suits', () => {
     const updatedReply = await model.update(reply.id, newReply);
 
     expect(updatedReply).toHaveProperty('id');
-    expect(updatedReply.id).toBeTypeOf('string');
+    expect(typeof updatedReply.id).toBe('string');
 
     expect(updatedReply).toHaveProperty('owner');
     expect(updatedReply?.owner).toBe(user.id);

@@ -1,5 +1,4 @@
 import { db } from '@test/helpers/db';
-import { describe, expect, test } from 'vitest';
 import { randomStr } from '~/commons/libs/random-str';
 import { AuthenticationMock } from '~/domains/models/__test__/mock/authentications-repository-mock';
 import { Authentications } from '~/domains/models/authentications';

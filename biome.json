@@ -21,7 +21,7 @@
   },
   "formatter": {
     "enabled": true,
-    "indentSize": 2,
+    "indentWidth": 2,
     "formatWithErrors": true,
     "indentStyle": "space",
     "lineWidth": 80
@@ -29,7 +29,7 @@
   "javascript": {
     "formatter": {
       "enabled": true,
-      "indentSize": 2,
+      "indentWidth": 2,
       "indentStyle": "space",
       "quoteStyle": "single",
       "arrowParentheses": "asNeeded",
@@ -45,12 +45,12 @@
   "json": {
     "formatter": {
       "enabled": true,
-      "indentSize": 2,
+      "indentWidth": 2,
       "indentStyle": "space",
       "lineWidth": 80
     }
   },
   "files": {
-    "ignore": ["node_modules/*", "target/*"]
+    "ignore": ["node_modules/*", "target/*", "**/*/postman/*"]
   }
 }

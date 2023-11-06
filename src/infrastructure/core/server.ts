@@ -1,5 +1,6 @@
 import { createServer } from 'node:http';
 import chalk from 'chalk';
+import { Response as NodeResponse } from 'node-fetch-cjs';
 import { ClientError } from '~/commons/errors/client-error';
 import { FatalError } from '~/commons/errors/fatal-error';
 import { MethodNotAllowedError } from '~/commons/errors/method-not-allowed-error';
@@ -56,11 +57,11 @@ export async function server() {
         async () => await (func as RouteMethod)(request, _response),
       );
 
-      if (!(result instanceof Response)) {
-        throw new FatalError('Return value must be instance of Response');
-      }
+      // if (!(result instanceof NodeResponse)) {
+      //   throw new FatalError('Return value must be instance of NodeResponse');
+      // }
 
-      const body = result.json().catch(error => {
+      const body = (result as NodeResponse).json().catch(error => {
         log.error('Return Type Error', error);
         throw new FatalError(error.message as string);
       });

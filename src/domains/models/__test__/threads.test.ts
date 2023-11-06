@@ -1,5 +1,4 @@
 import { db } from '@test/helpers/db';
-import { describe, expect, test } from 'vitest';
 import { randomStr } from '~/commons/libs/random-str';
 import { ThreadsMock } from '~/domains/models/__test__/mock/threads-repository-mock';
 import { UsersMock } from '~/domains/models/__test__/mock/users-repository-mock';
@@ -28,9 +27,9 @@ describe('Threads repository test suite', () => {
     const user = await insertUser();
     const thread = await model.create(threadTitle, threadBody, user.id);
 
-    expect(thread.id).toBeTypeOf('string');
-    expect(thread.title).toBeTypeOf('string');
-    expect(thread.owner).toBeTypeOf('string');
+    expect(typeof thread.id).toBe('string');
+    expect(typeof thread.title).toBe('string');
+    expect(typeof thread.owner).toBe('string');
 
     expect(thread.title).toBe(threadTitle);
     expect(thread.owner).toBe(user.id);
@@ -55,7 +54,7 @@ describe('Threads repository test suite', () => {
 
     const updatedThread = await model.update(thread.id, { title: newTitle });
 
-    expect(updatedThread.title).toBeTypeOf('string');
+    expect(typeof updatedThread.title).toBe('string');
     expect(updatedThread.title).toBe(newTitle);
     expect(updatedThread.body).toBe(threadBody);
     expect(updatedThread.owner).toBe(thread.owner);

@@ -1,5 +1,4 @@
 import { db } from '@test/helpers/db';
-import { afterAll, beforeEach, describe, expect, test } from 'vitest';
 import { randomStr } from '~/commons/libs/random-str';
 import {
   comments,
@@ -25,11 +24,12 @@ describe('Comments repository test suits', () => {
     await db.delete(users);
   });
 
-  afterAll(async () => {
-    await db.delete(replies);
-    await db.delete(comments);
-    await db.delete(threads);
-    await db.delete(users);
+  afterAll(done => {
+    db.delete(replies)
+      .then(() => db.delete(comments))
+      .then(() => db.delete(threads))
+      .then(() => db.delete(users))
+      .then(() => done());
   });
 
   test('Method check', () => {
@@ -46,7 +46,7 @@ describe('Comments repository test suits', () => {
     const comment = await model.create(user.id, thread.id, COMMENT);
 
     expect(comment).toHaveProperty('id');
-    expect(comment.id).toBeTypeOf('string');
+    expect(typeof comment.id).toBe('string');
 
     expect(comment).toHaveProperty('owner');
     expect(comment.owner).toBe(user.username);
@@ -66,7 +66,7 @@ describe('Comments repository test suits', () => {
     const selectedComment = await model.select(comment.id);
 
     expect(selectedComment).toHaveProperty('id');
-    expect(selectedComment?.id).toBeTypeOf('string');
+    expect(typeof selectedComment?.id).toBe('string');
 
     expect(selectedComment).toHaveProperty('owner');
     expect(selectedComment?.owner).toBe(user.username);
@@ -87,7 +87,7 @@ describe('Comments repository test suits', () => {
     const updatedComment = await model.update(comment.id, newComment);
 
     expect(updatedComment).toHaveProperty('id');
-    expect(updatedComment.id).toBeTypeOf('string');
+    expect(typeof updatedComment.id).toBe('string');
 
     expect(updatedComment).toHaveProperty('owner');
     expect(updatedComment.owner).toBe(user.username);
