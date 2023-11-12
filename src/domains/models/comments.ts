@@ -9,7 +9,7 @@ export class Comments {
   async select(
     id: string,
     options: CommentOption = { all: false },
-  ): Promise<TComment | undefined> {
+  ): Promise<(TComment & { masterId: string }) | undefined> {
     return await this.repository.select(id, options);
   }
 

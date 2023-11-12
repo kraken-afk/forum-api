@@ -1,6 +1,6 @@
 import { resolve } from 'path';
-import { controller } from '~/infrastructure/core/controller';
-import { searchForRoutesFile } from '~/infrastructure/core/mod';
+import { controller } from '~/interfaces/http/core/controller';
+import { searchForRoutesFile } from '~/interfaces/http/core/mod';
 
 describe('Search for router files test case', () => {
   const route: Set<string> = searchForRoutesFile(

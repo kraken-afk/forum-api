@@ -15,10 +15,11 @@ export class RepliesMock implements IReplies {
   async select(
     id: string,
     options: RepliesOptions = { all: false },
-  ): Promise<Reply | undefined> {
+  ): Promise<(Reply & { masterId: string }) | undefined> {
     if (this.reply.id !== id) return undefined;
-    if (options?.all) return this.reply;
-    if (!this.reply.isDeleted) return this.reply;
+    if (options?.all) return { ...this.reply, masterId: this.masterId };
+    if (!this.reply.isDeleted)
+      return { ...this.reply, masterId: this.masterId };
   }
 
   async create(

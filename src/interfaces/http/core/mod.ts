@@ -8,7 +8,7 @@ import { posix } from 'path';
 import { pathToFileURL } from 'url';
 import { Response as NodeResponse } from 'node-fetch-cjs';
 import { NotFoundError } from '~/commons/errors/not-found-error';
-import { controller } from '~/infrastructure/core/controller';
+import { controller } from '~/interfaces/http/core/controller';
 
 /* MODULE */
 export type Request = Prettify<

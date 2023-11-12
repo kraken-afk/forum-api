@@ -11,8 +11,8 @@ import {
   extractPayload,
   findMatchingRoute,
   prepareRoutesHandler,
-} from '~/infrastructure/core/mod';
-import middleware from '~/middleware';
+} from '~/interfaces/http/core/mod';
+import middleware from '~/interfaces/http/middleware';
 
 export async function server() {
   const port = parseInt(process.env.PORT ?? '3000', 10);

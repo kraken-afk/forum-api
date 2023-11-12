@@ -24,11 +24,12 @@ export class CommentsMock implements IComments {
   async select(
     id: string,
     options?: CommentOption,
-  ): Promise<TComment | undefined> {
+  ): Promise<(TComment & { masterId: string }) | undefined> {
     await setTimeout(() => {}, 10);
     if (this.comment.id !== id) return undefined;
-    if (options?.all) return this.comment;
-    if (!this.comment.isDeleted) return this.comment;
+    if (options?.all) return { ...this.comment, masterId: this.comment.master };
+    if (!this.comment.isDeleted)
+      return { ...this.comment, masterId: this.comment.master };
   }
 
   async create(

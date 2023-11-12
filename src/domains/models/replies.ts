@@ -6,7 +6,7 @@ export class Replies {
   async select(
     id: string,
     options: RepliesOptions = { all: false },
-  ): Promise<Reply | undefined> {
+  ): Promise<(Reply & { masterId: string }) | undefined> {
     return await this.repository.select(id, options);
   }
 

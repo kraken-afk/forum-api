@@ -1,8 +1,8 @@
 import { type JwtPayload } from 'jsonwebtoken';
 import { ClientError } from '~/commons/errors/client-error';
 import { UnauthorizedError } from '~/commons/errors/unauthorized-error';
-import type { Request } from '~/infrastructure/core/mod';
-import { Send } from '~/infrastructure/core/mod';
+import type { Request } from '~/interfaces/http/core/mod';
+import { Send } from '~/interfaces/http/core/mod';
 import { authentications } from '~/modules/models/authentications-model';
 import { users } from '~/modules/models/users-model';
 import { jwt } from '~/modules/security/jwt';

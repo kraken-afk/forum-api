@@ -1,5 +1,5 @@
 import { config } from 'dotenv';
-import { server } from '~/infrastructure/core/server';
+import { server } from '~/interfaces/http/core/server';
 
 void config();
 void server();
