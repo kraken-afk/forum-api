@@ -4,7 +4,7 @@ import { searchForRoutesFile } from '~/interfaces/http/core/mod';
 
 describe('Search for router files test case', () => {
   const route: Set<string> = searchForRoutesFile(
-    resolve(__dirname, 'mock/directory-mock'),
+    resolve(__dirname, 'mock/api'),
   );
 
   test('Should be type of Set', () => {

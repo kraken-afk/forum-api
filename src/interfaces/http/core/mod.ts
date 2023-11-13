@@ -32,8 +32,6 @@ export const Send = {
   },
 };
 
-const SOURCE_PATH = 'src/api';
-
 /**
  * Taking all router into memory with ```require() ```
  * and returning a Map with router path as keys
@@ -50,14 +48,17 @@ const SOURCE_PATH = 'src/api';
  * }
  * ```
  */
-export async function prepareRoutesHandler(): Promise<AppRouter> {
-  const apiPath = resolve(process.cwd(), SOURCE_PATH);
+export async function prepareRoutesHandler(
+  source_path: string,
+  output_path: string = __OUT_DIR__,
+): Promise<AppRouter> {
+  const apiPath = resolve(process.cwd(), source_path);
   const router = new Map<string, Record<Partial<HttpMethodKey>, RouterFunc>>();
   const routeList = searchForRoutesFile(apiPath);
 
   for (const route of routeList.values()) {
     if (route) {
-      const targetDir = resolve(posix.join(...__OUT_DIR__.split('/'), 'api'));
+      const targetDir = resolve(posix.join(...output_path.split('/'), 'api'));
       const targetRoute = route.replace(/ts$/, 'js').split('/');
       const modPath = resolve(targetDir, ...targetRoute);
       const module = await import(pathToFileURL(modPath).toString());

@@ -1,7 +1,12 @@
 import { db } from '@test/helpers/db';
 import { randomStr } from '~/commons/libs/random-str';
 import { Users as UsersDomain } from '~/domains/models/users';
-import { users } from '~/infrastructure/database/schema';
+import {
+  comments,
+  replies,
+  threads,
+  users,
+} from '~/infrastructure/database/schema';
 import { UsersRepository } from '~/infrastructure/repository/users-repository';
 import { Users } from '~/use-cases/users';
 
@@ -9,10 +14,16 @@ describe('Users use case test suite', () => {
   const model = new UsersDomain(new UsersRepository(db));
 
   beforeEach(async () => {
+    await db.delete(replies);
+    await db.delete(comments);
+    await db.delete(threads);
     await db.delete(users);
   });
 
   afterAll(async () => {
+    await db.delete(replies);
+    await db.delete(comments);
+    await db.delete(threads);
     await db.delete(users);
   });
 

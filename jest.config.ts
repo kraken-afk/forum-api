@@ -8,6 +8,14 @@ import type { Config } from 'jest';
 const config: Config = {
   // All imported modules in your tests should be mocked automatically
   // automock: false,
+  testEnvironment: 'node',
+  // transformIgnorePatterns: ['node_modules/(?!(\\.pnpm/)?(chalk@5.3.0)/)'],
+  transform: {
+    // '^.+\\.[tj]sx?$' to process js/ts with `ts-jest`
+    // '^.+\\.m?[tj]sx?$' to process js/ts/mjs/mts with `ts-jest`
+    '^.+\\.[tj]s?$': 'babel-jest',
+  },
+  transformIgnorePatterns: ['<rootDir>/node_modules/(?!chalk).+\\.js$'],
 
   // Stop running tests after `n` failures
   // bail: 0,
@@ -66,8 +74,11 @@ const config: Config = {
   // A path to a module which exports an async function that is triggered once after all test suites
   // globalTeardown: undefined,
 
+  globals: {
+    __OUT_DIR__: 'src/interfaces/http/__test__/out/',
+  },
+
   // A set of global variables that need to be available in all test environments
-  // globals: {},
 
   // The maximum amount of workers used to run your tests. Can be specified as % or a number. E.g. maxWorkers: 10% will use 10% of your CPU amount + 1 as the maximum worker number. maxWorkers: 2 will use a maximum of 2 workers.
   // maxWorkers: "50%",
@@ -104,8 +115,7 @@ const config: Config = {
   // An enum that specifies notification mode. Requires { notify: true }
   // notifyMode: "failure-change",
 
-  // A preset that is used as a base for Jest's configuration
-  preset: 'ts-jest',
+  // A preset that is used as a base for Jest's configuratio
 
   // Run tests from one or more projects
   // projects: undefined,
@@ -176,10 +186,6 @@ const config: Config = {
   // testRunner: "jest-circus/runner",
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
-  // transformIgnorePatterns: [
-  //   "\\\\node_modules\\\\",
-  //   "\\.pnp\\.[^\\\\]+$"
-  // ],
 
   // An array of regexp pattern strings that are matched against all modules before the module loader will automatically return a mock for them
   // unmockedModulePathPatterns: undefined,

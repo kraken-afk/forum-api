@@ -1,4 +1,4 @@
-import { createServer } from 'node:http';
+import { createServer } from 'http';
 import chalk from 'chalk';
 import { Response as NodeResponse } from 'node-fetch-cjs';
 import { ClientError } from '~/commons/errors/client-error';
@@ -14,11 +14,9 @@ import {
 } from '~/interfaces/http/core/mod';
 import middleware from '~/interfaces/http/middleware';
 
-export async function server() {
-  const port = parseInt(process.env.PORT ?? '3000', 10);
-  const host = process.env?.HOST;
+export async function server(source_path: string, host: string, port: number) {
   const httpServer = createServer();
-  const router = await prepareRoutesHandler();
+  const router = await prepareRoutesHandler(source_path, __OUT_DIR__);
 
   httpServer.on('request', async (_request, _response) => {
     console.time('response time');
@@ -103,5 +101,8 @@ export async function server() {
   });
 
   httpServer.listen(port, host);
+
   log.info('Listening to', `http://${host}:${port}`);
+
+  return httpServer;
 }
