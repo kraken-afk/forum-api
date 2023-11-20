@@ -1,24 +1,11 @@
-import { db } from '@test/helpers/db';
-import { randomStr } from '~/commons/libs/random-str';
-import { CommentsMock } from '~/domains/models/__test__/mock/comments-repository-mock';
-import { ThreadsMock } from '~/domains/models/__test__/mock/threads-repository-mock';
-import { UsersMock } from '~/domains/models/__test__/mock/users-repository-mock';
 import { Comments } from '~/domains/models/comments';
-import { Threads } from '~/domains/models/threads';
-import { Users } from '~/domains/models/users';
-
-const usersMock = new UsersMock(db);
-const threadsMock = new ThreadsMock(db);
-const commensMock = new CommentsMock(db);
-
-const model = new Comments(commensMock);
-const usersModel = new Users(usersMock);
-const threadModel = new Threads(threadsMock);
+import { IComments } from '~/infrastructure/contracts/T-comments';
 
 describe('Comments model test suits', () => {
-  const COMMENT = 'Lorem ipsum dolor sit amet';
-
   test('Method check', () => {
+    const MockedCommentsRepository = <jest.Mock<IComments>>jest.fn(() => ({}));
+    const model = new Comments(new MockedCommentsRepository());
+
     expect(model).toHaveProperty('select');
     expect(model).toHaveProperty('create');
     expect(model).toHaveProperty('update');
@@ -26,79 +13,163 @@ describe('Comments model test suits', () => {
   });
 
   test('Create comment test case', async () => {
-    const user = await createUser();
-    const thread = await createThread(user);
+    const MockedCommentsRepository = <jest.Mock<IComments>>jest.fn(() => ({
+      async create(ownerId, masterId, content): Promise<TComment> {
+        const threads = ['thread-xxx-1', 'thread-xxx-2'];
+        if (!threads.includes(masterId))
+          throw new Error("Master doesn't exist");
 
-    const comment = await model.create(user.id, thread.id, COMMENT);
+        return {
+          id: 'comment-xxx',
+          content: content,
+          owner: ownerId,
+          date: new Date(),
+        };
+      },
+    }));
+    const model = new Comments(new MockedCommentsRepository());
+    const comment = await model.create(
+      'user-xxx',
+      'thread-xxx-1',
+      'this is comment',
+    );
 
-    expect(comment).toHaveProperty('id');
-    expect(typeof comment.id).toBe('string');
-
-    expect(comment).toHaveProperty('content');
-    expect(comment.content).toBe(COMMENT);
-
+    expect(comment).toHaveProperty('id', 'comment-xxx');
+    expect(comment).toHaveProperty('content', 'this is comment');
+    expect(comment).toHaveProperty('owner', 'user-xxx');
     expect(comment).toHaveProperty('date');
     expect(comment.date).toBeInstanceOf(Date);
   });
 
   test('Select comment test case', async () => {
-    const user = await createUser();
-    const thread = await createThread(user);
-    const comment = await model.create(user.id, thread.id, COMMENT);
+    const MockedCommentsRepository = <jest.Mock<IComments>>jest.fn(() => {
+      const comments = [
+        {
+          id: 'comment-xxx-1',
+          content: 'this is comment',
+          owner: 'user-1',
+          date: new Date(),
+          isDeleted: false,
+        },
+        {
+          id: 'comment-xxx-2',
+          content: 'this is comment',
+          owner: 'user-2',
+          date: new Date(),
+          isDeleted: true,
+        },
+      ];
 
-    const selectedComment = await model.select(comment.id);
+      return {
+        async select(id, options): Promise<TComment | undefined> {
+          return comments.find(comment => {
+            if (options?.all) {
+              return comment.id === id;
+            } else {
+              return comment.id === id && !comment.isDeleted;
+            }
+          });
+        },
+      };
+    });
+    const model = new Comments(new MockedCommentsRepository());
+    const selectedComment = await model.select('comment-xxx-1');
 
-    expect(selectedComment).toHaveProperty('id');
-    expect(typeof selectedComment?.id).toBe('string');
-
-    expect(selectedComment).toHaveProperty('content');
-    expect(selectedComment?.content).toBe(COMMENT);
-
+    expect(selectedComment).toHaveProperty('id', 'comment-xxx-1');
+    expect(selectedComment).toHaveProperty('content', 'this is comment');
+    expect(selectedComment).toHaveProperty('owner', 'user-1');
     expect(selectedComment).toHaveProperty('date');
     expect(selectedComment?.date).toBeInstanceOf(Date);
   });
 
   test('Update comment test case', async () => {
-    const newComment = 'new comment';
-    const user = await createUser();
-    const thread = await createThread(user);
-    const comment = await model.create(user.id, thread.id, COMMENT);
+    const MockedCommentsRepository = <jest.Mock<IComments>>jest.fn(() => {
+      const comments = [
+        {
+          id: 'comment-xxx-1',
+          content: 'this is comment',
+          owner: 'user-1',
+          isDeleted: false,
+        },
+        {
+          id: 'comment-xxx-2',
+          content: 'this is comment',
+          owner: 'user-2',
+          isDeleted: true,
+        },
+      ];
 
-    const updatedComment = await model.update(comment.id, newComment);
+      return {
+        async select(id, options) {
+          return comments.find(comment => {
+            if (options?.all) {
+              return comment.id === id;
+            } else {
+              return comment.id === id && !comment.isDeleted;
+            }
+          });
+        },
+        async update(id, content): Promise<Reply> {
+          const index = comments.findIndex(reply => reply.id === id);
+          if (index === -1) throw new Error("Reply doesn't exist");
 
-    expect(updatedComment).toHaveProperty('id');
-    expect(typeof updatedComment.id).toBe('string');
+          comments[index].content = content;
+          return comments[index];
+        },
+      };
+    });
+    const model = new Comments(new MockedCommentsRepository());
+    const selectedReply = await model.select('comment-xxx-1');
 
-    expect(updatedComment).toHaveProperty('content');
-    expect(updatedComment.content).toBe(newComment);
+    expect(selectedReply).toHaveProperty('id', 'comment-xxx-1');
+    expect(selectedReply).toHaveProperty('content', 'this is comment');
+    expect(selectedReply).toHaveProperty('owner', 'user-1');
 
-    expect(updatedComment).toHaveProperty('date');
-    expect(updatedComment.date).toBeInstanceOf(Date);
+    const updatedReply = await model.update('comment-xxx-1', 'updated comment');
+
+    expect(updatedReply).toHaveProperty('id', 'comment-xxx-1');
+    expect(updatedReply).toHaveProperty('content', 'updated comment');
+    expect(updatedReply).toHaveProperty('owner', 'user-1');
   });
 
   test('Delete Comment', async () => {
-    const user = await createUser();
-    const thread = await createThread(user);
-    const comment = await model.create(user.id, thread.id, COMMENT);
+    const MockedCommentsRepository = <jest.Mock<IComments>>jest.fn(() => {
+      let comments = [
+        {
+          id: 'comment-xxx-1',
+          content: 'this is comment',
+          owner: 'user-1',
+          date: new Date(),
+          isDeleted: false,
+        },
+        {
+          id: 'comment-xxx-2',
+          content: 'this is comment',
+          owner: 'user-2',
+          date: new Date(),
+          isDeleted: true,
+        },
+      ];
 
-    await model.delete(comment.id);
+      return {
+        async delete(commentId): Promise<void> {
+          comments = comments.filter(comment => comment.id !== commentId);
+        },
+        async select(id, options) {
+          return comments.find(comment => {
+            if (options?.all) {
+              return comment.id === id;
+            } else {
+              return comment.id === id && !comment.isDeleted;
+            }
+          });
+        },
+      };
+    });
+    const model = new Comments(new MockedCommentsRepository());
 
-    expect(await model.select(comment.id, { all: false })).toBeFalsy();
+    await model.delete('comment-xxx-1');
+
+    expect(await model.select('comment-xxx-1')).toBe(undefined);
   });
 });
-
-async function createUser() {
-  return await usersModel.create({
-    fullname: 'Jhon doe',
-    username: randomStr(5),
-    password: 'password',
-  });
-}
-
-async function createThread(user: User) {
-  return await threadModel.create(
-    'title',
-    'lorem ipsum dolor sit amet.',
-    user.id,
-  );
-}

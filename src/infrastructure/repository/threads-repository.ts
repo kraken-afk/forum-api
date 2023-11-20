@@ -61,30 +61,28 @@ export class ThreadsRepository implements Ithreads {
       .innerJoin(users, eq(replies.ownerId, users.id))
       .orderBy(asc(replies.createdAt));
 
-    const result: ThreadsDetail = Object.assign(thread, {
+    const result = Object.assign(thread, {
       comments: commentList.map(comment => {
         return {
           id: comment.id,
           username: comment.username,
           date: comment.date,
-          content: comment.isDeleted
-            ? '**komentar telah dihapus**'
-            : comment.content,
+          content: comment.content,
+          isDeleted: comment.isDeleted,
           replies: reply
             .filter(reply => reply.masterId === comment.id)
             .map(reply => ({
               id: reply.id,
               username: reply.username,
               date: reply.date,
-              content: reply.isDeleted
-                ? '**balasan telah dihapus**'
-                : reply.content,
+              content: reply.content,
+              isDeleted: reply.isDeleted,
             })),
         };
       }),
     });
 
-    return result;
+    return result as ThreadsDetail;
   }
 
   async create(

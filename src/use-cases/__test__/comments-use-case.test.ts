@@ -1,121 +1,225 @@
-import { db } from '@test/helpers/db';
 import { ClientError } from '~/commons/errors/client-error';
-import { randomStr } from '~/commons/libs/random-str';
 import { Comments as CommentsDomain } from '~/domains/models/comments';
 import { Threads as ThreadsDomain } from '~/domains/models/threads';
 import { Users as UsersDomain } from '~/domains/models/users';
-import {
-  comments,
-  replies,
-  threads,
-  users,
-} from '~/infrastructure/database/schema';
-import { CommentsRepository } from '~/infrastructure/repository/comments-repository';
-import { ThreadsRepository } from '~/infrastructure/repository/threads-repository';
-import { UsersRepository } from '~/infrastructure/repository/users-repository';
 import { Comments } from '~/use-cases/comments';
 
 describe('Comments use-case test suite', () => {
-  beforeEach(async () => {
-    await db.delete(replies);
-    await db.delete(comments);
-    await db.delete(threads);
-    await db.delete(users);
-  });
-
-  afterAll(async () => {
-    await db.delete(replies);
-    await db.delete(comments);
-    await db.delete(threads);
-    await db.delete(users);
-  });
-
-  const userModel = new UsersDomain(new UsersRepository(db));
-  const threadModel = new ThreadsDomain(new ThreadsRepository(db));
-  const model = new CommentsDomain(new CommentsRepository(db));
-
   test('Create comment test case', async () => {
-    const content = 'this is a comment';
-    const user = await createUser(userModel);
-    const payload = createThreadPayload();
-    const thread = await createThread(
-      { body: payload.body, title: payload.title, ownerId: user.id },
-      threadModel,
-    );
+    const MockedUserDomain = <jest.Mock<UsersDomain>>jest.fn(() => {
+      const users: User[] = [
+        {
+          id: 'user-xxx-1',
+          fullname: 'Jhon doe',
+          username: 'jhondoe',
+        },
+      ];
+
+      return {
+        async select(username): Promise<User | undefined> {
+          return users.find(user => user.username === username);
+        },
+      };
+    });
+
+    const MockedThreadDomain = <jest.Mock<ThreadsDomain>>jest.fn(() => {
+      const threads: Thread[] = [
+        {
+          id: 'thread-xxx-1',
+          body: 'this is body',
+          date: new Date(),
+          owner: 'user-xxx-1',
+          title: 'this is title',
+        },
+      ];
+      return {
+        async create(
+          title,
+          body,
+          ownerId,
+        ): Promise<{ id: string; title: string; owner: string }> {
+          const thread: Thread = {
+            id: 'thread-xxx-1',
+            owner: ownerId,
+            title: title,
+            body: body,
+            date: new Date(),
+          };
+
+          threads.push(thread);
+
+          return thread;
+        },
+        async select(threadId): Promise<Thread | undefined> {
+          return threads.find(thread => thread.id === threadId);
+        },
+      };
+    });
+    const MockedCommentDomain = <jest.Mock<CommentsDomain>>jest.fn(() => ({
+      async create(
+        ownerId: string,
+        _masterId: string,
+        content: string,
+      ): Promise<TComment> {
+        return {
+          id: 'comment-xxx-1',
+          content: content,
+          date: new Date(),
+          owner: ownerId,
+        };
+      },
+    }));
 
     const comment = await Comments.createComment(
-      user.username,
-      thread.id,
-      { content },
-      { comments: model, threads: threadModel, users: userModel },
+      'jhondoe',
+      'thread-xxx-1',
+      { content: 'this is a comment' },
+      {
+        comments: new MockedCommentDomain(),
+        threads: new MockedThreadDomain(),
+        users: new MockedUserDomain(),
+      },
     );
 
-    expect(comment).toHaveProperty('owner', user.username);
-    expect(comment).toHaveProperty('content', content);
+    expect(comment).toHaveProperty('id', 'comment-xxx-1');
+    expect(comment).toHaveProperty('content', 'this is a comment');
+    expect(comment).toHaveProperty('owner', 'user-xxx-1');
     expect(comment).toHaveProperty('date');
     expect(comment.date).toBeInstanceOf(Date);
-    expect(comment).toHaveProperty('id');
-    expect(typeof comment.id).toBe('string');
   });
 
   test('Create comment with bad payload test case', async () => {
-    const user = await createUser(userModel);
-    const payload = createThreadPayload();
-    const thread = await createThread(
-      { body: payload.body, title: payload.title, ownerId: user.id },
-      threadModel,
-    );
+    const MockedUserDomain = <jest.Mock<UsersDomain>>jest.fn(() => {
+      const users: User[] = [
+        {
+          id: 'user-xxx-1',
+          fullname: 'Jhon doe',
+          username: 'jhondoe',
+        },
+      ];
 
-    expect(async () => {
-      await Comments.createComment(
-        user.username,
-        thread.id,
-        { content: '' },
-        { comments: model, threads: threadModel, users: userModel },
-      );
-    }).rejects.toThrow(ClientError);
+      return {
+        async select(username): Promise<User | undefined> {
+          return users.find(user => user.username === username);
+        },
+      };
+    });
+
+    const MockedThreadDomain = <jest.Mock<ThreadsDomain>>jest.fn(() => {
+      const threads: Thread[] = [
+        {
+          id: 'thread-xxx-1',
+          body: 'this is body',
+          date: new Date(),
+          owner: 'user-xxx-1',
+          title: 'this is title',
+        },
+      ];
+      return {
+        async create(
+          title,
+          body,
+          ownerId,
+        ): Promise<{ id: string; title: string; owner: string }> {
+          const thread: Thread = {
+            id: 'thread-xxx-1',
+            owner: ownerId,
+            title: title,
+            body: body,
+            date: new Date(),
+          };
+
+          threads.push(thread);
+
+          return thread;
+        },
+        async select(threadId): Promise<Thread | undefined> {
+          return threads.find(thread => thread.id === threadId);
+        },
+      };
+    });
+    const MockedCommentDomain = <jest.Mock<CommentsDomain>>jest.fn(() => ({
+      async create(
+        ownerId: string,
+        _masterId: string,
+        content: string,
+      ): Promise<TComment> {
+        return {
+          id: 'comment-xxx-1',
+          content: content,
+          date: new Date(),
+          owner: ownerId,
+        };
+      },
+    }));
+
+    expect(
+      async () =>
+        await Comments.createComment(
+          'jhondoe',
+          'thread-xxx-1',
+          // @ts-ignore
+          { content: {} },
+          {
+            comments: new MockedCommentDomain(),
+            threads: new MockedThreadDomain(),
+            users: new MockedUserDomain(),
+          },
+        ),
+    ).rejects.toThrow(ClientError);
   });
 
   test('Delete comment test case', async () => {
-    const content = 'this is a comment';
-    const user = await createUser(userModel);
-    const payload = createThreadPayload();
-    const thread = await createThread(
-      { body: payload.body, title: payload.title, ownerId: user.id },
-      threadModel,
-    );
+    const MockedUserDomain = <jest.Mock<UsersDomain>>jest.fn(() => {
+      const users: User[] = [
+        {
+          id: 'user-xxx-1',
+          fullname: 'Jhon doe',
+          username: 'jhondoe',
+        },
+      ];
 
-    const comment = await Comments.createComment(
-      user.username,
-      thread.id,
-      { content },
-      { comments: model, threads: threadModel, users: userModel },
-    );
-
-    await Comments.deleteComment(comment.id, comment.owner, {
-      comments: model,
-      users: userModel,
+      return {
+        async select(username): Promise<User | undefined> {
+          return users.find(user => user.username === username);
+        },
+      };
+    });
+    const MockedCommentDomain = <jest.Mock<CommentsDomain>>jest.fn(() => {
+      let comments: Array<TComment & { isDeleted: boolean }> = [
+        {
+          content: 'this is a comment',
+          id: 'comment-xxx',
+          date: new Date(),
+          owner: 'jhondoe',
+          isDeleted: false,
+        },
+      ];
+      return {
+        async delete(commentId: string): Promise<void> {
+          comments = comments.filter(comment => comment.id !== commentId);
+        },
+        async select(id, options) {
+          return comments.find(comment => {
+            if (options?.all) {
+              return comment.id === id;
+            } else {
+              return comment.id === id && !comment.isDeleted;
+            }
+          });
+        },
+      };
     });
 
-    expect(await model.select(comment.id)).toBeFalsy();
+    const commentModel = new MockedCommentDomain();
+
+    expect(await commentModel.select('comment-xxx')).toBeTruthy();
+
+    await Comments.deleteComment('comment-xxx', 'jhondoe', {
+      comments: commentModel,
+      users: new MockedUserDomain(),
+    });
+
+    expect(await commentModel.select('comment-xxx')).toBeFalsy();
   });
 });
-
-async function createThread(
-  payload: ThreadPayload & { ownerId: string },
-  domain: ThreadsDomain,
-) {
-  return await domain.create(payload.title, payload.body, payload.ownerId);
-}
-
-async function createUser(domain: UsersDomain) {
-  return await domain.create({
-    fullname: 'jhondoe',
-    password: 'supersecret',
-    username: randomStr(7),
-  });
-}
-
-function createThreadPayload() {
-  return { title: 'lorem', body: 'ipsum dolor sit' };
-}

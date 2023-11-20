@@ -1,14 +1,13 @@
-import { db } from '@test/helpers/db';
-import { randomStr } from '~/commons/libs/random-str';
-import { AuthenticationMock } from '~/domains/models/__test__/mock/authentications-repository-mock';
 import { Authentications } from '~/domains/models/authentications';
-
-// Mock class won't access database
-const mock = new AuthenticationMock(db);
-const model = new Authentications(mock);
+import { IAuthentications } from '~/infrastructure/contracts/T-authentications';
 
 describe('Authentication domain test suite', () => {
   test('Check methods', () => {
+    const MockedAuthenticationRepository = <jest.Mock<IAuthentications>>(
+      jest.fn(() => ({}))
+    );
+    const model = new Authentications(new MockedAuthenticationRepository());
+
     expect(model).toHaveProperty('isRefreshTokenExist');
     expect(model).toHaveProperty('isAccessTokenExist');
     expect(model).toHaveProperty('insert');
@@ -17,54 +16,121 @@ describe('Authentication domain test suite', () => {
   });
 
   test('Insert Token', async () => {
-    const accessToken = randomStr();
-    const refreshToken = randomStr();
+    const MockedAuthenticationRepository = <jest.Mock<IAuthentications>>jest.fn(
+      () => ({
+        async insert(accessToken, refreshToken): Promise<Auth> {
+          return {
+            accessToken,
+            refreshToken,
+          };
+        },
+      }),
+    );
+    const model = new Authentications(new MockedAuthenticationRepository());
+    const auth = await model.insert('access_token', 'refresh_token');
 
-    await model.insert(accessToken, refreshToken);
-
-    expect(await mock.token).toHaveProperty('accessToken', accessToken);
-    expect(await mock.token).toHaveProperty('refreshToken', refreshToken);
+    expect(auth).toHaveProperty('accessToken', 'access_token');
+    expect(auth).toHaveProperty('refreshToken', 'refresh_token');
   });
 
   test('Update Token', async () => {
-    const { refreshToken } = await insert();
-    const newToken = randomStr();
+    const MockedAuthenticationRepository = <jest.Mock<IAuthentications>>jest.fn(
+      () => {
+        const auth: Auth[] = [
+          {
+            accessToken: 'access_token_1',
+            refreshToken: 'refresh_token_1',
+          },
+        ];
 
-    await model.updateToken(newToken, refreshToken);
+        return {
+          async updateToken(newToken, refreshToken) {
+            const index = auth.findIndex(a => a.refreshToken === refreshToken);
 
-    expect(mock.token).toHaveProperty('accessToken', newToken);
+            if (index === -1) throw new Error("token doesn't exist");
+
+            auth[index].accessToken = newToken;
+
+            return { accessToken: newToken };
+          },
+        };
+      },
+    );
+    const model = new Authentications(new MockedAuthenticationRepository());
+    const auth = await model.updateToken('new token', 'refresh_token_1');
+
+    expect(auth).toHaveProperty('accessToken', 'new token');
   });
 
   test('Is refresh token exist', async () => {
-    const { refreshToken } = await insert();
+    const MockedAuthenticationRepository = <jest.Mock<IAuthentications>>jest.fn(
+      () => {
+        const auth: Auth[] = [
+          {
+            accessToken: 'access_token_1',
+            refreshToken: 'refresh_token_1',
+          },
+        ];
 
-    expect(await model.isRefreshTokenExist(refreshToken)).toBeTruthy();
+        return {
+          async isRefreshTokenExist(refreshToken): Promise<boolean> {
+            return auth.some(a => a.refreshToken === refreshToken);
+          },
+        };
+      },
+    );
+    const model = new Authentications(new MockedAuthenticationRepository());
+
+    expect(await model.isRefreshTokenExist('refresh_token_1')).toBeTruthy();
+    expect(await model.isRefreshTokenExist('refresh_token_2')).toBeFalsy();
   });
 
   test('Is access token exist', async () => {
-    const { accessToken } = await insert();
+    const MockedAuthenticationRepository = <jest.Mock<IAuthentications>>jest.fn(
+      () => {
+        const auth: Auth[] = [
+          {
+            accessToken: 'access_token_1',
+            refreshToken: 'refresh_token_1',
+          },
+        ];
 
-    expect(await model.isAccessTokenExist(accessToken)).toBeTruthy();
+        return {
+          async isAccessTokenExist(accessToken): Promise<boolean> {
+            return auth.some(a => a.accessToken === accessToken);
+          },
+        };
+      },
+    );
+    const model = new Authentications(new MockedAuthenticationRepository());
+
+    expect(await model.isAccessTokenExist('access_token_1')).toBeTruthy();
+    expect(await model.isAccessTokenExist('access_token_2')).toBeFalsy();
   });
 
   test('Delete token', async () => {
-    const { refreshToken } = await insert();
+    const MockedAuthenticationRepository = <jest.Mock<IAuthentications>>jest.fn(
+      () => {
+        let auth: Auth[] = [
+          {
+            accessToken: 'access_token_1',
+            refreshToken: 'refresh_token_1',
+          },
+        ];
 
-    await model.deleteToken(refreshToken);
+        return {
+          async deleteToken(refreshToken) {
+            auth = auth.filter(a => a.refreshToken !== refreshToken);
+          },
+          async isAccessTokenExist(accessToken): Promise<boolean> {
+            return auth.some(a => a.accessToken === accessToken);
+          },
+        };
+      },
+    );
+    const model = new Authentications(new MockedAuthenticationRepository());
 
-    expect(mock.token.accessToken).toEqual('');
-    expect(mock.token.refreshToken).toEqual('');
+    await model.deleteToken('refresh_token_1');
+    expect(await model.isAccessTokenExist('access_token_1')).toBeFalsy();
   });
 });
-
-async function insert(): Promise<{
-  accessToken: string;
-  refreshToken: string;
-}> {
-  const accessToken = randomStr();
-  const refreshToken = randomStr();
-
-  await model.insert(accessToken, refreshToken);
-
-  return { accessToken, refreshToken };
-}

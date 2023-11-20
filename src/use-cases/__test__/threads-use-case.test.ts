@@ -1,128 +1,169 @@
-import { db } from '@test/helpers/db';
 import { ClientError } from '~/commons/errors/client-error';
-import { randomStr } from '~/commons/libs/random-str';
-import { Comments as CommentsDomain } from '~/domains/models/comments';
-import { Replies as RepliesDomain } from '~/domains/models/replies';
+import { UnauthorizedError } from '~/commons/errors/unauthorized-error';
 import { Threads as ThreadsDomain } from '~/domains/models/threads';
 import { Users as UsersDomain } from '~/domains/models/users';
-import {
-  comments,
-  replies,
-  threads,
-  users,
-} from '~/infrastructure/database/schema';
-import { CommentsRepository } from '~/infrastructure/repository/comments-repository';
-import { RepliesRepository } from '~/infrastructure/repository/replies-repository';
-import { ThreadsRepository } from '~/infrastructure/repository/threads-repository';
-import { UsersRepository } from '~/infrastructure/repository/users-repository';
 import { Threads } from '~/use-cases/threads';
 
 describe('Threads use-case test suite', () => {
-  beforeEach(async () => {
-    await db.delete(replies);
-    await db.delete(comments);
-    await db.delete(threads);
-    await db.delete(users);
-  });
-
-  afterAll(async () => {
-    await db.delete(replies);
-    await db.delete(comments);
-    await db.delete(threads);
-    await db.delete(users);
-  });
-
-  const userModel = new UsersDomain(new UsersRepository(db));
-  const repliesModel = new RepliesDomain(new RepliesRepository(db));
-  const commentsModel = new CommentsDomain(new CommentsRepository(db));
-  const model = new ThreadsDomain(new ThreadsRepository(db));
-  const payload = {
-    title: 'this is title',
-    body: 'lorem ipsum dolor sit amet.',
-  };
-
   test('Create thread test case', async () => {
-    const user = await createUser(userModel);
-    const newThread = await Threads.createThread(user.username, payload, {
-      threads: model,
-      users: userModel,
-    });
+    const MockedUserDomain = <jest.Mock<UsersDomain>>jest.fn(() => {
+      const users: User[] = [
+        {
+          id: 'user-xxx-1',
+          fullname: 'Greg',
+          username: 'greg',
+        },
+      ];
 
-    expect(newThread).toHaveProperty('title', payload.title);
-    expect(newThread).toHaveProperty('id');
-    expect(typeof newThread.id).toBe('string');
+      return {
+        async select(username): Promise<User | undefined> {
+          return users.find(user => user.username === username);
+        },
+      };
+    });
+    const MockedThreadDomain = <jest.Mock<ThreadsDomain>>jest.fn(() => ({
+      async create(
+        title,
+        _body,
+        ownerId,
+      ): Promise<{ id: string; title: string; owner: string }> {
+        return { id: 'thread-xxx-1', owner: ownerId, title: title };
+      },
+    }));
+    const { threads, users } = {
+      threads: new MockedThreadDomain(),
+      users: new MockedUserDomain(),
+    };
+
+    const newThread = await Threads.createThread(
+      'greg',
+      { title: 'title 1', body: 'body 1' },
+      { threads, users },
+    );
+
+    expect(newThread).toHaveProperty('id', 'thread-xxx-1');
+    expect(newThread).toHaveProperty('title', 'title 1');
+    expect(newThread).toHaveProperty('owner', 'user-xxx-1');
+
+    expect(
+      async () =>
+        await Threads.createThread(
+          'Jhon',
+          { title: 'title 1', body: 'body 1' },
+          { threads, users },
+        ),
+    ).rejects.toThrow(UnauthorizedError);
   });
 
   test('Create thread test case with bad payload', async () => {
-    const user = await createUser(userModel);
-    const payload = { title: 'test', body: '' };
+    const MockedUserDomain = <jest.Mock<UsersDomain>>jest.fn(() => {
+      const users: User[] = [
+        {
+          id: 'user-xxx-1',
+          fullname: 'Greg',
+          username: 'greg',
+        },
+      ];
 
-    expect(async () => {
-      await Threads.createThread(user.username, payload, {
-        threads: model,
-        users: userModel,
-      });
-    }).rejects.toThrow(ClientError);
+      return {
+        async select(username): Promise<User | undefined> {
+          return users.find(user => user.username === username);
+        },
+      };
+    });
+    const MockedThreadDomain = <jest.Mock<ThreadsDomain>>jest.fn(() => ({
+      async create(
+        title,
+        _body,
+        ownerId,
+      ): Promise<{ id: string; title: string; owner: string }> {
+        return { id: 'thread-xxx-1', owner: ownerId, title: title };
+      },
+    }));
+    const { threads, users } = {
+      threads: new MockedThreadDomain(),
+      users: new MockedUserDomain(),
+    };
+
+    expect(
+      async () =>
+        await Threads.createThread(
+          'greg',
+          // @ts-ignore
+          { title: [], body: '' },
+          { threads, users },
+        ),
+    ).rejects.toThrow(ClientError);
   });
 
-  test('Get thread with comments and replies test case', async () => {
-    const threadTitle = 'this is title';
-    const threadBody = 'this is body';
-    const userA = await createUser(userModel);
-    const userB = await createUser(userModel);
-    const thread = await model.create(threadTitle, threadBody, userA.id);
-    const commentContent = 'this is a comment';
-    const replyContent = 'this is a reply';
-    const returnedComment = await commentsModel.create(
-      userB.id,
-      thread.id,
-      commentContent,
+  test('Get thread with comments', async () => {
+    const MockedThreadDomain = <jest.Mock<ThreadsDomain>>jest.fn(() => {
+      const threads: ThreadsDetail[] = [
+        {
+          id: 'thread-xxx',
+          title: 'title 1',
+          body: 'body 1',
+          date: new Date(),
+          username: 'jhondoe',
+          comments: [
+            {
+              id: 'comment-xxx',
+              username: 'romeo',
+              content: 'this is comment',
+              date: new Date(),
+              replies: [
+                {
+                  id: 'reply-xxx',
+                  content: 'this is reply',
+                  date: new Date(),
+                  username: 'sukuna',
+                },
+              ],
+            },
+          ],
+        },
+      ];
+
+      return {
+        async getThreadsWithComments(
+          threadId,
+        ): Promise<ThreadsDetail | undefined> {
+          return threads.find(thread => thread.id === threadId);
+        },
+      };
+    });
+    const thread = await Threads.getThreadDetail(
+      'thread-xxx',
+      new MockedThreadDomain(),
     );
-    const returnedReplies = await repliesModel.create(
-      userA.id,
-      returnedComment.id,
-      replyContent,
+
+    expect(thread).toHaveProperty('id', 'thread-xxx');
+    expect(thread).toHaveProperty('title', 'title 1');
+    expect(thread).toHaveProperty('body', 'body 1');
+    expect(thread).toHaveProperty('username', 'jhondoe');
+    expect(thread).toHaveProperty('date');
+    expect(thread).toHaveProperty('comments');
+
+    expect(thread?.date).toBeInstanceOf(Date);
+    expect(thread?.comments).toBeInstanceOf(Array);
+
+    expect(thread?.comments[0]).toHaveProperty('id', 'comment-xxx');
+    expect(thread?.comments[0]).toHaveProperty('username', 'romeo');
+    expect(thread?.comments[0]).toHaveProperty('content', 'this is comment');
+    expect(thread?.comments[0]).toHaveProperty('date');
+    expect(thread?.comments[0]).toHaveProperty('replies');
+
+    expect(thread?.comments[0].date).toBeInstanceOf(Date);
+    expect(thread?.comments[0].replies).toBeInstanceOf(Array);
+
+    expect(thread?.comments[0].replies[0]).toHaveProperty('id', 'reply-xxx');
+    expect(thread?.comments[0].replies[0]).toHaveProperty('username', 'sukuna');
+    expect(thread?.comments[0].replies[0]).toHaveProperty(
+      'content',
+      'this is reply',
     );
+    expect(thread?.comments[0].replies[0]).toHaveProperty('date');
 
-    const threadWithComments = await Threads.getThreadDetail(thread.id, model);
-
-    expect(threadWithComments).toHaveProperty('id', thread.id);
-    expect(threadWithComments).toHaveProperty('title', thread.title);
-    expect(threadWithComments).toHaveProperty('body', threadBody);
-    expect(threadWithComments).toHaveProperty('username', userA.username);
-
-    expect(threadWithComments).toHaveProperty('date');
-    expect(threadWithComments?.date).toBeInstanceOf(Date);
-
-    expect(threadWithComments).toHaveProperty('comments');
-    expect(Array.isArray(threadWithComments?.comments)).toBeTruthy();
-    expect(threadWithComments?.comments.length).toEqual(1);
-
-    const comment = threadWithComments?.comments[0];
-
-    expect(comment).toHaveProperty('id', returnedComment.id);
-    expect(comment).toHaveProperty('username', userB.username);
-    expect(comment).toHaveProperty('date', comment?.date);
-    expect(comment).toHaveProperty('content', commentContent);
-    expect(comment).toHaveProperty('replies');
-    expect(Array.isArray(comment?.replies)).toBeTruthy();
-    expect(comment?.replies.length).toEqual(1);
-
-    const reply = comment?.replies[0];
-
-    expect(reply).toHaveProperty('id', returnedReplies.id);
-    expect(reply).toHaveProperty('username', userA.username);
-    expect(reply).toHaveProperty('content', replyContent);
-
-    expect(reply).toHaveProperty('date');
-    expect(reply?.date).toBeInstanceOf(Date);
+    expect(thread?.comments[0].replies[0].date).toBeInstanceOf(Date);
   });
 });
-
-async function createUser(domain: UsersDomain) {
-  return await domain.create({
-    fullname: 'jhondoe',
-    password: 'supersecret',
-    username: randomStr(7),
-  });
-}

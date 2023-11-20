@@ -74,11 +74,13 @@ type ThreadsDetail = {
     username: string;
     date: Date;
     content: string;
+    isDeleted: boolean;
     replies: Array<{
       id: string;
       content: string;
       date: Date;
       username: string;
+      isDeleted: boolean;
     }>;
   }>;
 };

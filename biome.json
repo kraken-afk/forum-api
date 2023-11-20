@@ -51,6 +51,6 @@
     }
   },
   "files": {
-    "ignore": ["node_modules/*", "target/*", "**/*/postman/*"]
+    "ignore": ["node_modules/*", "target/*", "**/*/postman/*", "coverage/*"]
   }
 }

@@ -1,47 +1,45 @@
-import { db } from '@test/helpers/db';
-import { randomStr } from '~/commons/libs/random-str';
 import { Users as UsersDomain } from '~/domains/models/users';
-import {
-  comments,
-  replies,
-  threads,
-  users,
-} from '~/infrastructure/database/schema';
-import { UsersRepository } from '~/infrastructure/repository/users-repository';
 import { Users } from '~/use-cases/users';
 
 describe('Users use case test suite', () => {
-  const model = new UsersDomain(new UsersRepository(db));
-
-  beforeEach(async () => {
-    await db.delete(replies);
-    await db.delete(comments);
-    await db.delete(threads);
-    await db.delete(users);
-  });
-
-  afterAll(async () => {
-    await db.delete(replies);
-    await db.delete(comments);
-    await db.delete(threads);
-    await db.delete(users);
-  });
-
   test('Create User test case', async () => {
-    const userPayload = createUserPayload();
-    const newUser = await Users.createUser(userPayload, model);
+    const MockedUserDomain = <jest.Mock<UsersDomain>>jest.fn(() => {
+      const users: User[] = [
+        {
+          id: 'user-xxx-1',
+          fullname: 'Jhon doe',
+          username: 'jhondoe',
+        },
+      ];
 
-    expect(newUser).toHaveProperty('fullname', userPayload.fullname);
-    expect(newUser).toHaveProperty('username', userPayload.username);
+      return {
+        async create(payload): Promise<User> {
+          const user = {
+            id: 'user-xxx',
+            fullname: payload.fullname,
+            username: payload.username,
+          };
+
+          users.push(user);
+
+          return user;
+        },
+        async isUsernameExist(username) {
+          return users.some(user => user.username === username);
+        },
+      };
+    });
+    const model = new MockedUserDomain();
+    const payload = {
+      fullname: 'Megumi Fushiguro',
+      username: 'megumumi',
+      password: 'secret',
+    };
+    const newUser = await Users.createUser(payload, model);
+
+    expect(newUser).toHaveProperty('fullname', payload.fullname);
+    expect(newUser).toHaveProperty('username', payload.username);
     expect(newUser).toHaveProperty('id');
     expect(typeof newUser.id).toBe('string');
   });
 });
-
-function createUserPayload(): UserPayload {
-  return {
-    fullname: 'Jhondoe',
-    username: randomStr(7),
-    password: 'supersecret',
-  };
-}

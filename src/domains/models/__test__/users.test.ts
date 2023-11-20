@@ -1,14 +1,11 @@
-import { db } from '@test/helpers/db';
-import { randomStr } from '~/commons/libs/random-str';
-import { UsersMock } from '~/domains/models/__test__/mock/users-repository-mock';
 import { Users } from '~/domains/models/users';
-
-// Mock class won't access database
-const mock = new UsersMock(db);
-const model = new Users(mock);
+import type { IUsers } from '~/infrastructure/contracts/T-users';
 
 describe('Users repository test suite', () => {
   test('Methods check', () => {
+    const MockedUserRepository = <jest.Mock<IUsers>>jest.fn(() => ({}));
+    const model = new Users(new MockedUserRepository());
+
     expect(model).toHaveProperty('create');
     expect(model).toHaveProperty('select');
     expect(model).toHaveProperty('delete');
@@ -17,64 +14,120 @@ describe('Users repository test suite', () => {
   });
 
   test('Create user', async () => {
-    const payload = createUserPayload();
+    const MockedUserRepository = <jest.Mock<IUsers>>jest.fn(() => ({
+      async create(payload): Promise<User> {
+        return {
+          id: 'xxx',
+          fullname: payload.fullname,
+          username: payload.username,
+        };
+      },
+    }));
+    const model = new Users(new MockedUserRepository());
+    const payload = {
+      fullname: 'Jhon doe',
+      username: 'jhnd11',
+      password: 'supersecret',
+    };
     const user = await model.create(payload);
 
-    expect(mock.user.id).toEqual(user.id);
+    expect(user).toHaveProperty('id', 'xxx');
+    expect(user).toHaveProperty('fullname', payload.fullname);
+    expect(user).toHaveProperty('username', payload.username);
   });
 
   test('Check password and username', async () => {
-    const payload = createUserPayload();
+    const MockedUserRepository = <jest.Mock<IUsers>>jest.fn(() => ({
+      async isPasswordAndUsernameMatch(username, password): Promise<boolean> {
+        const users = {
+          username: 'Romeo',
+          password: 'supersecret',
+        };
 
-    await insertUser(payload);
+        return username === users.username && password === users.password;
+      },
+    }));
+    const model = new Users(new MockedUserRepository());
 
     expect(
-      await model.isPasswordAndUsernameMatch(
-        payload.username,
-        payload.password,
-      ),
+      await model.isPasswordAndUsernameMatch('Romeo', 'supersecret'),
     ).toBeTruthy();
     expect(
-      await model.isPasswordAndUsernameMatch(payload.username, 'wrongpassword'),
+      await model.isPasswordAndUsernameMatch('Romeo', 'wrongpassword'),
     ).toBeFalsy();
   });
 
   test('Check username availability', async () => {
-    const payload = createUserPayload();
-    const user = await insertUser(payload);
+    const MockedUserRepository = <jest.Mock<IUsers>>jest.fn(() => ({
+      async isUsernameExist(username): Promise<boolean> {
+        const users = ['Itadori', 'Gojo satouru', 'Sukuna'];
 
-    expect(await model.isUsernameExist(user.username)).toBeTruthy();
+        return users.includes(username);
+      },
+    }));
+    const model = new Users(new MockedUserRepository());
+
+    expect(await model.isUsernameExist('Sukuna')).toBeTruthy();
     expect(await model.isUsernameExist('xxx')).toBeFalsy();
   });
 
   test('Select user by username', async () => {
-    const payload = createUserPayload();
-    const { username, fullname, id } = await insertUser(payload);
-    const user = await model.select(username);
+    const MockedUserRepository = <jest.Mock<IUsers>>jest.fn(() => ({
+      async select(username): Promise<User | undefined> {
+        const users: User[] = [
+          {
+            fullname: 'Jhon doe',
+            id: 'jdh1',
+            username: 'jhondoe',
+          },
+          {
+            fullname: 'Toji Fushiguro',
+            id: 'tji11',
+            username: 'toji',
+          },
+        ];
 
-    expect(user).toHaveProperty('fullname', fullname);
-    expect(user).toHaveProperty('username', username);
-    expect(user).toHaveProperty('id', id);
+        return users.find(user => user.username === username);
+      },
+    }));
+    const model = new Users(new MockedUserRepository());
+    const userThatExist = await model.select('toji');
+
+    expect(userThatExist).toHaveProperty('fullname', 'Toji Fushiguro');
+    expect(userThatExist).toHaveProperty('username', 'toji');
+    expect(userThatExist).toHaveProperty('id', 'tji11');
+
+    const userDidntExist = await model.select('kaori');
+    expect(userDidntExist).toBe(undefined);
   });
 
   test('Delete user', async () => {
-    const payload = createUserPayload();
-    const { id } = await insertUser(payload);
+    const MockedUserRepository = <jest.Mock<IUsers>>jest.fn(() => {
+      let users: User[] = [
+        {
+          fullname: 'Jhon doe',
+          id: 'jdh1',
+          username: 'jhondoe',
+        },
+        {
+          fullname: 'Toji Fushiguro',
+          id: 'tji11',
+          username: 'toji',
+        },
+      ];
+      return {
+        async delete(id): Promise<void> {
+          users = users.filter(user => user.id !== id);
+        },
+        async select(username): Promise<User | undefined> {
+          return users.find(user => user.username === username);
+        },
+      };
+    });
+    const model = new Users(new MockedUserRepository());
 
-    await model.delete(id);
+    await model.delete('jdh1');
 
-    expect(await model.select(id)).toBeFalsy();
+    expect(await model.select('jdh1')).toBeFalsy();
   });
 });
-
-async function insertUser(payload: UserPayload) {
-  return await model.create(payload);
-}
-
-function createUserPayload(): UserPayload {
-  return {
-    fullname: 'Jhon doe',
-    username: randomStr(7),
-    password: 'supersecret',
-  };
-}

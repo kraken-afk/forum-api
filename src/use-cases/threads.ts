@@ -45,6 +45,20 @@ export namespace Threads {
     if (!thread)
       throw new NotFoundError(`Thread with id: ${threadId} cannot be find.`);
 
+    thread.comments = thread?.comments.map(comment => {
+      comment.replies = comment.replies.map(reply => {
+        reply.content = reply.isDeleted
+          ? '**balasan telah dihapus**'
+          : reply.content;
+        return reply;
+      });
+      comment.content = comment.isDeleted
+        ? '**komentar telah dihapus**'
+        : comment.content;
+
+      return comment;
+    });
+
     return thread;
   }
 }
