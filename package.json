@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "src/main.ts",
   "scripts": {
-    "test": "jest --forceExit --runInBand --coverage",
+    "test": "jest --forceExit --coverage",
     "start": "node --experimental-modules target/release/main.js",
     "dev": "nodemon",
     "build": "node esbuild.mjs",

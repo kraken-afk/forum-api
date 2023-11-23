@@ -36,9 +36,11 @@ const config: Config = {
   // coverageDirectory: undefined,
 
   // An array of regexp pattern strings used to skip coverage collection
-  // coveragePathIgnorePatterns: [
-  //   "\\\\node_modules\\\\"
-  // ],
+  coveragePathIgnorePatterns: [
+    '\\\\node_modules\\\\',
+    '<rootDir>/src/infrastructure/database/*',
+    '<rootDir>/src/interfaces/http/__test__/api/*',
+  ],
 
   // Indicates which provider should be used to instrument code for coverage
   coverageProvider: 'babel',

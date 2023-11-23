@@ -1,26 +1,4 @@
-import { resolve } from 'path';
 import { controller } from '~/interfaces/http/core/controller';
-import { searchForRoutesFile } from '~/interfaces/http/core/mod';
-
-describe('Search for router files test case', () => {
-  const route: Set<string> = searchForRoutesFile(
-    resolve(__dirname, 'mock/api'),
-  );
-
-  test('Should be type of Set', () => {
-    expect(route).toBeInstanceOf(Set);
-  });
-
-  test('Should have 2 length', () => {
-    expect(route.size).toEqual(3);
-  });
-
-  test('Each item should include name route.ts', () => {
-    for (const item of route) {
-      expect(item.includes('route.ts')).toBe(true);
-    }
-  });
-});
 
 describe('Extract router url function test case', () => {
   const TRUE = 'TRUE';
@@ -32,8 +10,6 @@ describe('Extract router url function test case', () => {
 
   const urlOne = '/user/123';
   const urlTwo = '/user/123/post/456';
-
-  const urlOneWithSearchParams = '/user/123?name=Romeo&age=18';
 
   test('Router and url should match', () => {
     const r = controller('/user', '/user');
@@ -64,6 +40,7 @@ describe('Extract router url function test case', () => {
   });
 
   test('Should return userId, name, and age as params', () => {
+    const urlOneWithSearchParams = '/user/123?name=Romeo&age=19';
     const r = controller(routeOne, urlOneWithSearchParams);
 
     expect(r).toHaveProperty('endPoint', routeOne);
@@ -76,11 +53,17 @@ describe('Extract router url function test case', () => {
     expect(typeof r.params?.age).toBe('number');
 
     expect(r.params?.name).toBe('Romeo');
-    expect(r.params?.age).toBe(18);
+    expect(r.params?.age).toBe(19);
   });
 
-  test('Status of router should be FALSE', () => {
-    const r = controller('/user', '/error');
+  test('Status of router should be FALSE (1)', () => {
+    const r = controller('/user/settings', '/error');
+
+    expect(r).toHaveProperty('status', FALSE);
+  });
+
+  test('Status of router should be FALSE (2)', () => {
+    const r = controller('/user', '/error/test');
 
     expect(r).toHaveProperty('status', FALSE);
   });

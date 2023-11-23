@@ -11,23 +11,24 @@ type ThreadsUseCaseModels = {
   threads: ThreadsModel;
 };
 
-export namespace Threads {
-  export async function createThread(
+export class ThreadsUseCase {
+  constructor(private models: ThreadsUseCaseModels) {}
+
+  async createThread(
     ownerUsername: string,
     payload: ThreadPayload,
-    model: ThreadsUseCaseModels = { users, threads },
   ): Promise<{
     id: string;
     title: string;
     owner: string;
   }> {
-    const user = await model.users.select(ownerUsername);
+    const user = await this.models.users.select(ownerUsername);
 
     threadPayloadValidator(payload);
 
     if (!user) throw new UnauthorizedError('User not listed on database');
 
-    const addedThread = await model.threads.create(
+    const addedThread = await this.models.threads.create(
       payload.title,
       payload.body,
       user.id,
@@ -36,11 +37,8 @@ export namespace Threads {
     return addedThread;
   }
 
-  export async function getThreadDetail(
-    threadId: string,
-    model: ThreadsModel = threads,
-  ): Promise<ThreadsDetail | undefined> {
-    const thread = await model.getThreadsWithComments(threadId);
+  async getThreadDetail(threadId: string): Promise<ThreadsDetail | undefined> {
+    const thread = await this.models.threads.getThreadsWithComments(threadId);
 
     if (!thread)
       throw new NotFoundError(`Thread with id: ${threadId} cannot be find.`);
@@ -62,3 +60,5 @@ export namespace Threads {
     return thread;
   }
 }
+
+export const Threads = new ThreadsUseCase({ threads, users });

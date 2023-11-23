@@ -24,15 +24,16 @@ type RepliesUseCaseModels = {
   replies: RepliesModel;
 };
 
-export namespace Replies {
-  export async function createReply(
+export class RepliesUseCase {
+  constructor(private models: RepliesUseCaseModels) {}
+
+  async createReply(
     ownerUsername: string,
     masters: ReplyMaster,
     payload: ReplyPayload,
-    models: RepliesUseCaseModels = { comments, threads, users, replies },
   ): Promise<Reply> {
     replyPayloadValidator(payload);
-    const { comments, threads, users, replies } = models;
+    const { comments, threads, users, replies } = this.models;
     const [user, comment, thread] = await Promise.all([
       users.select(ownerUsername),
       comments.select(masters.commentId),
@@ -59,18 +60,12 @@ export namespace Replies {
     return addedReply;
   }
 
-  export async function deleteReply(
+  async deleteReply(
     replyId: string,
     ownerUsername: string,
     masters: ReplyMaster,
-    models: RepliesUseCaseModels = {
-      comments,
-      threads,
-      users,
-      replies,
-    },
   ): Promise<void> {
-    const { comments, threads, users, replies } = models;
+    const { comments, threads, users, replies } = this.models;
     const [user, comment, thread, reply] = await Promise.all([
       users.select(ownerUsername),
       comments.select(masters.commentId),
@@ -105,3 +100,10 @@ export namespace Replies {
     void (await replies.delete(reply.id));
   }
 }
+
+export const Replies = new RepliesUseCase({
+  users,
+  threads,
+  comments,
+  replies,
+});

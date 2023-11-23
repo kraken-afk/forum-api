@@ -9,7 +9,9 @@ export class RepliesRepository implements IReplies {
   async select(
     id: string,
     options: RepliesOptions = { all: false },
-  ): Promise<(Reply & { masterId: string }) | undefined> {
+  ): Promise<
+    (Reply & { masterId: string; isDeleted: boolean | null }) | undefined
+  > {
     const [data] = options.all
       ? await this.db
           .select()
@@ -29,6 +31,7 @@ export class RepliesRepository implements IReplies {
       content: data.replies.content,
       owner: data.users.id,
       masterId: data.replies.masterId,
+      isDeleted: data.replies.isDeleted,
     };
 
     return result;

@@ -15,16 +15,17 @@ type CommentsUseCaseModels = {
   comments: CommentsModel;
 };
 
-export namespace Comments {
-  export async function createComment(
+export class CommentsUseCase {
+  constructor(private models: CommentsUseCaseModels) {}
+
+  async createComment(
     ownerUsername: string,
     masterId: string,
     payload: CommentPayload,
-    models: CommentsUseCaseModels = { users, comments, threads },
   ): Promise<TComment> {
     commentPayloadValidator(payload);
 
-    const { users, threads, comments } = models;
+    const { users, threads, comments } = this.models;
     const [user, thread] = await Promise.all([
       users.select(ownerUsername),
       threads.select(masterId),
@@ -44,12 +45,8 @@ export namespace Comments {
     return addedComment;
   }
 
-  export async function deleteComment(
-    commentId: string,
-    ownerUsername: string,
-    models: Omit<CommentsUseCaseModels, 'threads'> = { comments, users },
-  ): Promise<void> {
-    const { comments, users } = models;
+  async deleteComment(commentId: string, ownerUsername: string): Promise<void> {
+    const { comments, users } = this.models;
     const [comment, user] = await Promise.all([
       comments.select(commentId),
       users.select(ownerUsername),
@@ -66,3 +63,5 @@ export namespace Comments {
     return await comments.delete(commentId);
   }
 }
+
+export const Comments = new CommentsUseCase({ comments, threads, users });

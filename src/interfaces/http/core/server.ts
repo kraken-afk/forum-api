@@ -1,4 +1,7 @@
-import { createServer } from 'http';
+import {
+  type IncomingMessage as NodeIncomingMessage,
+  createServer,
+} from 'http';
 import chalk from 'chalk';
 import { Response as NodeResponse } from 'node-fetch-cjs';
 import { ClientError } from '~/commons/errors/client-error';
@@ -8,7 +11,6 @@ import { log } from '~/commons/libs/log';
 import {
   type Request,
   type RouteMethod,
-  extractPayload,
   findMatchingRoute,
   prepareRoutesHandler,
 } from '~/interfaces/http/core/mod';
@@ -97,7 +99,7 @@ export async function server(source_path: string, host: string, port: number) {
       _response.end(JSON.stringify(response));
     }
     console.timeEnd('response time');
-    console.log();
+    console.log('\n');
   });
 
   httpServer.listen(port, host);
@@ -105,4 +107,15 @@ export async function server(source_path: string, host: string, port: number) {
   log.info('Listening to', `http://${host}:${port}`);
 
   return httpServer;
+}
+
+function extractPayload(req: NodeIncomingMessage): Promise<string> {
+  return new Promise((resolve, reject) => {
+    let data = '';
+    req.on('data', chunk => {
+      data += chunk;
+    });
+    req.on('end', () => resolve(data));
+    req.on('error', err => reject(err));
+  });
 }

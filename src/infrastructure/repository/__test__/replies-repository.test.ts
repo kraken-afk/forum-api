@@ -75,6 +75,45 @@ describe('Replies repository test suits', () => {
 
     expect(selectedReply).toHaveProperty('content');
     expect(selectedReply?.content).toBe(REPLY);
+
+    expect(selectedReply).toHaveProperty('isDeleted');
+    expect(selectedReply?.isDeleted).toBe(false);
+  });
+
+  test('Select reply test case include deleted replies', async () => {
+    const user = await createUser();
+    const thread = await createThread(user);
+    const comment = await commentsModel.create(user.id, thread.id, COMMENT);
+    const reply = await model.create(user.id, comment.id, REPLY);
+
+    // delete reply
+    await model.delete(reply.id);
+
+    const selectedReply = await model.select(reply.id, { all: true });
+
+    expect(selectedReply).toHaveProperty('id');
+    expect(typeof selectedReply?.id).toBe('string');
+
+    expect(selectedReply).toHaveProperty('owner');
+    expect(selectedReply?.owner).toBe(user.id);
+
+    expect(selectedReply).toHaveProperty('content');
+    expect(selectedReply?.content).toBe(REPLY);
+
+    expect(selectedReply).toHaveProperty('isDeleted');
+    expect(selectedReply?.isDeleted).toBe(true);
+  });
+
+  test("Select reply that didn't exist", async () => {
+    const user = await createUser();
+    const thread = await createThread(user);
+    const comment = await commentsModel.create(user.id, thread.id, COMMENT);
+
+    await model.create(user.id, comment.id, REPLY);
+
+    const selectedReply = await model.select('xxx');
+
+    expect(selectedReply).toBe(undefined);
   });
 
   test('Update reply test case', async () => {

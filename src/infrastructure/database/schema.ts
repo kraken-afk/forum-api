@@ -70,7 +70,9 @@ export const replies = pgTable('replies', {
   ownerId: varchar('ownerId')
     .references(() => users.id)
     .notNull(),
-  isDeleted: boolean('isDeleted').$default(() => false),
+  isDeleted: boolean('isDeleted')
+    .$default(() => false)
+    .notNull(),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
   updatedAt: timestamp('updatedAt').defaultNow().notNull(),
 });

@@ -3,17 +3,18 @@ import { Users as UsersModel } from '~/domains/models/users';
 import { users } from '~/modules/models/users-model';
 import { userPayloadValidator } from '~/modules/validators/user-payload-validator';
 
-export namespace Users {
-  export async function createUser(
-    payload: UserPayload,
-    model: UsersModel = users,
-  ): Promise<User> {
+export class UsersUseCase {
+  constructor(private model: UsersModel) {}
+
+  async createUser(payload: UserPayload): Promise<User> {
     userPayloadValidator(payload);
 
-    if (await model.isUsernameExist(payload.username))
+    if (await this.model.isUsernameExist(payload.username))
       throw new ClientError('username tidak tersedia');
 
-    const newUser = await model.create(payload);
+    const newUser = await this.model.create(payload);
     return newUser;
   }
 }
+
+export const Users = new UsersUseCase(users);
