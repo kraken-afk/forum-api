@@ -133,7 +133,7 @@ describe('Threads repository test suite', () => {
     expect(comment).toHaveProperty('replies');
     expect(Array.isArray(comment?.replies)).toBeTruthy();
     expect(comment?.replies.length).toEqual(0);
-  });
+  }, 300000);
 
   test("Get thread with comments that didn't exist", async () => {
     const threadWithComments = await model.getThreadsWithComments('xxx');

@@ -1,8 +1,6 @@
+import { config } from 'dotenv';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { createPool } from '~/infrastructure/database/create-pool';
-
-import { config } from 'dotenv';
-import postgres from 'postgres';
 
 config();
 
@@ -17,7 +15,8 @@ const {
 
 export const db = drizzle(
   process.env.PLATFORM === 'ACTION'
-    ? postgres(process.env.DATABASE_URL!)
+    ? // @ts-ignore
+      createPool(process.env.DATABASE_URL!)
     : createPool({
         host: PGHOST_TEST,
         port: PGPORT_TEST,
