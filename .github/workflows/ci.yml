@@ -41,3 +41,6 @@ jobs:
       PGPORT: ${{ secrets.PGPORT }}
       PLATFORM: ${{ secrets.PLATFORM }}
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      ACCESS_TOKEN_KEY: ${{ secrets.ACCESS_TOKEN_KEY }}
+      ACCESS_TOKEN_AGE: ${{ secrets.ACCESS_TOKEN_AGE }}
+      REFRESH_TOKEN_KEY: ${{ secrets.REFRESH_TOKEN_KEY }}

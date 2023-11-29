@@ -18,7 +18,7 @@ const {
 const sql =
   process.env.PLATFORM === 'ACTION'
     ? postgres(process.env.DATABASE_URL)
-    : createPool({
+    : postgres({
         host: PGHOST_TEST,
         port: PGPORT_TEST,
         database: PGDATABASE_TEST,
