@@ -18,7 +18,7 @@ const {
 
 export const db = drizzle(
   PLATFORM === 'ACTION'
-    ? postgres(process.env.DATBASE_URL!)
+    ? postgres(process.env.DATABASE_URL!)
     : createPool({
         host: PGHOST_TEST,
         port: PGPORT_TEST,
