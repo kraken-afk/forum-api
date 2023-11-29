@@ -12,12 +12,11 @@ const {
   PGDATABASE_TEST,
   PGPASSWORD_TEST,
   PGPORT_TEST,
-  PLATFORM,
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 } = process.env as any;
 
 export const db = drizzle(
-  PLATFORM === 'ACTION'
+  process.env.PLATFORM === 'ACTION'
     ? postgres(process.env.DATABASE_URL!)
     : createPool({
         host: PGHOST_TEST,

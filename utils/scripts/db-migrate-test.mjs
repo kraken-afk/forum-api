@@ -6,6 +6,7 @@ import { migrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
 
 void config();
+
 const {
   PGHOST_TEST,
   PGUSER_TEST,
@@ -14,14 +15,18 @@ const {
   PGPORT_TEST,
 } = process.env;
 
-const sql = postgres({
-  host: PGHOST_TEST,
-  port: PGPORT_TEST,
-  database: PGDATABASE_TEST,
-  password: PGPASSWORD_TEST,
-  username: PGUSER_TEST,
-  max: 1,
-});
+const sql =
+  process.env.PLATFORM === 'ACTION'
+    ? postgres(process.env.DATABASE_URL)
+    : createPool({
+        host: PGHOST_TEST,
+        port: PGPORT_TEST,
+        database: PGDATABASE_TEST,
+        password: PGPASSWORD_TEST,
+        username: PGUSER_TEST,
+        max: 1,
+      });
+
 const db = drizzle(sql);
 
 (async () => {
