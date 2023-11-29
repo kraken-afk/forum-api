@@ -7,7 +7,7 @@ on:
   push:
     branches: [ "main", "node@14.17.0" ]
   pull_request:
-    branches: [ "main", "node@14.17.0" ]
+    branches: [ "main" ]
 
 jobs:
   test:
@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -26,10 +26,9 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: |
-      npm install
-      npm run migrate
-      npm test
+    - run: npm install
+    - run: npm run migrate:test
+    - run: npm run test
     env:
       PGHOST_TEST: ${{ secrets.PGHOST_TEST }}
       PGUSER_TEST: ${{ secrets.PGUSER_TEST }}
