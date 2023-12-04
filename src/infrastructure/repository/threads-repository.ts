@@ -38,7 +38,6 @@ export class ThreadsRepository implements Ithreads {
       .innerJoin(users, eq(comments.ownerId, users.id))
       .orderBy(asc(comments.createdAt));
 
-
     const [[thread], commentList] = await Promise.all([
       threadRaw,
       threadComments,

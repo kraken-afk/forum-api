@@ -12,7 +12,8 @@
     "format": "biome format --write .",
     "prepare": "husky install",
     "generate": "drizzle-kit generate:pg --schema=./src/infrastructure/database/schema.ts --out=migrations",
-    "migrate": "node utils/scripts/db-migrate.mjs",
+    "migrate:dev": "node utils/scripts/db-migrate-dev.mjs",
+    "migrate:prod": "node utils/scripts/db-migrate-prod.mjs",
     "migrate:test": "node utils/scripts/db-migrate-test.mjs"
   },
   "keywords": [],
