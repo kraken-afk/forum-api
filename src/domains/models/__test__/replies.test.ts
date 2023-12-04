@@ -1,20 +1,11 @@
-import { db } from '@test/helpers/db';
-import { randomStr } from '~/commons/libs/random-str';
-import { CommentsRepository } from '~/infrastructure/repository/comments-repository';
-import { RepliesRepository } from '~/infrastructure/repository/replies-repository';
-import { ThreadsRepository } from '~/infrastructure/repository/threads-repository';
-import { UsersRepository } from '~/infrastructure/repository/users-repository';
-
-const model = new RepliesRepository(db);
-const commentsModel = new CommentsRepository(db);
-const usersModel = new UsersRepository(db);
-const threadModel = new ThreadsRepository(db);
+import { Replies } from '~/domains/models/replies';
+import { IReplies } from '~/infrastructure/contracts/T-replies';
 
 describe('Replies repository test suits', () => {
-  const COMMENT = 'comment';
-  const REPLY = 'reply';
-
   test('Method check', () => {
+    const MockedReplyRepository = <jest.Mock<IReplies>>jest.fn(() => ({}));
+    const model = new Replies(new MockedReplyRepository());
+
     expect(model).toHaveProperty('select');
     expect(model).toHaveProperty('create');
     expect(model).toHaveProperty('update');
@@ -22,83 +13,155 @@ describe('Replies repository test suits', () => {
   });
 
   test('Create reply test case', async () => {
-    const user = await createUser();
-    const thread = await createThread(user);
-    const comment = await commentsModel.create(user.id, thread.id, COMMENT);
+    const MockedReplyRepository = <jest.Mock<IReplies>>jest.fn(() => {
+      const comments = ['comment-xxx-1', 'comment-xxx-2'];
 
-    const reply = await model.create(user.id, comment.id, REPLY);
+      return {
+        async create(ownerId, masterId, content): Promise<Reply> {
+          if (!comments.includes(masterId)) throw new Error('master not found');
+          return {
+            id: 'reply-xxx',
+            content: content,
+            owner: ownerId,
+          };
+        },
+      };
+    });
+    const model = new Replies(new MockedReplyRepository());
+    const reply = await model.create(
+      'user-xxx',
+      'comment-xxx-1',
+      'this is reply',
+    );
 
-    expect(reply).toHaveProperty('id');
-    expect(typeof reply.id).toBe('string');
-
-    expect(reply).toHaveProperty('owner');
-    expect(reply.owner).toBe(user.id);
-
-    expect(reply).toHaveProperty('content');
-    expect(reply.content).toBe(REPLY);
+    expect(reply).toHaveProperty('id', 'reply-xxx');
+    expect(reply).toHaveProperty('content', 'this is reply');
+    expect(reply).toHaveProperty('owner', 'user-xxx');
   });
 
   test('Select reply test case', async () => {
-    const user = await createUser();
-    const thread = await createThread(user);
-    const comment = await commentsModel.create(user.id, thread.id, COMMENT);
-    const reply = await model.create(user.id, comment.id, REPLY);
+    const MockedReplyRepository = <jest.Mock<IReplies>>jest.fn(() => {
+      const replies = [
+        {
+          id: 'reply-xxx-1',
+          content: 'this is reply',
+          owner: 'user-1',
+          isDeleted: false,
+        },
+        {
+          id: 'reply-xxx-2',
+          content: 'this is reply',
+          owner: 'user-2',
+          isDeleted: true,
+        },
+      ];
 
-    const selectedReply = await model.select(reply.id);
+      return {
+        async select(id, options) {
+          return replies.find(reply => {
+            if (options?.all) {
+              return reply.id === id;
+            } else {
+              return reply.id === id && !reply.isDeleted;
+            }
+          });
+        },
+      };
+    });
+    const model = new Replies(new MockedReplyRepository());
+    const selectedReply = await model.select('reply-xxx-1');
 
-    expect(selectedReply).toHaveProperty('id');
-    expect(typeof selectedReply?.id).toBe('string');
-
-    expect(selectedReply).toHaveProperty('owner');
-    expect(selectedReply?.owner).toBe(user.id);
-
-    expect(selectedReply).toHaveProperty('content');
-    expect(selectedReply?.content).toBe(REPLY);
+    expect(selectedReply).toHaveProperty('id', 'reply-xxx-1');
+    expect(selectedReply).toHaveProperty('content', 'this is reply');
+    expect(selectedReply).toHaveProperty('owner', 'user-1');
   });
 
   test('Update reply test case', async () => {
-    const newReply = 'new reply';
-    const user = await createUser();
-    const thread = await createThread(user);
-    const comment = await commentsModel.create(user.id, thread.id, COMMENT);
-    const reply = await model.create(user.id, comment.id, REPLY);
+    const MockedReplyRepository = <jest.Mock<IReplies>>jest.fn(() => {
+      const replies = [
+        {
+          id: 'reply-xxx-1',
+          content: 'this is reply',
+          owner: 'user-1',
+          isDeleted: false,
+        },
+        {
+          id: 'reply-xxx-2',
+          content: 'this is reply',
+          owner: 'user-2',
+          isDeleted: true,
+        },
+      ];
 
-    const updatedReply = await model.update(reply.id, newReply);
+      return {
+        async select(id, options) {
+          return replies.find(reply => {
+            if (options?.all) {
+              return reply.id === id;
+            } else {
+              return reply.id === id && !reply.isDeleted;
+            }
+          });
+        },
+        async update(id, content): Promise<Reply> {
+          const index = replies.findIndex(reply => reply.id === id);
+          if (index === -1) throw new Error("Reply doesn't exist");
 
-    expect(updatedReply).toHaveProperty('id');
-    expect(typeof updatedReply.id).toBe('string');
+          replies[index].content = content;
+          return replies[index];
+        },
+      };
+    });
+    const model = new Replies(new MockedReplyRepository());
+    const selectedReply = await model.select('reply-xxx-1');
 
-    expect(updatedReply).toHaveProperty('owner');
-    expect(updatedReply?.owner).toBe(user.id);
+    expect(selectedReply).toHaveProperty('id', 'reply-xxx-1');
+    expect(selectedReply).toHaveProperty('content', 'this is reply');
+    expect(selectedReply).toHaveProperty('owner', 'user-1');
 
-    expect(updatedReply).toHaveProperty('content');
-    expect(updatedReply.content).toBe(newReply);
+    const updatedReply = await model.update('reply-xxx-1', 'updated reply');
+
+    expect(updatedReply).toHaveProperty('id', 'reply-xxx-1');
+    expect(updatedReply).toHaveProperty('content', 'updated reply');
+    expect(updatedReply).toHaveProperty('owner', 'user-1');
   });
 
   test('Delete reply', async () => {
-    const user = await createUser();
-    const thread = await createThread(user);
-    const comment = await commentsModel.create(user.id, thread.id, COMMENT);
-    const reply = await model.create(user.id, comment.id, REPLY);
+    const MockedReplyRepository = <jest.Mock<IReplies>>jest.fn(() => {
+      let replies = [
+        {
+          id: 'reply-xxx-1',
+          content: 'this is reply',
+          owner: 'user-1',
+          isDeleted: false,
+        },
+        {
+          id: 'reply-xxx-2',
+          content: 'this is reply',
+          owner: 'user-2',
+          isDeleted: true,
+        },
+      ];
 
-    await model.delete(reply.id);
+      return {
+        async delete(replyId): Promise<void> {
+          replies = replies.filter(reply => reply.id !== replyId);
+        },
+        async select(id, options) {
+          return replies.find(reply => {
+            if (options?.all) {
+              return reply.id === id;
+            } else {
+              return reply.id === id && !reply.isDeleted;
+            }
+          });
+        },
+      };
+    });
+    const model = new Replies(new MockedReplyRepository());
 
-    expect(await model.select(reply.id)).toBeFalsy();
+    await model.delete('reply-xxx-1');
+
+    expect(await model.select('reply-xxx-1')).toBe(undefined);
   });
 });
-
-async function createUser() {
-  return await usersModel.create({
-    fullname: 'Jhon doe',
-    username: randomStr(5),
-    password: 'password',
-  });
-}
-
-async function createThread(user: User) {
-  return await threadModel.create(
-    'title',
-    'lorem ipsum dolor sit amet.',
-    user.id,
-  );
-}

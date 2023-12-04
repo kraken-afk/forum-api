@@ -2,18 +2,29 @@ import { db } from '@test/helpers/db';
 import { eq } from 'drizzle-orm';
 import { randomStr } from '~/commons/libs/random-str';
 import { Users } from '~/domains/models/users';
-import { users } from '~/infrastructure/database/schema';
+import {
+  comments,
+  replies,
+  threads,
+  users,
+} from '~/infrastructure/database/schema';
 import { UsersRepository } from '~/infrastructure/repository/users-repository';
 
 const model = new Users(new UsersRepository(db));
 
 describe('Users model test suite', () => {
   beforeEach(async () => {
+    await db.delete(replies);
+    await db.delete(comments);
+    await db.delete(threads);
     await db.delete(users);
   });
 
-  afterAll(done => {
-    db.delete(users).then(() => done());
+  afterAll(async () => {
+    await db.delete(replies);
+    await db.delete(comments);
+    await db.delete(threads);
+    await db.delete(users);
   });
 
   test('Methods check', () => {

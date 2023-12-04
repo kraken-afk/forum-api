@@ -9,7 +9,7 @@ const ROUTER_PATH = 'src/api/';
  *
  * @param {import('esbuild').BuildOptions} options
  */
-export default function bundler(options) {
+export default function bundler(options, router_path = ROUTER_PATH) {
   const spinner = ora();
 
   return {
@@ -39,7 +39,7 @@ export default function bundler(options) {
 
         await Promise.all([
           esbuild.build(option),
-          routerParser(ROUTER_PATH, options.outdir, {
+          routerParser(router_path, options.outdir, {
             ...option,
           }),
         ]);

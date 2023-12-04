@@ -9,7 +9,10 @@ export interface IComments {
   select: (
     id: string,
     options?: CommentOption,
-  ) => Promise<TComment | undefined> | TComment | undefined;
+  ) =>
+    | Promise<(TComment & { masterId: string }) | undefined>
+    | (TComment & { masterId: string })
+    | undefined;
   update: (
     id: string,
     content: string,

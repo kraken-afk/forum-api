@@ -68,6 +68,16 @@ describe('Threads repository test suite', () => {
     expect(selectedThread?.date).toBeInstanceOf(Date);
   });
 
+  test("Select thread that didn't exist", async () => {
+    const user = await insertUser();
+
+    await model.create(threadTitle, threadBody, user.id);
+
+    const selectedThread = await model.select('xxx');
+
+    expect(selectedThread).toBe(undefined);
+  });
+
   test('Update thread test case', async () => {
     const user = await insertUser();
     const thread = await model.create(threadTitle, threadBody, user.id);
@@ -123,6 +133,12 @@ describe('Threads repository test suite', () => {
     expect(comment).toHaveProperty('replies');
     expect(Array.isArray(comment?.replies)).toBeTruthy();
     expect(comment?.replies.length).toEqual(0);
+  }, 300000);
+
+  test("Get thread with comments that didn't exist", async () => {
+    const threadWithComments = await model.getThreadsWithComments('xxx');
+
+    expect(threadWithComments).toBe(undefined);
   });
 
   test('Get thread with comments and replies test case', async () => {
@@ -174,6 +190,63 @@ describe('Threads repository test suite', () => {
 
     expect(reply).toHaveProperty('date');
     expect(reply?.date).toBeInstanceOf(Date);
+  });
+
+  test('Get thread with deleted comments test case', async () => {
+    const userA = await insertUser();
+    const userB = await insertUser();
+    const thread = await model.create(threadTitle, threadBody, userA.id);
+    const commentContent = 'this is a comment';
+    const replyContent = 'this is a reply';
+    const returnedComment = await commentsModel.create(
+      userB.id,
+      thread.id,
+      commentContent,
+    );
+    const returnedReplies = await repliesModel.create(
+      userA.id,
+      returnedComment.id,
+      replyContent,
+    );
+
+    await Promise.all([
+      commentsModel.delete(returnedComment.id),
+      repliesModel.delete(returnedReplies.id),
+    ]);
+
+    const threadWithComments = await model.getThreadsWithComments(thread.id);
+
+    expect(threadWithComments).toHaveProperty('id', thread.id);
+    expect(threadWithComments).toHaveProperty('title', thread.title);
+    expect(threadWithComments).toHaveProperty('body', threadBody);
+    expect(threadWithComments).toHaveProperty('username', userA.username);
+
+    expect(threadWithComments).toHaveProperty('date');
+    expect(threadWithComments?.date).toBeInstanceOf(Date);
+
+    expect(threadWithComments).toHaveProperty('comments');
+    expect(Array.isArray(threadWithComments?.comments)).toBeTruthy();
+    expect(threadWithComments?.comments.length).toEqual(1);
+
+    const comment = threadWithComments?.comments[0];
+
+    expect(comment).toHaveProperty('id', returnedComment.id);
+    expect(comment).toHaveProperty('username', userB.username);
+    expect(comment).toHaveProperty('date', comment?.date);
+    expect(comment).toHaveProperty('content', commentContent);
+    expect(comment).toHaveProperty('replies');
+    expect(Array.isArray(comment?.replies)).toBeTruthy();
+    expect(comment?.replies.length).toEqual(1);
+    expect(comment?.isDeleted).toBe(true);
+
+    const reply = comment?.replies[0];
+
+    expect(reply).toHaveProperty('id', returnedReplies.id);
+    expect(reply).toHaveProperty('username', userA.username);
+    expect(reply).toHaveProperty('content', replyContent);
+    expect(reply).toHaveProperty('date');
+    expect(reply?.date).toBeInstanceOf(Date);
+    expect(reply?.isDeleted).toBe(true);
   });
 });
 

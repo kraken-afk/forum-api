@@ -1,16 +1,9 @@
-import { ClientError } from '~/commons/errors/client-error';
-import { type Request, Send } from '~/infrastructure/core/mod';
-import { users } from '~/modules/models/users-model';
-import { userPayloadValidator } from '~/modules/validators/user-payload-validator';
+import { type Request, Send } from '~/interfaces/http/core/mod';
+import { Users } from '~/use-cases/users';
 
 export async function POST(req: Request) {
   const payload = JSON.parse(req.payload) as UserPayload;
+  const newUser = await Users.createUser(payload);
 
-  userPayloadValidator(payload);
-
-  if (await users.isUsernameExist(payload.username))
-    throw new ClientError('username tidak tersedia');
-
-  const newUser = await users.create(payload);
   return Send.new({ addedUser: newUser }, { status: 201 });
 }

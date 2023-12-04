@@ -21,7 +21,7 @@ export class JwtRepository implements IJwt {
     try {
       jwtoken.verify(token, secret);
       return true;
-    } catch {
+    } catch (error) {
       return false;
     }
   }

@@ -1,7 +1,7 @@
 import { ForbiddenError } from '~/commons/errors/forbidden-error';
 import { UnauthorizedError } from '~/commons/errors/unauthorized-error';
-import { controller } from '~/infrastructure/core/controller';
-import { type Request, type ServerResponse } from '~/infrastructure/core/mod';
+import { controller } from '~/interfaces/http/core/controller';
+import { type Request, type ServerResponse } from '~/interfaces/http/core/mod';
 import { authentications } from '~/modules/models/authentications-model';
 import { jwt } from '~/modules/security/jwt';
 

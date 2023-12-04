@@ -12,7 +12,9 @@ export class CommentsRepository implements IComments {
   async select(
     id: string,
     options: CommentOption = { all: false },
-  ): Promise<TComment | undefined> {
+  ): Promise<
+    (TComment & { masterId: string; isDeleted: boolean }) | undefined
+  > {
     const [data] = options.all
       ? await this.db
           .selectDistinct({
@@ -20,6 +22,8 @@ export class CommentsRepository implements IComments {
             content: comments.content,
             date: comments.createdAt,
             owner: users.username,
+            masterId: comments.masterId,
+            isDeleted: comments.isDeleted,
           })
           .from(comments)
           .where(eq(comments.id, id))
@@ -30,6 +34,8 @@ export class CommentsRepository implements IComments {
             content: comments.content,
             date: comments.createdAt,
             owner: users.username,
+            masterId: comments.masterId,
+            isDeleted: comments.isDeleted,
           })
           .from(comments)
           .where(and(eq(comments.id, id), eq(comments.isDeleted, false)))
@@ -37,11 +43,13 @@ export class CommentsRepository implements IComments {
 
     if (!data) return undefined;
 
-    const result: TComment = {
+    const result = {
       id: data.id,
       content: data.content,
       date: data.date,
       owner: data.owner,
+      masterId: data.masterId,
+      isDeleted: data.isDeleted,
     };
 
     return result;

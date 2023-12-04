@@ -9,7 +9,10 @@ export interface IReplies {
   select: (
     id: string,
     options?: RepliesOptions,
-  ) => Promise<Reply | undefined> | Reply | undefined;
+  ) =>
+    | Promise<(Reply & { masterId: string }) | undefined>
+    | (Reply & { masterId: string })
+    | undefined;
   update: (id: string, content: string) => Promise<Reply> | Reply;
   create: (
     ownerId: string,

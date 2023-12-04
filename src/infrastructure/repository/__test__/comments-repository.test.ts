@@ -76,6 +76,46 @@ describe('Comments repository test suits', () => {
 
     expect(selectedComment).toHaveProperty('date');
     expect(selectedComment?.date).toBeInstanceOf(Date);
+
+    expect(selectedComment).toHaveProperty('isDeleted');
+    expect(selectedComment?.isDeleted).toBe(false);
+  });
+
+  test('Select comment test case including deleted comments', async () => {
+    const user = await createUser();
+    const thread = await createThread(user);
+    const comment = await model.create(user.id, thread.id, COMMENT);
+
+    // delete comment
+    await model.delete(comment.id);
+
+    const selectedComment = await model.select(comment.id, { all: true });
+
+    expect(selectedComment).toHaveProperty('id');
+    expect(typeof selectedComment?.id).toBe('string');
+
+    expect(selectedComment).toHaveProperty('owner');
+    expect(selectedComment?.owner).toBe(user.username);
+
+    expect(selectedComment).toHaveProperty('content');
+    expect(selectedComment?.content).toBe(COMMENT);
+
+    expect(selectedComment).toHaveProperty('date');
+    expect(selectedComment?.date).toBeInstanceOf(Date);
+
+    expect(selectedComment).toHaveProperty('isDeleted');
+    expect(selectedComment?.isDeleted).toBe(true);
+  });
+
+  test("Select comment that didn't exist", async () => {
+    const user = await createUser();
+    const thread = await createThread(user);
+
+    await model.create(user.id, thread.id, COMMENT);
+
+    const selectedComment = await model.select('xxx');
+
+    expect(selectedComment).toBe(undefined);
   });
 
   test('Update comment test case', async () => {

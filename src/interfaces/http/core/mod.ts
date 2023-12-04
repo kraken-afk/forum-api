@@ -3,12 +3,11 @@ import {
   type IncomingMessage as NodeIncomingMessage,
   type ServerResponse as NodeServerResponse,
 } from 'http';
-import { resolve, sep } from 'path';
+import { join, resolve, sep } from 'path';
 import { posix } from 'path';
-import { pathToFileURL } from 'url';
 import { Response as NodeResponse } from 'node-fetch-cjs';
 import { NotFoundError } from '~/commons/errors/not-found-error';
-import { controller } from '~/infrastructure/core/controller';
+import { controller } from '~/interfaces/http/core/controller';
 
 /* MODULE */
 export type Request = Prettify<
@@ -20,19 +19,22 @@ export type RouteMethod = (req: Request, res: ServerResponse) => NodeResponse;
 export const Send = {
   new: (
     body: Prettify<BodyInit | Record<string, unknown>> = {},
-    headers?: ResponseInit,
+    init?: ResponseInit,
   ): NodeResponse => {
     const _body = typeof body === 'string' ? body : JSON.stringify(body);
-    const _headers =
-      headers && 'Content-Type' in headers!
-        ? headers
-        : { ...headers, headers: { 'Content-Type': 'application/json' } };
+    const _init: ResponseInit =
+      init !== undefined
+        ? {
+            ...init,
+            headers: { 'Content-Type': 'application/json', ...init?.headers },
+          }
+        : {
+            headers: { 'Content-Type': 'application/json' },
+          };
 
-    return new NodeResponse(_body, _headers);
+    return new NodeResponse(_body, _init);
   },
 };
-
-const SOURCE_PATH = 'src/api';
 
 /**
  * Taking all router into memory with ```require() ```
@@ -50,20 +52,21 @@ const SOURCE_PATH = 'src/api';
  * }
  * ```
  */
-export async function prepareRoutesHandler(): Promise<AppRouter> {
-  const apiPath = resolve(process.cwd(), SOURCE_PATH);
+export async function prepareRoutesHandler(
+  source_path: string,
+  output_path: string,
+): Promise<AppRouter> {
+  const apiPath = resolve(process.cwd(), source_path);
   const router = new Map<string, Record<Partial<HttpMethodKey>, RouterFunc>>();
   const routeList = searchForRoutesFile(apiPath);
 
-  for (const route of routeList.values()) {
-    if (route) {
-      const targetDir = resolve(posix.join(...__OUT_DIR__.split('/'), 'api'));
-      const targetRoute = route.replace(/ts$/, 'js').split('/');
-      const modPath = resolve(targetDir, ...targetRoute);
-      const module = await import(pathToFileURL(modPath).toString());
+  for (const route of routeList) {
+    const targetDir = resolve(output_path, 'api');
+    const targetRoute = route.replace(/ts$/, 'js');
+    const modPath = join(targetDir, targetRoute);
+    const module = require(modPath);
 
-      router.set(route.replace('/route.ts', '') || '/', module);
-    }
+    router.set(route.replace('/route.ts', '') || '/', module);
   }
 
   return router;
@@ -149,15 +152,4 @@ export function findMatchingRoute(
   }
 
   return extractedRouterObject;
-}
-
-export function extractPayload(req: NodeIncomingMessage): Promise<string> {
-  return new Promise((resolve, reject) => {
-    let data = '';
-    req.on('data', chunk => {
-      data += chunk;
-    });
-    req.on('end', () => resolve(data));
-    req.on('error', err => reject(err));
-  });
 }
