@@ -9,6 +9,7 @@ COPY . /app/
 
 RUN curl -L https://unpkg.com/@pnpm/self-installer | node
 
+RUN pnpm install
 RUN pnpm run build
 RUN cat /app/nginx.conf > /etc/nginx/nginx.conf
 
