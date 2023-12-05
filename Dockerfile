@@ -14,9 +14,6 @@ RUN pnpm install
 RUN pnpm run build
 RUN cat /app/nginx.conf > /etc/nginx/nginx.conf
 
-ENV PORT "5000"
-ENV HOST "localhost"
-
 EXPOSE 80
 
 CMD ["supervisord", "-c", "/app/supervisord.conf"]
