@@ -1,7 +1,6 @@
 FROM alpine:latest
 WORKDIR /app/
 
-RUN apk-update
 RUN apk --no-cache add nodejs
 RUN apk --no-cache add nginx
 
