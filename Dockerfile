@@ -3,7 +3,6 @@ WORKDIR /app/
 
 RUN apk --no-cache add curl
 RUN apk --no-cache add nodejs
-RUN apk --no-cache add pnpm
 RUN apk --no-cache add nginx
 
 COPY . /app/
