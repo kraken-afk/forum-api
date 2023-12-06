@@ -15,7 +15,10 @@ const config: Config = {
     // '^.+\\.m?[tj]sx?$' to process js/ts/mjs/mts with `ts-jest`
     '^.+\\.[tj]s?$': 'babel-jest',
   },
-  transformIgnorePatterns: ['<rootDir>/node_modules/(?!chalk).+\\.js$'],
+  transformIgnorePatterns: [
+    '<rootDir>/node_modules/(?!chalk).+\\.js$',
+    '<rootDir>/target/*',
+  ],
 
   // Stop running tests after `n` failures
   // bail: 0,
@@ -40,6 +43,8 @@ const config: Config = {
     '\\\\node_modules\\\\',
     '<rootDir>/src/infrastructure/database/*',
     '<rootDir>/src/interfaces/http/__test__/api/*',
+    '<rootDir>/src/commons/libs/log.ts',
+    '<rootDir>/__tests__/*',
   ],
 
   // Indicates which provider should be used to instrument code for coverage
@@ -77,7 +82,7 @@ const config: Config = {
   // globalTeardown: undefined,
 
   globals: {
-    __OUT_DIR__: 'src/interfaces/http/__test__/out/',
+    __OUT_DIR__: 'src/interfaces/http/__test__/',
   },
 
   // A set of global variables that need to be available in all test environments
@@ -174,9 +179,7 @@ const config: Config = {
   ],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-  // testPathIgnorePatterns: [
-  //   "\\\\node_modules\\\\"
-  // ],
+  testPathIgnorePatterns: ['\\\\node_modules\\\\', '<rootDir>/target/*'],
 
   // The regexp pattern or array of patterns that Jest uses to detect test files
   // testRegex: [],

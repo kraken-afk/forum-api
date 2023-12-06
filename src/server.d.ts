@@ -6,7 +6,6 @@ type Prettify<T> = {
 
 type HttpMethodKey = 'GET' | 'POST' | 'DELETE' | 'PUT' | 'PATCH';
 type ServerState = 'SUCCESS' | 'ERROR' | 'NOT FOUND';
-type RouterFunc = (request: Request, response: Response) => Response;
 type AppRouter = Map<string, Record<Partial<HttpMethodKey>, RouterFunc>>;
 
 declare const __OUT_DIR__: string;

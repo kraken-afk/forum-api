@@ -1,14 +1,14 @@
 import { ForbiddenError } from '~/commons/errors/forbidden-error';
 import { UnauthorizedError } from '~/commons/errors/unauthorized-error';
 import { controller } from '~/interfaces/http/core/controller';
-import { type Request, type ServerResponse } from '~/interfaces/http/core/mod';
+import { RouterFunc, type Request, type ServerResponse } from '~/interfaces/http/core/mod';
 import { authentications } from '~/modules/models/authentications-model';
 import { jwt } from '~/modules/security/jwt';
 
 export type TPublicRoutes = Record<string, Array<HttpMethodKey | '*'>>;
 
 const publicRoutes: TPublicRoutes = {
-  '/': ['GET'],
+  '/': ['GET', 'POST'],
   '/users': ['*'],
   '/authentications': ['*'],
   '/threads/[threadId]': ['GET'],
@@ -17,12 +17,10 @@ const publicRoutes: TPublicRoutes = {
 
 export default async function (
   req: Request,
-  _res: ServerResponse,
-  next: CallableFunction,
+  res: ServerResponse,
+  next: RouterFunc
 ) {
   let isPublicUrl = false;
-
-  console.log(req.url);
 
   for (const [route, method] of Object.entries(publicRoutes)) {
     const control = controller(route, req.url!);
@@ -36,7 +34,7 @@ export default async function (
     }
   }
 
-  if (isPublicUrl) return await next();
+  if (isPublicUrl) return await next(req, res);
   const auth = req.headers?.authorization;
 
   if (!auth) throw new UnauthorizedError('Missing authentication');
@@ -54,5 +52,5 @@ export default async function (
   if (now > (token?.exp as number))
     throw new ForbiddenError('Token has been expired');
 
-  return await next();
+  return await next(req, res);
 }

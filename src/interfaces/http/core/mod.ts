@@ -6,15 +6,19 @@ import {
 import { join, resolve, sep } from 'path';
 import { posix } from 'path';
 import { Response as NodeResponse } from 'node-fetch-cjs';
-import { NotFoundError } from '~/commons/errors/not-found-error';
 import { controller } from '~/interfaces/http/core/controller';
 
 /* MODULE */
-export type Request = Prettify<
-  NodeIncomingMessage & { params: Record<string, string>; payload: string }
->;
+export type Request = NodeIncomingMessage & {
+  params: Record<string, string>;
+  payload: string;
+};
 export type ServerResponse = Prettify<NodeServerResponse>;
 export type RouteMethod = (req: Request, res: ServerResponse) => NodeResponse;
+export type RouterFunc = (
+  request: Request,
+  response: ServerResponse,
+) => Response;
 
 export const Send = {
   new: (
@@ -135,7 +139,7 @@ export function searchForRoutesFile(relativeDir: string): Set<string> {
 export function findMatchingRoute(
   router: AppRouter,
   url: string,
-): ExtractedRouterObject {
+): ExtractedRouterObject | undefined {
   let extractedRouterObject: ExtractedRouterObject | undefined;
 
   for (const routePath of router.keys()) {
@@ -145,10 +149,6 @@ export function findMatchingRoute(
       extractedRouterObject = comparedRouter;
       break;
     }
-  }
-
-  if (!extractedRouterObject) {
-    throw new NotFoundError('404 Not Found');
   }
 
   return extractedRouterObject;

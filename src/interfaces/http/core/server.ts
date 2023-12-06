@@ -1,22 +1,29 @@
-import {
-  type IncomingMessage as NodeIncomingMessage,
-  createServer,
-} from 'http';
+import { createServer } from 'http';
 import chalk from 'chalk';
 import { Response as NodeResponse } from 'node-fetch-cjs';
 import { ClientError } from '~/commons/errors/client-error';
 import { FatalError } from '~/commons/errors/fatal-error';
 import { MethodNotAllowedError } from '~/commons/errors/method-not-allowed-error';
+import { NotFoundError } from '~/commons/errors/not-found-error';
 import { log } from '~/commons/libs/log';
 import {
   type Request,
-  type RouteMethod,
+  ServerResponse,
   findMatchingRoute,
   prepareRoutesHandler,
+  RouterFunc,
 } from '~/interfaces/http/core/mod';
-import middleware from '~/interfaces/http/middleware';
 
-export async function server(source_path: string, host: string, port: number) {
+export async function server(
+  source_path: string,
+  host: string,
+  port: number,
+  middleware: (
+    req: Request,
+    res: ServerResponse,
+    next: RouterFunc,
+  ) => Promise<NodeResponse>,
+) {
   const httpServer = createServer();
   const router = await prepareRoutesHandler(source_path, __OUT_DIR__);
 
@@ -25,46 +32,38 @@ export async function server(source_path: string, host: string, port: number) {
     log.log(_request.method!, chalk.blue(_request.url));
 
     try {
-      if (!_request?.method) {
-        throw new ClientError('Http method should be attached');
-      }
+      const payload = new Promise(resolve => {
+        let data = '';
+        _request.on('data', chunk => {
+          data += chunk;
+        });
+        _request.on('end', () => resolve(data));
+      });
 
-      const payload = extractPayload(_request);
-      const method = _request.method!;
-      const { endPoint, params }: ExtractedRouterObject = findMatchingRoute(
-        router,
-        _request.url!,
-      );
-      const modules = router.get(endPoint);
+      const method = _request.method as HttpMethodKey;
+      const r = findMatchingRoute(router, _request.url!);
 
-      // @ts-ignore
-      const func = modules[method];
+      if (!r) throw new NotFoundError('404 Not Found');
+
+      const modules = router.get(r.endPoint)!;
 
       // If route doesn't have a method to handle request
-      if (!func) {
+      if (!modules[method]) {
         throw new MethodNotAllowedError(
           `A request made for a resource that not support ${method} method`,
         );
       }
 
       const request = Object.assign(_request, {
-        params,
+        params: r.params,
         payload: await payload,
       }) as Request;
-      const result = await middleware(
-        request,
-        _response,
-        async () => await (func as RouteMethod)(request, _response),
-      );
-
-      // if (!(result instanceof NodeResponse)) {
-      //   throw new FatalError('Return value must be instance of NodeResponse');
-      // }
-
-      const body = (result as NodeResponse).json().catch(error => {
-        log.error('Return Type Error', error);
-        throw new FatalError(error.message as string);
+      // @ts-ignore
+      const result = await middleware(request, _response, async () => {
+        return modules[method](request, _response);
       });
+
+      const body = (result as NodeResponse).json();
 
       for (const [headerKey, headerValue] of result.headers) {
         _response.setHeader(headerKey, headerValue);
@@ -80,12 +79,10 @@ export async function server(source_path: string, host: string, port: number) {
 
       _response.end(JSON.stringify(response));
     } catch (error) {
-      if (error instanceof FatalError || !('statusCode' in (error as Error))) {
-        log.error((error as Error).message, error);
-        process.exit(1);
-      }
+      if (error instanceof FatalError || !(error as ClientError)?.statusCode)
+        log.error('FATAL_ERROR', error);
 
-      const statusCode = (error as ClientError).statusCode ?? 500;
+      const statusCode = (error as ClientError)?.statusCode ?? 500;
       const { message } = error as ClientError;
 
       const response: ResponseStruct = {
@@ -107,15 +104,4 @@ export async function server(source_path: string, host: string, port: number) {
   log.info('Listening to', `http://${host}:${port}`);
 
   return httpServer;
-}
-
-function extractPayload(req: NodeIncomingMessage): Promise<string> {
-  return new Promise((resolve, reject) => {
-    let data = '';
-    req.on('data', chunk => {
-      data += chunk;
-    });
-    req.on('end', () => resolve(data));
-    req.on('error', err => reject(err));
-  });
 }

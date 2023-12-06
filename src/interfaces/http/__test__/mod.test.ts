@@ -1,6 +1,5 @@
 import { resolve } from 'path';
 import { Response } from 'node-fetch-cjs';
-import { NotFoundError } from '~/commons/errors/not-found-error';
 import {
   Send,
   findMatchingRoute,
@@ -105,9 +104,8 @@ describe('Route matcher test suite', () => {
       'src/interfaces/http/__test__/api',
       'src/interfaces/http/__test__/',
     );
-    expect(() => findMatchingRoute(appRouter, '/cosmic')).toThrow(
-      NotFoundError,
-    );
+
+    expect(findMatchingRoute(appRouter, '/cosmic')).toBe(undefined);
   });
 
   test('Route should have params', async () => {
@@ -120,6 +118,6 @@ describe('Route matcher test suite', () => {
     expect(r).toHaveProperty('status', 'PARAMS');
     expect(r).toHaveProperty('endPoint', '/users/[userId]');
     expect(r).toHaveProperty('params');
-    expect(r.params.userId).toBe('123');
+    expect(r?.params.userId).toBe('123');
   });
 });

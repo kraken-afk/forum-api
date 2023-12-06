@@ -13,8 +13,8 @@ export function controller(
   urlStr: string,
 ): ExtractedRouterObject {
   const { pathname, searchParams } = new URL(`http://userhost${urlStr}`);
-  const route = routeStr.match(/(?<=\/)[^\/.]+(?=\/)?/) ?? [];
-  const url = pathname.match(/(?<=\/)[^\/.]+(?=\/)?/) ?? [];
+  const route = routeStr.match(/(?<=\/)[^\/.]+(?=\/)?/g) ?? [];
+  const url = pathname.match(/(?<=\/)[^\/.]+(?=\/)?/g) ?? [];
   const len = route.length > url.length ? route.length : url.length;
   const rgx = /\[.+\]/;
   const params = new Map<string, string | number>();
