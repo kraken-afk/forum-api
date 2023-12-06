@@ -22,6 +22,8 @@ export default async function (
 ) {
   let isPublicUrl = false;
 
+  console.log(req.url);
+
   for (const [route, method] of Object.entries(publicRoutes)) {
     const control = controller(route, req.url!);
 
