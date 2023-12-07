@@ -10,7 +10,6 @@ describe('Http Server test suite', () => {
 
   test('Should return instance of Http.Server', async () => {
     const app = await server(
-      'src/interfaces/http/__test__/api',
       '127.0.0.1',
       5050,
       async (_req, _res, next) => await next(_req, _res),
@@ -24,7 +23,6 @@ describe('Http Server test suite', () => {
     test('Create user scenario with POST method test case', async () => {
       const name = 'Jhon doe';
       const app = await server(
-        'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
         async (_req, _res, next) => await next(_req, _res),
@@ -49,7 +47,6 @@ describe('Http Server test suite', () => {
 
     test('Create user but fail test case', async () => {
       const app = await server(
-        'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
         async (_req, _res, next) => await next(_req, _res),
@@ -75,7 +72,6 @@ describe('Http Server test suite', () => {
 
     test('Send request with unsupported method', async () => {
       const app = await server(
-        'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
         async (_req, _res, next) => await next(_req, _res),
@@ -100,7 +96,6 @@ describe('Http Server test suite', () => {
 
     test('Send request to nonexistence url', async () => {
       const app = await server(
-        'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
         async (_req, _res, next) => await next(_req, _res),
@@ -124,7 +119,6 @@ describe('Http Server test suite', () => {
   describe('Send request with parameter', () => {
     test('Get user with id scenario test case', async () => {
       const app = await server(
-        'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
         async (_req, _res, next) => await next(_req, _res),
@@ -148,7 +142,6 @@ describe('Http Server test suite', () => {
 
     test('Get unknown user with id scenario test case', async () => {
       const app = await server(
-        'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
         async (_req, _res, next) => await next(_req, _res),
@@ -172,7 +165,6 @@ describe('Http Server test suite', () => {
   describe('Response test suite', () => {
     test('Should response with JSON', async () => {
       const app = await server(
-        'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
         async (_req, _res, next) => await next(_req, _res),
@@ -196,7 +188,6 @@ describe('Http Server test suite', () => {
 
     test('Should get custom headers', async () => {
       const app = await server(
-        'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
         async (_req, _res, next) => await next(_req, _res),
@@ -221,7 +212,6 @@ describe('Http Server test suite', () => {
 
     test('Should throw FatalError because instance got server issue', async () => {
       const app = await server(
-        'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
         async (_req, _res, next) => await next(_req, _res),
@@ -245,7 +235,6 @@ describe('Http Server test suite', () => {
 
     test('Should throw FatalError because instance returning non-JSON format', async () => {
       const app = await server(
-        'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
         async (_req, _res, next) => await next(_req, _res),

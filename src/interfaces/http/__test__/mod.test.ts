@@ -69,7 +69,6 @@ describe('Get route file handler test suite', () => {
   test('Should instance of Map', async () => {
     const appRouter = await prepareRoutesHandler(
       'src/interfaces/http/__test__/api',
-      'src/interfaces/http/__test__/',
     );
 
     expect(appRouter).toBeInstanceOf(Map);
@@ -78,7 +77,6 @@ describe('Get route file handler test suite', () => {
   test('Should have route key', async () => {
     const appRouter = await prepareRoutesHandler(
       'src/interfaces/http/__test__/api',
-      'src/interfaces/http/__test__/',
     );
 
     expect(appRouter.has('/')).toBeTruthy();
@@ -90,7 +88,6 @@ describe('Route matcher test suite', () => {
   test('Route should match', async () => {
     const appRouter = await prepareRoutesHandler(
       'src/interfaces/http/__test__/api',
-      'src/interfaces/http/__test__/',
     );
     const r = findMatchingRoute(appRouter, '/users');
 
@@ -102,7 +99,6 @@ describe('Route matcher test suite', () => {
   test("Route shouldn't match", async () => {
     const appRouter = await prepareRoutesHandler(
       'src/interfaces/http/__test__/api',
-      'src/interfaces/http/__test__/',
     );
 
     expect(findMatchingRoute(appRouter, '/cosmic')).toBe(undefined);
@@ -111,7 +107,6 @@ describe('Route matcher test suite', () => {
   test('Route should have params', async () => {
     const appRouter = await prepareRoutesHandler(
       'src/interfaces/http/__test__/api',
-      'src/interfaces/http/__test__/',
     );
     const r = findMatchingRoute(appRouter, '/users/123');
 

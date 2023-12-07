@@ -15,7 +15,6 @@ import {
 } from '~/interfaces/http/core/mod';
 
 export async function server(
-  source_path: string,
   host: string,
   port: number,
   middleware: (
@@ -25,7 +24,7 @@ export async function server(
   ) => Promise<NodeResponse>,
 ) {
   const httpServer = createServer();
-  const router = await prepareRoutesHandler(source_path, __OUT_DIR__);
+  const router = await prepareRoutesHandler(__OUT_DIR__);
 
   httpServer.on('request', async (_request, _response) => {
     console.time('response time');

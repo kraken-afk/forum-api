@@ -16,9 +16,9 @@ export async function routerParser(dir, outdir, options) {
    */
   const targetPath = new Set();
 
-  for (const target of directoryCrawler(routerPath)) {
-    const path = join(routerPath, target);
-    targetPath.add(path);
+  for (const file of directoryCrawler(routerPath)) {
+    if (!RegExp('.+route.ts$').test(file)) continue;
+    targetPath.add(file);
   }
 
   const opt = {

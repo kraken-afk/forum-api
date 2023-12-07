@@ -3,9 +3,12 @@ import {
   type IncomingMessage as NodeIncomingMessage,
   type ServerResponse as NodeServerResponse,
 } from 'http';
-import { join, resolve, sep } from 'path';
-import { posix } from 'path';
-import { Response as NodeResponse } from 'node-fetch-cjs';
+import { join, resolve } from 'path';
+import {
+  BodyInit,
+  Response as NodeResponse,
+  ResponseInit,
+} from 'node-fetch-cjs';
 import { controller } from '~/interfaces/http/core/controller';
 
 /* MODULE */
@@ -21,10 +24,7 @@ export type RouterFunc = (
 ) => NodeResponse;
 
 export const Send = {
-  new: (
-    body: Prettify<BodyInit | Record<string, unknown>> = {},
-    init?: ResponseInit,
-  ): NodeResponse => {
+  new: (body: BodyInit = {}, init?: ResponseInit): NodeResponse => {
     const _body = typeof body === 'string' ? body : JSON.stringify(body);
     const _init: ResponseInit =
       init !== undefined
@@ -57,23 +57,34 @@ export const Send = {
  * ```
  */
 export async function prepareRoutesHandler(
-  source_path: string,
   output_path: string,
 ): Promise<AppRouter> {
-  const apiPath = resolve(process.cwd(), source_path);
   const router = new Map<string, Record<Partial<HttpMethodKey>, RouterFunc>>();
-  const routeList = searchForRoutesFile(apiPath);
 
-  for (const route of routeList) {
-    const targetDir = resolve(output_path, 'api');
-    const targetRoute = route.replace(/ts$/, 'js');
-    const modPath = join(targetDir, targetRoute);
-    const module = require(modPath);
+  for (const route of directoryCrawler(output_path)) {
+    if (!RegExp('.+route.js$').test(route)) continue;
+    const module = require(resolve(route));
+    const url =
+      route
+        .replace(/\\/g, '/')
+        .replace(/.+api|(?<=.)route.js|(?<=.)\/(?=route\.js|$)/gm, '') || '/';
 
-    router.set(route.replace('/route.ts', '') || '/', module);
+    router.set(url, module);
   }
 
   return router;
+
+  function* directoryCrawler(dir: string): Generator<string> {
+    const files = readdirSync(dir, { withFileTypes: true });
+
+    for (const file of files) {
+      if (file.isDirectory()) {
+        yield* directoryCrawler(join(dir, file.name));
+      } else {
+        yield join(dir, file.name);
+      }
+    }
+  }
 }
 
 /**
@@ -88,49 +99,28 @@ export async function prepareRoutesHandler(
  * Similiar with NextJs route system
  * @param {string} relativeDir
  */
-export function searchForRoutesFile(relativeDir: string): Set<string> {
-  const directory = resolve(process.cwd(), relativeDir);
-  const file = new Set<string>();
-  const parentDir = readdirSync(directory, {
-    encoding: 'utf-8',
-    withFileTypes: true,
-  }).map(dirent => {
-    if (dirent.isDirectory()) return dirent.name;
-  });
-  const routerDirectory = String(
-    directory.split(sep)[directory.split(sep).length - 1],
-  );
-  let currentPath = directory;
+export function searchForRoutesFile(dir: string): Set<string> {
+  const routesFile = new Set<string>();
 
-  const findFileRecursive = (searchPath: string = currentPath) => {
-    const dir = readdirSync(searchPath, {
-      encoding: 'utf-8',
-      withFileTypes: true,
-    });
-    const realtivePath =
-      searchPath
-        .split(routerDirectory)
-        [searchPath.split(routerDirectory).length - 1].replace(/\\/g, '/') ||
-      '/';
+  for (const file of directoryCrawler(dir)) {
+    if (!RegExp('.+route.ts$').test(file)) continue;
 
-    for (const f of dir) {
-      if (f.name === 'route.ts') {
-        file.add(posix.join(realtivePath, f.name));
-      }
+    routesFile.add(file);
+  }
 
-      if (f.isDirectory()) {
-        if (parentDir.includes(f.name))
-          currentPath = resolve(directory, f.name);
-        else currentPath = resolve(currentPath, f.name);
+  return routesFile;
 
-        findFileRecursive(currentPath);
+  function* directoryCrawler(dir: string): Generator<string> {
+    const files = readdirSync(dir, { withFileTypes: true });
+
+    for (const file of files) {
+      if (file.isDirectory()) {
+        yield* directoryCrawler(join(dir, file.name));
+      } else {
+        yield join(dir, file.name);
       }
     }
-
-    return file;
-  };
-
-  return findFileRecursive();
+  }
 }
 
 /**

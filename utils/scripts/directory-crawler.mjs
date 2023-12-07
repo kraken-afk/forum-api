@@ -1,55 +1,14 @@
-import { readdirSync } from 'node:fs';
-import { sep } from 'node:path';
-import { join, resolve } from 'node:path';
+import fs from 'fs';
+import path from 'path';
 
-/**
- *
- * @param {string} relativeDir
- * @returns {Set<string>}
- */
-export function directoryCrawler(relativeDir) {
-  const directory = resolve(process.cwd(), relativeDir);
-  const file = new Set();
-  const parentDir = readdirSync(directory, {
-    encoding: 'utf-8',
-    withFileTypes: true,
-  }).map(dirent => {
-    if (dirent.isDirectory()) return dirent.name;
-  });
-  const routerDirectory = String(
-    directory.split(sep)[directory.split(sep).length - 1],
-  );
-  let currentPath = directory;
+export function* directoryCrawler(dir) {
+  const files = fs.readdirSync(dir, { withFileTypes: true });
 
-  const directoriesClimber = (searchPath = currentPath) => {
-    const dir = readdirSync(searchPath, {
-      encoding: 'utf-8',
-      withFileTypes: true,
-    });
-
-    // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-    const realtivePath =
-      searchPath
-        .split(routerDirectory)
-        [searchPath.split(routerDirectory).length - 1].replace(/\\/g, '/') ||
-      '/';
-
-    for (const f of dir) {
-      if (f.name === 'route.ts') {
-        file.add(join(realtivePath, f.name));
-      }
-
-      if (f.isDirectory()) {
-        if (parentDir.includes(f.name))
-          currentPath = resolve(directory, f.name);
-        else currentPath = resolve(currentPath, f.name);
-
-        directoriesClimber(currentPath);
-      }
+  for (const file of files) {
+    if (file.isDirectory()) {
+      yield* directoryCrawler(path.join(dir, file.name));
+    } else {
+      yield path.join(dir, file.name);
     }
-
-    return file;
-  };
-
-  return directoriesClimber();
+  }
 }
