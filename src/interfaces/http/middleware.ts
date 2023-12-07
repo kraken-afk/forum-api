@@ -1,7 +1,11 @@
 import { ForbiddenError } from '~/commons/errors/forbidden-error';
 import { UnauthorizedError } from '~/commons/errors/unauthorized-error';
 import { controller } from '~/interfaces/http/core/controller';
-import { RouterFunc, type Request, type ServerResponse } from '~/interfaces/http/core/mod';
+import {
+  type Request,
+  RouterFunc,
+  type ServerResponse,
+} from '~/interfaces/http/core/mod';
 import { authentications } from '~/modules/models/authentications-model';
 import { jwt } from '~/modules/security/jwt';
 
@@ -18,7 +22,7 @@ const publicRoutes: TPublicRoutes = {
 export default async function (
   req: Request,
   res: ServerResponse,
-  next: RouterFunc
+  next: RouterFunc,
 ) {
   let isPublicUrl = false;
 

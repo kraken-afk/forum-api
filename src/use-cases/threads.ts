@@ -37,27 +37,66 @@ export class ThreadsUseCase {
     return addedThread;
   }
 
-  async getThreadDetail(threadId: string): Promise<ThreadsDetail | undefined> {
+  async getThreadDetail(threadId: string): Promise<
+    | {
+        id: string;
+        title: string;
+        body: string;
+        username: string;
+        date: Date;
+        comments: Array<{
+          id: string;
+          username: string;
+          date: Date;
+          content: string;
+          likeCount: number;
+          replies: Array<{
+            id: string;
+            content: string;
+            date: Date;
+            username: string;
+            isDeleted: boolean;
+          }>;
+        }>;
+      }
+    | undefined
+  > {
     const thread = await this.models.threads.getThreadsWithComments(threadId);
 
     if (!thread)
       throw new NotFoundError(`Thread with id: ${threadId} cannot be find.`);
 
-    thread.comments = thread?.comments.map(comment => {
-      comment.replies = comment.replies.map(reply => {
+    const newComment = thread?.comments.map(comment => {
+      const newComment = {
+        id: comment.id,
+        username: comment.username,
+        date: comment.date,
+        content: comment.content,
+        likeCount: comment.likes.length,
+        replies: comment.replies,
+      };
+
+      newComment.replies = comment.replies.map(reply => {
         reply.content = reply.isDeleted
           ? '**balasan telah dihapus**'
           : reply.content;
         return reply;
       });
-      comment.content = comment.isDeleted
+      newComment.content = comment.isDeleted
         ? '**komentar telah dihapus**'
         : comment.content;
 
-      return comment;
+      return newComment;
     });
 
-    return thread;
+    return {
+      id: thread.id,
+      body: thread.body,
+      date: thread.date,
+      title: thread.title,
+      username: thread.username,
+      comments: newComment,
+    };
   }
 }
 

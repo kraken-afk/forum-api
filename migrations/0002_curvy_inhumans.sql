@@ -1,1 +1,0 @@
-ALTER TABLE "replies" ADD COLUMN "isDeleted" boolean;

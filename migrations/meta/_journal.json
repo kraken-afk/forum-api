@@ -5,22 +5,8 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1698131698981,
-      "tag": "0000_lying_captain_britain",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1698151738886,
-      "tag": "0001_burly_donald_blake",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "5",
-      "when": 1698195143093,
-      "tag": "0002_curvy_inhumans",
+      "when": 1701944456157,
+      "tag": "0000_wandering_blindfold",
       "breakpoints": true
     }
   ]

@@ -23,4 +23,5 @@ export interface IComments {
     content: string,
   ) => Promise<TComment> | TComment;
   delete: (commentId: string) => Promise<void> | void;
+  like: (userId: string, commentId: string) => Promise<TComment>;
 }

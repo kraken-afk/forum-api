@@ -32,6 +32,7 @@ export class ThreadsRepository implements Ithreads {
         date: comments.createdAt,
         content: comments.content,
         isDeleted: comments.isDeleted,
+        likes: comments.likes,
       })
       .from(comments)
       .where(eq(comments.masterId, threadId))
@@ -69,6 +70,7 @@ export class ThreadsRepository implements Ithreads {
           date: comment.date,
           content: comment.content,
           isDeleted: comment.isDeleted,
+          likes: comment.likes,
           replies: reply
             .filter(reply => reply.masterId === comment.id)
             .map(reply => ({
@@ -82,7 +84,7 @@ export class ThreadsRepository implements Ithreads {
       }),
     });
 
-    return result as ThreadsDetail;
+    return result;
   }
 
   async create(

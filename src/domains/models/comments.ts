@@ -6,29 +6,41 @@ import {
 export class Comments {
   constructor(private readonly repository: IComments) {}
 
-  async select(
+  select(
     id: string,
     options: CommentOption = { all: false },
   ): Promise<(TComment & { masterId: string }) | undefined> {
-    return await this.repository.select(id, options);
+    return this.repository.select(id, options) as Promise<
+      (TComment & { masterId: string }) | undefined
+    >;
   }
 
-  async create(
+  create(
     ownerId: string,
     masterId: string,
     content: string,
   ): Promise<TComment> {
-    return await this.repository.create(ownerId, masterId, content);
+    return this.repository.create(
+      ownerId,
+      masterId,
+      content,
+    ) as Promise<TComment>;
   }
 
-  async update(
+  update(
     commentId: string,
     content: string,
   ): Promise<TComment & { editedAt: Date }> {
-    return await this.repository.update(commentId, content);
+    return this.repository.update(commentId, content) as Promise<
+      TComment & { editedAt: Date }
+    >;
   }
 
-  async delete(commentId: string): Promise<void> {
-    return await this.repository.delete(commentId);
+  delete(commentId: string): Promise<void> {
+    return this.repository.delete(commentId) as Promise<void>;
+  }
+
+  like(userId: string, commentId: string): Promise<TComment> {
+    return this.repository.like(userId, commentId) as Promise<TComment>;
   }
 }

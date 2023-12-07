@@ -54,6 +54,10 @@ export const comments = pgTable('comments', {
   isDeleted: boolean('isDeleted')
     .$default(() => false)
     .notNull(),
+  likes: varchar('likes')
+    .array()
+    .notNull()
+    .$defaultFn(() => []),
   createdAt: timestamp('createdAt').defaultNow().notNull(),
   updatedAt: timestamp('updatedAt').defaultNow().notNull(),
 });

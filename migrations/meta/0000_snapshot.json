@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "eeaf363a-8586-4699-b0f6-cd63bb2ccd47",
+  "id": "eea58ec7-ac5c-4aa0-9ba8-c450695dab5c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "authentications": {
@@ -54,6 +54,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "isDeleted": {
+          "name": "isDeleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp",
@@ -67,6 +73,12 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "likes": {
+          "name": "likes",
+          "type": "varchar[]",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
@@ -75,8 +87,12 @@
           "name": "comments_masterId_threads_id_fk",
           "tableFrom": "comments",
           "tableTo": "threads",
-          "columnsFrom": ["masterId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "masterId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -84,8 +100,12 @@
           "name": "comments_ownerId_users_id_fk",
           "tableFrom": "comments",
           "tableTo": "users",
-          "columnsFrom": ["ownerId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "ownerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -121,6 +141,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "isDeleted": {
+          "name": "isDeleted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp",
@@ -142,8 +168,12 @@
           "name": "replies_masterId_comments_id_fk",
           "tableFrom": "replies",
           "tableTo": "comments",
-          "columnsFrom": ["masterId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "masterId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -151,8 +181,12 @@
           "name": "replies_ownerId_users_id_fk",
           "tableFrom": "replies",
           "tableTo": "users",
-          "columnsFrom": ["ownerId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "ownerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -209,8 +243,12 @@
           "name": "threads_ownerId_users_id_fk",
           "tableFrom": "threads",
           "tableTo": "users",
-          "columnsFrom": ["ownerId"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "ownerId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -268,7 +306,9 @@
         "users_username_unique": {
           "name": "users_username_unique",
           "nullsNotDistinct": false,
-          "columns": ["username"]
+          "columns": [
+            "username"
+          ]
         }
       }
     }

@@ -112,6 +112,7 @@ describe('Threads use-case test suite', () => {
               content: 'this is comment',
               date: new Date(),
               isDeleted: false,
+              likes: [],
               replies: [
                 {
                   id: 'reply-xxx',
@@ -187,6 +188,7 @@ describe('Threads use-case test suite', () => {
               content: 'this is comment',
               date: new Date(),
               isDeleted: true,
+              likes: [],
               replies: [
                 {
                   id: 'reply-xxx',
@@ -265,6 +267,7 @@ describe('Threads use-case test suite', () => {
               content: 'this is comment',
               date: new Date(),
               isDeleted: false,
+              likes: [],
               replies: [
                 {
                   id: 'reply-xxx',

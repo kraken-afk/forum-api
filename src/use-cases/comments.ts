@@ -62,6 +62,26 @@ export class CommentsUseCase {
 
     return await comments.delete(commentId);
   }
+
+  async likeComment(
+    username: string,
+    commentId: string,
+    masterId: string,
+  ): Promise<{ likeCount: number }> {
+    const [user, comment, thread] = await Promise.all([
+      this.models.users.select(username),
+      this.models.comments.select(commentId),
+      this.models.threads.select(masterId),
+    ]);
+
+    if (!user) throw new UnauthorizedError('Unauthorized action');
+    if (!comment) throw new NotFoundError('404 Error: Comment not found');
+    if (!thread) throw new NotFoundError('404 Error: Thread not found');
+
+    const { likes } = await this.models.comments.like(user.id, comment.id);
+
+    return { likeCount: likes.length };
+  }
 }
 
 export const Comments = new CommentsUseCase({ comments, threads, users });

@@ -55,6 +55,7 @@ type TComment = {
   owner: string;
   date: Date;
   content: string;
+  likes: string[];
 };
 
 type Reply = {
@@ -75,6 +76,7 @@ type ThreadsDetail = {
     date: Date;
     content: string;
     isDeleted: boolean;
+    likes: string[];
     replies: Array<{
       id: string;
       content: string;

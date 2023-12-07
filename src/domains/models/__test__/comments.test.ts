@@ -23,6 +23,7 @@ describe('Comments model test suits', () => {
           id: 'comment-xxx',
           content: content,
           owner: ownerId,
+          likes: [],
           date: new Date(),
         };
       },
@@ -50,6 +51,7 @@ describe('Comments model test suits', () => {
           owner: 'user-1',
           date: new Date(),
           isDeleted: false,
+          likes: [],
         },
         {
           id: 'comment-xxx-2',
@@ -57,6 +59,7 @@ describe('Comments model test suits', () => {
           owner: 'user-2',
           date: new Date(),
           isDeleted: true,
+          likes: [],
         },
       ];
 
@@ -171,5 +174,61 @@ describe('Comments model test suits', () => {
     await model.delete('comment-xxx-1');
 
     expect(await model.select('comment-xxx-1')).toBe(undefined);
+  });
+
+  test('Like comment', async () => {
+    const MockedCommentsRepository = <jest.Mock<IComments>>jest.fn(() => {
+      const comments: (TComment & { isDeleted: boolean })[] = [
+        {
+          id: 'comment-xxx-1',
+          content: 'this is comment',
+          owner: 'user-1',
+          date: new Date(),
+          isDeleted: false,
+          likes: [],
+        },
+        {
+          id: 'comment-xxx-2',
+          content: 'this is comment',
+          owner: 'user-2',
+          date: new Date(),
+          isDeleted: false,
+          likes: [],
+        },
+      ];
+
+      return {
+        async select(id, options) {
+          return comments.find(comment => {
+            if (options?.all) {
+              return comment.id === id;
+            } else {
+              return comment.id === id && !comment.isDeleted;
+            }
+          });
+        },
+        async like(userId, commentId): Promise<TComment> {
+          const index = comments.findIndex(e => e.id === commentId);
+
+          comments[index].likes.push(userId);
+
+          return comments[index];
+        },
+      };
+    });
+    const model = new Comments(new MockedCommentsRepository());
+    const comment = await model.select('comment-xxx-1');
+
+    expect(comment).toHaveProperty('likes');
+    expect(Array.isArray(comment?.likes)).toBeTruthy();
+    expect(comment?.likes.length).toEqual(0);
+
+    const commentAfterLike = await model.like('user-xxx-1', comment!.id);
+
+    expect(commentAfterLike).toHaveProperty('likes');
+    expect(Array.isArray(commentAfterLike.likes)).toBeTruthy();
+
+    expect(commentAfterLike.likes.length).toEqual(1);
+    expect(commentAfterLike.likes[0]).toBe('user-xxx-1');
   });
 });

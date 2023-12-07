@@ -13,7 +13,7 @@ describe('Http Server test suite', () => {
       'src/interfaces/http/__test__/api',
       '127.0.0.1',
       5050,
-      async (_req, _res, next) => next(),
+      async (_req, _res, next) => await next(_req, _res),
     );
     expect(app).toBeInstanceOf(Server);
 
@@ -27,7 +27,7 @@ describe('Http Server test suite', () => {
         'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
-        async (_req, _res, next) => next(),
+        async (_req, _res, next) => await next(_req, _res),
       );
 
       return request(app)
@@ -52,7 +52,7 @@ describe('Http Server test suite', () => {
         'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
-        async (_req, _res, next) => next(),
+        async (_req, _res, next) => await next(_req, _res),
       );
 
       return request(app)
@@ -78,7 +78,7 @@ describe('Http Server test suite', () => {
         'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
-        async (_req, _res, next) => next(),
+        async (_req, _res, next) => await next(_req, _res),
       );
 
       return request(app)
@@ -103,7 +103,7 @@ describe('Http Server test suite', () => {
         'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
-        async (_req, _res, next) => next(),
+        async (_req, _res, next) => await next(_req, _res),
       );
 
       return request(app)
@@ -127,7 +127,7 @@ describe('Http Server test suite', () => {
         'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
-        async (_req, _res, next) => next(),
+        async (_req, _res, next) => await next(_req, _res),
       );
 
       return request(app)
@@ -151,7 +151,7 @@ describe('Http Server test suite', () => {
         'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
-        async (_req, _res, next) => next(),
+        async (_req, _res, next) => await next(_req, _res),
       );
 
       return request(app)
@@ -175,7 +175,7 @@ describe('Http Server test suite', () => {
         'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
-        async (_req, _res, next) => next(),
+        async (_req, _res, next) => await next(_req, _res),
       );
 
       return request(app)
@@ -199,7 +199,7 @@ describe('Http Server test suite', () => {
         'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
-        async (_req, _res, next) => next(),
+        async (_req, _res, next) => await next(_req, _res),
       );
 
       return request(app)
@@ -224,7 +224,7 @@ describe('Http Server test suite', () => {
         'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
-        async (_req, _res, next) => next(),
+        async (_req, _res, next) => await next(_req, _res),
       );
       return request(app)
         .post('/users/xxx')
@@ -248,7 +248,7 @@ describe('Http Server test suite', () => {
         'src/interfaces/http/__test__/api',
         '127.0.0.1',
         5050,
-        async (_req, _res, next) => next(),
+        async (_req, _res, next) => await next(_req, _res),
       );
       return request(app)
         .post('/')

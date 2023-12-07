@@ -18,7 +18,7 @@ export type RouteMethod = (req: Request, res: ServerResponse) => NodeResponse;
 export type RouterFunc = (
   request: Request,
   response: ServerResponse,
-) => Response;
+) => NodeResponse;
 
 export const Send = {
   new: (

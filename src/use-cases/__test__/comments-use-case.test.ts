@@ -70,6 +70,7 @@ describe('Comments use-case test suite', () => {
             content: content,
             date: new Date(),
             owner: ownerId,
+            likes: [],
           };
         },
       }));
@@ -150,6 +151,7 @@ describe('Comments use-case test suite', () => {
             content: content,
             date: new Date(),
             owner: ownerId,
+            likes: [],
           };
         },
       }));
@@ -231,6 +233,7 @@ describe('Comments use-case test suite', () => {
             content: content,
             date: new Date(),
             owner: ownerId,
+            likes: [],
           };
         },
       }));
@@ -312,6 +315,7 @@ describe('Comments use-case test suite', () => {
             content: content,
             date: new Date(),
             owner: ownerId,
+            likes: [],
           };
         },
       }));
@@ -358,6 +362,7 @@ describe('Comments use-case test suite', () => {
             date: new Date(),
             owner: 'jhondoe',
             isDeleted: false,
+            likes: [],
           },
         ];
         return {
@@ -414,6 +419,7 @@ describe('Comments use-case test suite', () => {
             date: new Date(),
             owner: 'jhondoe',
             isDeleted: false,
+            likes: [],
           },
         ];
         return {
@@ -469,6 +475,7 @@ describe('Comments use-case test suite', () => {
             date: new Date(),
             owner: 'jhondoe',
             isDeleted: false,
+            likes: [],
           },
         ];
         return {
@@ -529,6 +536,7 @@ describe('Comments use-case test suite', () => {
             date: new Date(),
             owner: 'jhondoe',
             isDeleted: false,
+            likes: [],
           },
         ];
         return {
@@ -558,6 +566,366 @@ describe('Comments use-case test suite', () => {
       expect(
         async () => await Comments.deleteComment('comment-xxx', 'joe'),
       ).rejects.toThrow(ForbiddenError);
+    });
+  });
+
+  describe('Like comment test suite', () => {
+    test('Like comment test case', async () => {
+      const MockedUserDomain = <jest.Mock<UsersDomain>>jest.fn(() => {
+        const users: User[] = [
+          {
+            id: 'user-xxx-1',
+            fullname: 'Jhon doe',
+            username: 'jhondoe',
+          },
+          {
+            id: 'user-xxx-2',
+            fullname: 'Joe',
+            username: 'joe',
+          },
+        ];
+
+        return {
+          async select(username): Promise<User | undefined> {
+            return users.find(user => user.username === username);
+          },
+        };
+      });
+      const MockedCommentDomain = <jest.Mock<CommentsDomain>>jest.fn(() => {
+        const comments: Array<
+          TComment & { isDeleted: boolean; masterId: string }
+        > = [
+          {
+            content: 'this is a comment',
+            id: 'comment-xxx',
+            date: new Date(),
+            owner: 'jhondoe',
+            isDeleted: false,
+            masterId: 'thread-xxx-1',
+            likes: [],
+          },
+        ];
+        return {
+          async select(id, options) {
+            return comments.find(comment => {
+              if (options?.all) {
+                return comment.id === id;
+              } else {
+                return comment.id === id && !comment.isDeleted;
+              }
+            });
+          },
+          async like(userId: string, commentId: string): Promise<TComment> {
+            const index = comments.findIndex(e => e.id === commentId);
+
+            comments[index].likes.push(userId);
+
+            return comments[index];
+          },
+        };
+      });
+      const MockedThreadDomain = <jest.Mock<ThreadsDomain>>jest.fn(() => {
+        const threads: Thread[] = [
+          {
+            id: 'thread-xxx-1',
+            body: 'this is body',
+            date: new Date(),
+            owner: 'user-xxx-1',
+            title: 'this is title',
+          },
+        ];
+        return {
+          async select(threadId): Promise<Thread | undefined> {
+            return threads.find(thread => thread.id === threadId);
+          },
+        };
+      });
+      const commentModel = new MockedCommentDomain();
+      const Comments = new CommentsUseCase({
+        comments: commentModel,
+        threads: new MockedThreadDomain(),
+        users: new MockedUserDomain(),
+      });
+
+      const comment = await commentModel.select('comment-xxx');
+
+      expect(comment).toHaveProperty('likes');
+      expect(Array.isArray(comment?.likes)).toBeTruthy();
+      expect(comment?.likes.length).toEqual(0);
+
+      const commentAfterLike = await Comments.likeComment(
+        'jhondoe',
+        comment!.id,
+        comment!.masterId,
+      );
+
+      expect(commentAfterLike).toHaveProperty('likeCount', 1);
+    });
+
+    test('Like comment test case with nonexistence thread', async () => {
+      const MockedUserDomain = <jest.Mock<UsersDomain>>jest.fn(() => {
+        const users: User[] = [
+          {
+            id: 'user-xxx-1',
+            fullname: 'Jhon doe',
+            username: 'jhondoe',
+          },
+          {
+            id: 'user-xxx-2',
+            fullname: 'Joe',
+            username: 'joe',
+          },
+        ];
+
+        return {
+          async select(username): Promise<User | undefined> {
+            return users.find(user => user.username === username);
+          },
+        };
+      });
+      const MockedCommentDomain = <jest.Mock<CommentsDomain>>jest.fn(() => {
+        const comments: Array<
+          TComment & { isDeleted: boolean; masterId: string }
+        > = [
+          {
+            content: 'this is a comment',
+            id: 'comment-xxx',
+            date: new Date(),
+            owner: 'jhondoe',
+            isDeleted: false,
+            masterId: 'thread-xxx-1',
+            likes: [],
+          },
+        ];
+        return {
+          async select(id, options) {
+            return comments.find(comment => {
+              if (options?.all) {
+                return comment.id === id;
+              } else {
+                return comment.id === id && !comment.isDeleted;
+              }
+            });
+          },
+          async like(userId: string, commentId: string): Promise<TComment> {
+            const index = comments.findIndex(e => e.id === commentId);
+
+            comments[index].likes.push(userId);
+
+            return comments[index];
+          },
+        };
+      });
+      const MockedThreadDomain = <jest.Mock<ThreadsDomain>>jest.fn(() => {
+        const threads: Thread[] = [
+          {
+            id: 'thread-xxx-1',
+            body: 'this is body',
+            date: new Date(),
+            owner: 'user-xxx-1',
+            title: 'this is title',
+          },
+        ];
+        return {
+          async select(threadId): Promise<Thread | undefined> {
+            return threads.find(thread => thread.id === threadId);
+          },
+        };
+      });
+      const commentModel = new MockedCommentDomain();
+      const Comments = new CommentsUseCase({
+        comments: commentModel,
+        threads: new MockedThreadDomain(),
+        users: new MockedUserDomain(),
+      });
+
+      const comment = await commentModel.select('comment-xxx');
+
+      expect(comment).toHaveProperty('likes');
+      expect(Array.isArray(comment?.likes)).toBeTruthy();
+      expect(comment?.likes.length).toEqual(0);
+
+      expect(
+        async () => await Comments.likeComment('jhondoe', comment!.id, 'xxx'),
+      ).rejects.toThrow(NotFoundError);
+    });
+
+    test('Like comment test case with nonexistence comment', async () => {
+      const MockedUserDomain = <jest.Mock<UsersDomain>>jest.fn(() => {
+        const users: User[] = [
+          {
+            id: 'user-xxx-1',
+            fullname: 'Jhon doe',
+            username: 'jhondoe',
+          },
+          {
+            id: 'user-xxx-2',
+            fullname: 'Joe',
+            username: 'joe',
+          },
+        ];
+
+        return {
+          async select(username): Promise<User | undefined> {
+            return users.find(user => user.username === username);
+          },
+        };
+      });
+      const MockedCommentDomain = <jest.Mock<CommentsDomain>>jest.fn(() => {
+        const comments: Array<
+          TComment & { isDeleted: boolean; masterId: string }
+        > = [
+          {
+            content: 'this is a comment',
+            id: 'comment-xxx',
+            date: new Date(),
+            owner: 'jhondoe',
+            isDeleted: false,
+            masterId: 'thread-xxx-1',
+            likes: [],
+          },
+        ];
+        return {
+          async select(id, options) {
+            return comments.find(comment => {
+              if (options?.all) {
+                return comment.id === id;
+              } else {
+                return comment.id === id && !comment.isDeleted;
+              }
+            });
+          },
+          async like(userId: string, commentId: string): Promise<TComment> {
+            const index = comments.findIndex(e => e.id === commentId);
+
+            comments[index].likes.push(userId);
+
+            return comments[index];
+          },
+        };
+      });
+      const MockedThreadDomain = <jest.Mock<ThreadsDomain>>jest.fn(() => {
+        const threads: Thread[] = [
+          {
+            id: 'thread-xxx-1',
+            body: 'this is body',
+            date: new Date(),
+            owner: 'user-xxx-1',
+            title: 'this is title',
+          },
+        ];
+        return {
+          async select(threadId): Promise<Thread | undefined> {
+            return threads.find(thread => thread.id === threadId);
+          },
+        };
+      });
+      const commentModel = new MockedCommentDomain();
+      const Comments = new CommentsUseCase({
+        comments: commentModel,
+        threads: new MockedThreadDomain(),
+        users: new MockedUserDomain(),
+      });
+
+      const comment = await commentModel.select('comment-xxx');
+
+      expect(comment).toHaveProperty('likes');
+      expect(Array.isArray(comment?.likes)).toBeTruthy();
+      expect(comment?.likes.length).toEqual(0);
+
+      expect(
+        async () =>
+          await Comments.likeComment('jhondoe', 'xxx', 'thread-xxx-1'),
+      ).rejects.toThrow(NotFoundError);
+    });
+
+    test('Like comment test case with nonexistence comment', async () => {
+      const MockedUserDomain = <jest.Mock<UsersDomain>>jest.fn(() => {
+        const users: User[] = [
+          {
+            id: 'user-xxx-1',
+            fullname: 'Jhon doe',
+            username: 'jhondoe',
+          },
+          {
+            id: 'user-xxx-2',
+            fullname: 'Joe',
+            username: 'joe',
+          },
+        ];
+
+        return {
+          async select(username): Promise<User | undefined> {
+            return users.find(user => user.username === username);
+          },
+        };
+      });
+      const MockedCommentDomain = <jest.Mock<CommentsDomain>>jest.fn(() => {
+        const comments: Array<
+          TComment & { isDeleted: boolean; masterId: string }
+        > = [
+          {
+            content: 'this is a comment',
+            id: 'comment-xxx',
+            date: new Date(),
+            owner: 'jhondoe',
+            isDeleted: false,
+            masterId: 'thread-xxx-1',
+            likes: [],
+          },
+        ];
+        return {
+          async select(id, options) {
+            return comments.find(comment => {
+              if (options?.all) {
+                return comment.id === id;
+              } else {
+                return comment.id === id && !comment.isDeleted;
+              }
+            });
+          },
+          async like(userId: string, commentId: string): Promise<TComment> {
+            const index = comments.findIndex(e => e.id === commentId);
+
+            comments[index].likes.push(userId);
+
+            return comments[index];
+          },
+        };
+      });
+      const MockedThreadDomain = <jest.Mock<ThreadsDomain>>jest.fn(() => {
+        const threads: Thread[] = [
+          {
+            id: 'thread-xxx-1',
+            body: 'this is body',
+            date: new Date(),
+            owner: 'user-xxx-1',
+            title: 'this is title',
+          },
+        ];
+        return {
+          async select(threadId): Promise<Thread | undefined> {
+            return threads.find(thread => thread.id === threadId);
+          },
+        };
+      });
+      const commentModel = new MockedCommentDomain();
+      const Comments = new CommentsUseCase({
+        comments: commentModel,
+        threads: new MockedThreadDomain(),
+        users: new MockedUserDomain(),
+      });
+
+      const comment = await commentModel.select('comment-xxx');
+
+      expect(comment).toHaveProperty('likes');
+      expect(Array.isArray(comment?.likes)).toBeTruthy();
+      expect(comment?.likes.length).toEqual(0);
+
+      expect(
+        async () =>
+          await Comments.likeComment('xxx', comment!.id, 'thread-xxx-1'),
+      ).rejects.toThrow(UnauthorizedError);
     });
   });
 });

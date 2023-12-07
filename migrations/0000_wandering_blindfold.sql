@@ -8,8 +8,10 @@ CREATE TABLE IF NOT EXISTS "comments" (
 	"body" text NOT NULL,
 	"masterId" varchar NOT NULL,
 	"ownerId" varchar NOT NULL,
+	"isDeleted" boolean NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL,
-	"updatedAt" timestamp DEFAULT now() NOT NULL
+	"updatedAt" timestamp DEFAULT now() NOT NULL,
+	"likes" varchar[] NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "replies" (
@@ -17,6 +19,7 @@ CREATE TABLE IF NOT EXISTS "replies" (
 	"body" text NOT NULL,
 	"masterId" varchar NOT NULL,
 	"ownerId" varchar NOT NULL,
+	"isDeleted" boolean NOT NULL,
 	"createdAt" timestamp DEFAULT now() NOT NULL,
 	"updatedAt" timestamp DEFAULT now() NOT NULL
 );

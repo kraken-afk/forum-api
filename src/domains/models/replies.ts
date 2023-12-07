@@ -3,26 +3,24 @@ import { IReplies, RepliesOptions } from '~/infrastructure/contracts/T-replies';
 export class Replies {
   constructor(private readonly repository: IReplies) {}
 
-  async select(
+  select(
     id: string,
     options: RepliesOptions = { all: false },
   ): Promise<(Reply & { masterId: string }) | undefined> {
-    return await this.repository.select(id, options);
+    return this.repository.select(id, options) as Promise<
+      (Reply & { masterId: string }) | undefined
+    >;
   }
 
-  async create(
-    ownerId: string,
-    masterId: string,
-    content: string,
-  ): Promise<Reply> {
-    return await this.repository.create(ownerId, masterId, content);
+  create(ownerId: string, masterId: string, content: string): Promise<Reply> {
+    return this.repository.create(ownerId, masterId, content) as Promise<Reply>;
   }
 
-  async update(replyId: string, content: string): Promise<Reply> {
-    return await this.repository.update(replyId, content);
+  update(replyId: string, content: string): Promise<Reply> {
+    return this.repository.update(replyId, content) as Promise<Reply>;
   }
 
-  async delete(replyId: string): Promise<void> {
-    return await this.repository.delete(replyId);
+  delete(replyId: string): Promise<void> {
+    return this.repository.delete(replyId) as Promise<void>;
   }
 }

@@ -54,6 +54,7 @@ describe('Replies use-case test suite', () => {
             owner: 'user-xxx-1',
             isDeleted: false,
             masterId: 'thread-xxx-1',
+            likes: [],
           },
         ];
 
@@ -141,6 +142,7 @@ describe('Replies use-case test suite', () => {
             id: 'comment-xxx-1',
             owner: 'user-xxx-1',
             isDeleted: false,
+            likes: [],
           },
         ];
 
@@ -231,6 +233,7 @@ describe('Replies use-case test suite', () => {
             owner: 'user-xxx-1',
             isDeleted: false,
             masterId: 'thread-xxx-1',
+            likes: [],
           },
         ];
 
@@ -320,6 +323,7 @@ describe('Replies use-case test suite', () => {
             owner: 'user-xxx-1',
             isDeleted: false,
             masterId: 'thread-xxx-1',
+            likes: [],
           },
         ];
 
@@ -409,6 +413,7 @@ describe('Replies use-case test suite', () => {
             owner: 'user-xxx-1',
             isDeleted: false,
             masterId: 'thread-xxx-1',
+            likes: [],
           },
         ];
 
@@ -498,6 +503,7 @@ describe('Replies use-case test suite', () => {
             owner: 'user-xxx-1',
             isDeleted: false,
             masterId: 'thread-xxx-2',
+            likes: [],
           },
         ];
 
@@ -589,6 +595,7 @@ describe('Replies use-case test suite', () => {
             owner: 'user-xxx-1',
             isDeleted: false,
             masterId: 'thread-xxx-1',
+            likes: [],
           },
         ];
 
@@ -691,6 +698,7 @@ describe('Replies use-case test suite', () => {
             owner: 'user-xxx-1',
             isDeleted: false,
             masterId: 'thread-xxx-1',
+            likes: [],
           },
         ];
 
@@ -794,6 +802,7 @@ describe('Replies use-case test suite', () => {
             owner: 'user-xxx-1',
             isDeleted: false,
             masterId: 'thread-xxx-1',
+            likes: [],
           },
         ];
 
@@ -897,6 +906,7 @@ describe('Replies use-case test suite', () => {
             owner: 'user-xxx-1',
             isDeleted: false,
             masterId: 'thread-xxx-1',
+            likes: [],
           },
         ];
 
@@ -1000,6 +1010,7 @@ describe('Replies use-case test suite', () => {
             owner: 'user-xxx-1',
             isDeleted: false,
             masterId: 'thread-xxx-1',
+            likes: [],
           },
         ];
 
@@ -1103,6 +1114,7 @@ describe('Replies use-case test suite', () => {
             owner: 'user-xxx-1',
             isDeleted: false,
             masterId: 'thread-xxx-2',
+            likes: [],
           },
         ];
 
@@ -1207,6 +1219,7 @@ describe('Replies use-case test suite', () => {
             owner: 'user-xxx-1',
             isDeleted: false,
             masterId: 'thread-xxx-1',
+            likes: [],
           },
         ];
 
@@ -1316,6 +1329,7 @@ describe('Replies use-case test suite', () => {
             owner: 'user-xxx-1',
             isDeleted: false,
             masterId: 'thread-xxx-1',
+            likes: [],
           },
         ];
 

@@ -3,13 +3,13 @@ import { Ithreads } from '~/infrastructure/contracts/T-threads';
 export class Threads {
   constructor(private readonly repository: Ithreads) {}
 
-  async getThreadsWithComments(
-    threadId: string,
-  ): Promise<ThreadsDetail | undefined> {
-    return await this.repository.getThreadsWithComments(threadId);
+  getThreadsWithComments(threadId: string): Promise<ThreadsDetail | undefined> {
+    return this.repository.getThreadsWithComments(threadId) as Promise<
+      ThreadsDetail | undefined
+    >;
   }
 
-  async create(
+  create(
     title: string,
     body: string,
     ownerId: string,
@@ -18,18 +18,22 @@ export class Threads {
     title: string;
     owner: string;
   }> {
-    return await this.repository.create(title, body, ownerId);
+    return this.repository.create(title, body, ownerId) as Promise<{
+      id: string;
+      title: string;
+      owner: string;
+    }>;
   }
 
-  async select(id: string): Promise<Thread | undefined> {
-    return this.repository.select(id);
+  select(id: string): Promise<Thread | undefined> {
+    return this.repository.select(id) as Promise<Thread | undefined>;
   }
 
-  async delete(id: string): Promise<void> {
-    await this.repository.delete(id);
+  delete(id: string): Promise<void> {
+    return this.repository.delete(id) as Promise<void>;
   }
 
-  async update(id: string, payload: Partial<ThreadPayload>): Promise<Thread> {
-    return await this.repository.update(id, payload);
+  update(id: string, payload: Partial<ThreadPayload>): Promise<Thread> {
+    return this.repository.update(id, payload) as Promise<Thread>;
   }
 }

@@ -3,26 +3,30 @@ import { IAuthentications } from '~/infrastructure/contracts/T-authentications';
 export class Authentications {
   constructor(private readonly repository: IAuthentications) {}
 
-  async insert(accessToken: string, refreshToken: string): Promise<Auth> {
-    return await this.repository.insert(accessToken, refreshToken);
+  insert(accessToken: string, refreshToken: string): Promise<Auth> {
+    return this.repository.insert(accessToken, refreshToken) as Promise<Auth>;
   }
 
-  async updateToken(
+  updateToken(
     newToken: string,
     refreshToken: string,
   ): Promise<{ accessToken: string }> {
-    return await this.repository.updateToken(newToken, refreshToken);
+    return this.repository.updateToken(newToken, refreshToken) as Promise<{
+      accessToken: string;
+    }>;
   }
 
-  async deleteToken(refreshToken: string): Promise<void> {
-    return await this.repository.deleteToken(refreshToken);
+  deleteToken(refreshToken: string): Promise<void> {
+    return this.repository.deleteToken(refreshToken) as Promise<void>;
   }
 
-  async isRefreshTokenExist(refreshToken: string): Promise<boolean> {
-    return await this.repository.isRefreshTokenExist(refreshToken);
+  isRefreshTokenExist(refreshToken: string): Promise<boolean> {
+    return this.repository.isRefreshTokenExist(
+      refreshToken,
+    ) as Promise<boolean>;
   }
 
-  async isAccessTokenExist(token: string): Promise<boolean> {
-    return await this.repository.isAccessTokenExist(token);
+  isAccessTokenExist(token: string): Promise<boolean> {
+    return this.repository.isAccessTokenExist(token) as Promise<boolean>;
   }
 }

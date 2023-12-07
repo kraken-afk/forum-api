@@ -8,10 +8,10 @@ import { NotFoundError } from '~/commons/errors/not-found-error';
 import { log } from '~/commons/libs/log';
 import {
   type Request,
+  RouterFunc,
   ServerResponse,
   findMatchingRoute,
   prepareRoutesHandler,
-  RouterFunc,
 } from '~/interfaces/http/core/mod';
 
 export async function server(

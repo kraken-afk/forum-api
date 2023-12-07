@@ -24,6 +24,7 @@ export class CommentsRepository implements IComments {
             owner: users.username,
             masterId: comments.masterId,
             isDeleted: comments.isDeleted,
+            likes: comments.likes,
           })
           .from(comments)
           .where(eq(comments.id, id))
@@ -36,6 +37,7 @@ export class CommentsRepository implements IComments {
             owner: users.username,
             masterId: comments.masterId,
             isDeleted: comments.isDeleted,
+            likes: comments.likes,
           })
           .from(comments)
           .where(and(eq(comments.id, id), eq(comments.isDeleted, false)))
@@ -50,6 +52,7 @@ export class CommentsRepository implements IComments {
       owner: data.owner,
       masterId: data.masterId,
       isDeleted: data.isDeleted,
+      likes: data.likes,
     };
 
     return result;
@@ -71,14 +74,13 @@ export class CommentsRepository implements IComments {
         id: comments.id,
         date: comments.createdAt,
         content: comments.content,
+        likes: comments.likes,
       });
 
-    const [[{ owner }], [{ id, content: comment, date }]] = await Promise.all([
-      user,
-      returnedComment,
-    ]);
+    const [[{ owner }], [{ id, content: comment, date, likes }]] =
+      await Promise.all([user, returnedComment]);
 
-    return { id, owner, content: comment, date };
+    return { id, owner, content: comment, date, likes };
   }
 
   async update(
@@ -91,6 +93,7 @@ export class CommentsRepository implements IComments {
       editedAt,
       id,
       ownerId,
+      likes,
     } = (
       await this.db
         .update(comments)
@@ -102,6 +105,7 @@ export class CommentsRepository implements IComments {
           content: comments.content,
           editedAt: comments.updatedAt,
           ownerId: comments.ownerId,
+          likes: comments.likes,
         })
     )[0];
 
@@ -110,7 +114,14 @@ export class CommentsRepository implements IComments {
       .from(users)
       .where(eq(users.id, ownerId));
 
-    return { id, owner, content: comment, date, editedAt };
+    return {
+      id,
+      owner,
+      content: comment,
+      date,
+      editedAt,
+      likes,
+    };
   }
 
   async delete(commentId: string): Promise<void> {
@@ -118,5 +129,39 @@ export class CommentsRepository implements IComments {
       .update(comments)
       .set({ isDeleted: true })
       .where(eq(comments.id, commentId));
+  }
+  async like(userId: string, commentId: string): Promise<TComment> {
+    const data = (
+      await this.db
+        .selectDistinct({ likes: comments.likes })
+        .from(comments)
+        .where(eq(comments.id, commentId))
+    )[0];
+
+    if (data.likes.includes(userId))
+      data.likes = data.likes.filter(e => e !== userId);
+    else data.likes.push(userId);
+
+    const { content, date, id, likes, owner } = (
+      await this.db
+        .update(comments)
+        .set({ likes: data.likes })
+        .where(eq(comments.id, commentId))
+        .returning({
+          id: comments.id,
+          content: comments.content,
+          owner: comments.ownerId,
+          likes: comments.likes,
+          date: comments.createdAt,
+        })
+    )[0];
+
+    return {
+      id,
+      date,
+      content,
+      owner,
+      likes,
+    };
   }
 }

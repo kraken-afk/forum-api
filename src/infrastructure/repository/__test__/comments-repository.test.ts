@@ -148,6 +148,49 @@ describe('Comments repository test suits', () => {
 
     expect(await model.select(comment.id)).toBeFalsy();
   });
+
+  test('Like Comment', async () => {
+    const user = await createUser();
+    const thread = await createThread(user);
+    const comment = await model.create(user.id, thread.id, COMMENT);
+
+    expect(comment).toHaveProperty('likes');
+    expect(Array.isArray(comment.likes)).toBeTruthy();
+    expect(comment.likes.length).toEqual(0);
+
+    const commentAfterLike = await model.like(user.id, comment.id);
+
+    expect(commentAfterLike).toHaveProperty('likes');
+    expect(Array.isArray(commentAfterLike.likes)).toBeTruthy();
+
+    expect(commentAfterLike.likes.length).toEqual(1);
+    expect(commentAfterLike.likes[0]).toBe(user.id);
+  });
+
+  test('Unlike Comment', async () => {
+    const user = await createUser();
+    const thread = await createThread(user);
+    const comment = await model.create(user.id, thread.id, COMMENT);
+
+    expect(comment).toHaveProperty('likes');
+    expect(Array.isArray(comment.likes)).toBeTruthy;
+    expect(comment.likes.length).toEqual(0);
+
+    const commentAfterLike = await model.like(user.id, comment.id);
+
+    expect(commentAfterLike).toHaveProperty('likes');
+    expect(Array.isArray(commentAfterLike.likes)).toBeTruthy();
+
+    expect(commentAfterLike.likes.length).toEqual(1);
+    expect(commentAfterLike.likes[0]).toBe(user.id);
+
+    const commentAfterUnlike = await model.like(user.id, comment.id);
+
+    expect(commentAfterUnlike).toHaveProperty('likes');
+    expect(Array.isArray(commentAfterUnlike.likes)).toBeTruthy();
+
+    expect(commentAfterUnlike.likes.length).toEqual(0);
+  });
 });
 
 async function createUser() {
