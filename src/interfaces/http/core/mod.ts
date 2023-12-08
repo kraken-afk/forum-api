@@ -135,7 +135,7 @@ export function findMatchingRoute(
   for (const routePath of router.keys()) {
     const comparedRouter = controller(routePath, url);
 
-    if (comparedRouter.status !== 'FALSE') {
+    if (comparedRouter.status) {
       extractedRouterObject = comparedRouter;
       break;
     }

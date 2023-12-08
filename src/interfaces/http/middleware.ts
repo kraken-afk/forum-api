@@ -26,15 +26,17 @@ export default async function (
 ) {
   let isPublicUrl = false;
 
-  for (const [route, method] of Object.entries(publicRoutes)) {
-    const control = controller(route, req.url!);
+  for (const route of Object.keys(publicRoutes)) {
+    const conclusion = controller(route, req.url!);
+
+    if (!conclusion.status) continue;
 
     if (
-      (control.status !== 'FALSE' && method.includes('*')) ||
-      method.includes(req.method as HttpMethodKey)
+      (publicRoutes[conclusion.endpoint] &&
+        publicRoutes[conclusion.endpoint].includes('*')) ||
+      publicRoutes[conclusion.endpoint].includes(req.method! as HttpMethodKey)
     ) {
       isPublicUrl = true;
-      break;
     }
   }
 

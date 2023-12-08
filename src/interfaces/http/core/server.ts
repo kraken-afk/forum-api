@@ -44,7 +44,7 @@ export async function server(
 
       if (!r) throw new NotFoundError('404 Not Found');
 
-      const modules = router.get(r.endPoint)!;
+      const modules = router.get(r.endpoint)!;
 
       // If route doesn't have a method to handle request
       if (!modules[method]) {

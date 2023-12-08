@@ -91,8 +91,8 @@ describe('Route matcher test suite', () => {
     );
     const r = findMatchingRoute(appRouter, '/users');
 
-    expect(r).toHaveProperty('status', 'TRUE');
-    expect(r).toHaveProperty('endPoint', '/users');
+    expect(r).toHaveProperty('status', true);
+    expect(r).toHaveProperty('endpoint', '/users');
     expect(r).toHaveProperty('params');
   });
 
@@ -110,9 +110,30 @@ describe('Route matcher test suite', () => {
     );
     const r = findMatchingRoute(appRouter, '/users/123');
 
-    expect(r).toHaveProperty('status', 'PARAMS');
-    expect(r).toHaveProperty('endPoint', '/users/[userId]');
+    expect(r).toHaveProperty('status', true);
+    expect(r).toHaveProperty('endpoint', '/users/[userId]');
     expect(r).toHaveProperty('params');
     expect(r?.params.userId).toBe('123');
+  });
+
+  test('Route not match with parameters', async () => {
+    const appRouter = await prepareRoutesHandler(
+      'src/interfaces/http/__test__/api',
+    );
+    const r = findMatchingRoute(appRouter, '/cosmic?id=123');
+
+    expect(r).toBe(undefined);
+  });
+
+  test('Route match with parameters', async () => {
+    const appRouter = await prepareRoutesHandler(
+      'src/interfaces/http/__test__/api',
+    );
+    const r = findMatchingRoute(appRouter, '/users?id=1');
+
+    expect(r).toHaveProperty('status', true);
+    expect(r).toHaveProperty('endpoint', '/users');
+    expect(r).toHaveProperty('params');
+    expect(r?.params.id).toBe('1');
   });
 });

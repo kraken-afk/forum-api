@@ -10,11 +10,9 @@ type AppRouter = Map<string, Record<Partial<HttpMethodKey>, RouterFunc>>;
 
 declare const __OUT_DIR__: string;
 
-type UrlMatchStatus = 'TRUE' | 'PARAMS' | 'FALSE';
-
 type ExtractedRouterObject = {
-  endPoint: string;
-  status: UrlMatchStatus;
+  endpoint: string;
+  status: boolean;
   params: Record<string, string | number>;
 };
 
