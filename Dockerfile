@@ -1,7 +1,7 @@
 FROM alpine:latest
 WORKDIR /app/
 
-RUN apk --no-cache apk nodejs=18.16.0
+RUN apk --no-cache nodejs=18.16.0
 RUN apk --no-cache add curl
 RUN apk --no-cache add nginx
 RUN apk --no-cache add supervisor
