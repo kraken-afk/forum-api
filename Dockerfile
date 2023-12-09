@@ -8,7 +8,7 @@ RUN apk --no-cache add supervisor
 
 COPY . /app/
 
-RUN curl -L https://unpkg.com/@pnpm/self-installer | node
+RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which sh)" sh
 
 RUN pnpm install
 RUN pnpm run build
