@@ -1,7 +1,14 @@
+ARG NODE_VERSION=18.16.0
+FROM node:${NODE_VERSION}-alpine AS node
+
 FROM alpine:latest
 WORKDIR /app/
 
-RUN apk --no-cache nodejs=18.16.0
+COPY --from=node /usr/lib /usr/lib
+COPY --from=node /usr/local/lib /usr/local/lib
+COPY --from=node /usr/local/include /usr/local/include
+COPY --from=node /usr/local/bin /usr/local/bin
+
 RUN apk --no-cache add curl
 RUN apk --no-cache add nginx
 RUN apk --no-cache add supervisor
