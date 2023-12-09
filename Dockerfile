@@ -2,16 +2,14 @@ FROM alpine:latest
 WORKDIR /app/
 
 RUN apk --no-cache add curl
-RUN apk --no-cache add nodejs
+RUN apk --no-cache add nodejs npm
 RUN apk --no-cache add nginx
 RUN apk --no-cache add supervisor
 
 COPY . /app/
 
-RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which sh)" sh
-
-RUN pnpm install
-RUN pnpm run build
+RUN npm install
+RUN npm run build
 RUN cat /app/nginx.conf > /etc/nginx/nginx.conf
 
 EXPOSE 80
