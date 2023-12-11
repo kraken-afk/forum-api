@@ -16,7 +16,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USERNAME }}
           port: ${{ secrets.SSH_PORT }}
-          key: ${{ secrets.KEY }}
+          password: ${{ secrets.SSH_PASSWORD }}
           script: |
             cd ~/documents/dev/forum-api
             git pull origin main
