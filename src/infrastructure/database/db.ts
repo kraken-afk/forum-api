@@ -4,8 +4,9 @@ import { createPool } from '~/infrastructure/database/create-pool';
 
 config();
 
-// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-const { PGHOST, PGUSER, PGDATABASE, PGPASSWORD, PGPORT } = process.env as any;
+const { PGHOST, PGUSER, PGDATABASE, PGPASSWORD, PGPORT, SSL } =
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  process.env as any;
 
 export const db = drizzle(
   createPool({
@@ -15,5 +16,6 @@ export const db = drizzle(
     password: PGPASSWORD,
     username: PGUSER,
     max: 1,
+    ssl: SSL,
   }),
 );
