@@ -1,0 +1,24 @@
+name: Continues Deployment
+
+on:
+  push:
+    branches: [ "main"]
+  pull_request:
+    branches: [ "main" ]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH and deploy apps
+        uses: appleboy@ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd ~/documents/dev/forum-api
+            git pull origin main
+            bun install
+            bun run migrate:prod
+            sudo systemctl restart forum-api-app
