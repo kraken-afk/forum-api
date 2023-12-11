@@ -22,4 +22,5 @@ jobs:
             git pull origin main
             bun install
             bun run migrate:prod
+            bun run build
             sudo systemctl restart forum-api-app
