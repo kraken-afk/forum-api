@@ -3,7 +3,7 @@ import { Send } from '~/interfaces/http/core/mod';
 
 export function GET(req: Request, res: ServerResponse) {
   return Send.new({
-    name: 'Romeo',
+    name: 'Romeo Noveanre',
     age: 19,
     method: 'GET',
   });
