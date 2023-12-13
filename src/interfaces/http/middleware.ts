@@ -17,7 +17,7 @@ const publicRoutes: TPublicRoutes = {
   '/authentications': ['*'],
   '/threads/[threadId]': ['GET'],
   '/threads/[threadId]/comments': ['GET'],
-  '/503': ['*']
+  '/503': ['*'],
 };
 
 export default async function (
